@@ -28,11 +28,14 @@ components/
   hero/
     Hero.tsx               art-directed (desktop/mobile) hero — Home only
   products/
-    ProductCard.tsx         one product's image + copy + price + AddToCartControl
+    ProductCard.tsx         one product's image+badge, title, and AddToCartControl — no
+                             description/attributes/rating on the card (see below)
     ProductGrid.tsx          section wrapper, maps lib/products.ts -> ProductCard — used on both `/` and `/sweets`
-    AddToCartControl.tsx     "use client": owns local qty state, QuantityStepper + "Add to Cart"
-    QuantityStepper.tsx      "use client", controlled (value/onChange) — used by both
-                             AddToCartControl and CartDrawer's per-line qty control
+    AddToCartControl.tsx     "use client": owns pack-size (weightOptions) selection state,
+                             renders the price row (reactive to selection) + dropdown + "Add to Cart"
+    QuantityStepper.tsx      "use client", controlled (value/onChange) — used only by
+                             CartDrawer's per-line qty control (ProductCard has no stepper;
+                             quantity is adjusted in the cart, not before adding)
   blog/
     BlogCard.tsx             one post's cover image + date/read-time + title + excerpt
     BlogGrid.tsx             section wrapper, maps lib/blog-posts.ts -> BlogCard — `/blogs`
@@ -41,6 +44,10 @@ components/
   sections/
     BrandIntro.tsx          Home only
     WhyNouriqo.tsx          Home only
+    Counters.tsx             "use client" — Home only, between WhyNouriqo and ProductGrid.
+                             4 stat tiles with a scroll-triggered count-up (Framer Motion
+                             useInView + animate on a useMotionValue), reduced-motion aware.
+                             Figures are provisional placeholders — see lib/counters.ts.
     LifestyleStory.tsx      `/story`
     Ingredients.tsx         `/sweets`
     OurCraft.tsx            `/sweets`
@@ -59,15 +66,23 @@ components/
     Footer.tsx              renders once, in app/layout.tsx
 
 lib/
-  products.ts               Product type + data (source of truth for the catalog, incl. price)
+  products.ts               Product type + data (source of truth for the catalog).
+                             Each product has a weightOptions: { weight, price }[] array
+                             (currently 500 gram / 1 kg, 1 kg priced at exactly 2x) instead
+                             of a single weight/price pair — see CHANGELOG.md 2026-09-05 (2)
+  counters.ts                 Counter type + data for the home page Counters section — icon,
+                             target value, suffix, label. Figures are provisional placeholders,
+                             not confirmed metrics (see CONTENT_GUIDELINES.md and TODO.md)
   blog-posts.ts              BlogPost type + data (title/excerpt/date/readTime/coverImage/content
                              blocks) — same data-driven pattern as products.ts, no MDX/CMS
                              tooling; see the note below on why
   benefits.ts                "Why Nouriqo" icon/label pairs
   nav-links.ts               shared nav link list + isNavLinkActive(pathname, href) — real
                               paths, not anchors; used by both NavLinks and MobileMenu
-  cart-context.tsx            "use client": CartProvider + useCart() — slug+quantity lines,
-                              persisted to localStorage, product details looked up by slug
+  cart-context.tsx            "use client": CartProvider + useCart() — lines are keyed by
+                              slug+weight together (the same product can sit in the cart at
+                              two different pack sizes as independent lines), persisted to
+                              localStorage, product/price details looked up by slug+weight
   currency.ts                 formatINR() — Intl.NumberFormat("en-IN", { currency: "INR" })
   whatsapp.ts                 builds the itemized order message + wa.me checkout URL
   config.ts                   WHATSAPP_ORDER_NUMBER — the one place that number is defined

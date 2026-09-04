@@ -50,6 +50,23 @@ no regenerated packaging, per the brief's explicit rule.
 | `process-shaping.jpg` | `process-3.png` | Our Craft — hand-rolling a ladoo. |
 | `process-garnishing.jpg` | `process-4.png` | Our Craft — garnishing a tray of papri with nuts. |
 
+## `counters/` (4 — home page stat-counter icons)
+
+Client-supplied circular line icons, renamed from generated filenames
+to match this map's naming convention. Used by `components/sections/
+Counters.tsx` via `lib/counters.ts`.
+
+| File | Depicts | Used for |
+|---|---|---|
+| `counter-feedback.svg` | Thumbs-up + speech bubble | Positive feedback % |
+| `counter-customers.svg` | Handshake | Customers loved |
+| `counter-followers.svg` | Person with follow icon | Followers |
+| `counter-retail-stores.svg` | Storefront | Retail stores |
+
+The four figures shown alongside these icons are provisional
+placeholders, not confirmed brand metrics — see `CONTENT_GUIDELINES.md`
+and `TODO.md`.
+
 ## `icons/` (12 — "Why Nouriqo" benefit icons)
 
 Illustrated, circular, gold-outlined icons. Currently 6 are used on the

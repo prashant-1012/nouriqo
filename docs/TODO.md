@@ -24,6 +24,18 @@ logo strip, and a design polish pass. This file covers everything else.
 - [ ] Any certifications (FSSAI number, etc.) legally required to display
       for an Indian food ecommerce site — not currently shown because none
       were supplied.
+- [ ] Real numbers for the home page `Counters` section (positive
+      feedback %, customers, followers, retail stores) — added
+      2026-09-05 (2) using the reference screenshot's numbers
+      (92% / 18K+ / 18K+ / 180+) explicitly as provisional placeholders,
+      not confirmed Nouriqo metrics (client's call — see
+      `CONTENT_GUIDELINES.md` and `lib/counters.ts`). **Still needed:**
+      real figures before launch, at which point the "provisional
+      placeholders" disclaimer under the row should come off.
+- [ ] Confirmation of the 1 kg = 2x the 500 gram price rule
+      (`lib/products.ts`'s `weightOptions`) as real, final pricing —
+      it's a client-specified rule, not invented, but still pairs with
+      the same "indicative and may change" pricing disclaimer above.
 
 ## Ecommerce build-out (not started — brief explicitly says don't fake it)
 

@@ -1,5 +1,52 @@
 # Changelog
 
+## 2026-09-05 (2) — Home page trust-counters section; product cards restyled with pack-size pricing
+
+**New `Counters` section** (`components/sections/Counters.tsx`, data in
+`lib/counters.ts`), placed on the home page between `WhyNouriqo` and
+`ProductGrid`. Four stat tiles (positive feedback %, customers,
+followers, retail stores), each with a client-supplied circular icon
+(`public/assets/counters/`), a count-up animation that plays once when
+the row scrolls into view (Framer Motion `useInView` + `animate` on a
+`useMotionValue`, synced to React state via `useMotionValueEvent`), and
+respects `prefers-reduced-motion` by snapping straight to the final
+value instead of animating. Background is a soft cream gradient with a
+faint radial emerald wash plus two corner leaf motifs
+(`leaf-branch-medium`, `leaf-single-large`), keeping the section a
+distinct step in `DESIGN_SYSTEM.md`'s background-rhythm sequence
+(`beige/50` → **`cream`** → `ivory`) rather than repeating the tone of
+either neighbor.
+
+**The four figures (92% / 18K+ / 18K+ / 180+) are explicitly
+provisional placeholders, not confirmed Nouriqo metrics** — no real
+feedback/follower/retail-store numbers have been supplied. Per
+`CONTENT_GUIDELINES.md`'s existing rule against fabricating stats or
+social proof, this was flagged before implementation; the client
+chose to ship the reference numbers as clearly-marked placeholders
+(visible "Figures shown are provisional placeholders pending confirmed
+numbers" line under the row, same pattern as the pricing disclaimer)
+rather than block on real numbers or use bracketed placeholders. See
+`TODO.md` for the "needed from client" follow-up.
+
+**Product cards and cart restyled** to a tighter commerce-card layout
+(client-provided reference screenshots): `ProductCard` dropped the
+description/attributes/rating rows down to image+badge → title → price
+→ pack-size dropdown + Add to Cart. Products gained a second pack-size
+option — `lib/products.ts`'s `weight`/`price` fields became a
+`weightOptions: { weight, price }[]` array, with 1 kg priced at exactly
+2× the 500 gram price (a real, client-specified rule, not invented).
+`CartLine` is now keyed by `slug` + `weight` together so the same
+product can sit in the cart at two different pack sizes as independent
+lines; `CartDrawer` line items were restyled to match the reference
+cart screenshot (unit price top-right, remove icon inline with the qty
+stepper).
+
+**Verification:** `lint`/`build` clean; Playwright pass confirmed the
+count-up animates correctly on scroll-into-view, the 1kg dropdown
+selection doubles the displayed price, and adding the same product at
+both pack sizes produces two independent cart lines with a correct
+combined total.
+
 ## 2026-09-05 — Dark mode withdrawn; mobile hero rebuilt full-screen
 
 **`ROADMAP.md` #10 withdrawn.** Client confirmed a light/dark theme

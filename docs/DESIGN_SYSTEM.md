@@ -41,7 +41,17 @@ and needs no adjustment.
 `emerald-950` (dark) → `cream` → `emerald-900` (dark) → `cream` (footer), so
 no more than one section in a row shares a background tone, and green is
 reserved for two intentional "anchor" moments (Brand Story, Final CTA)
-rather than tinting every section.
+rather than tinting every section. On the home page specifically, the
+sequence is `ivory` (Brand Intro) → `beige/50` (Why Nouriqo) → a
+`cream`-based gradient (Counters — see below) → `ivory` (Product Grid) →
+dark (Final CTA); `Counters` sits between two light-neutral sections, so
+it deliberately uses `cream` rather than repeating `ivory`/`beige` to
+keep the alternation intact.
+
+**Gradients:** used sparingly, and only on `Counters` so far — a soft
+diagonal `from-cream via-ivory to-cream` plus a faint radial emerald wash
+(`rgba(26,82,64,0.06)`) for depth. Every other section uses a flat
+background color; don't reach for a gradient as a default treatment.
 
 ## Typography
 
