@@ -68,10 +68,15 @@ rather than tinting every section.
 
 ## Radius & Shadows
 
-- Photography containers: `rounded-2xl` (cards) or `rounded-[2rem]` (hero).
-- Shadows are used exactly once, on the hero image, as a soft long shadow
-  (`shadow-[0_35px_70px_-30px_rgba(14,44,34,0.45)]`) — not applied to every
-  card, to avoid generic "elevated card" template style.
+- Photography containers: `rounded-2xl` (cards, e.g. products/blog). The
+  hero is the one deliberate exception — full-bleed, no radius — since
+  it runs edge-to-edge as a background with the headline overlaid on it,
+  not as a contained card (see `WEBSITE_STRUCTURE.md`).
+- No card shadows anywhere on the site — kept out deliberately, to avoid
+  the generic "elevated card" template style the brief warns against.
+  (An earlier version of the hero used one soft long shadow on its image
+  card; removed 2026-09-05 when the hero became full-bleed and stopped
+  being a card at all.)
 - No glassmorphism, no blur panels, no neumorphism.
 
 ## Buttons

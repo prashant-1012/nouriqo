@@ -9,7 +9,7 @@ breakpoints as the two structural thresholds — most sections only need
 | Section | < 640px | 640–1023px | ≥ 1024px |
 |---|---|---|---|
 | Navbar | Logo + hamburger, links in slide-down drawer | Same as mobile | Full horizontal nav + CTA button |
-| Hero | Single column: text, then rounded `hero-mobile.jpg` (aspect 4/5) | Same column order, image aspect widens to 16/10 | Two columns: text left, `hero-desktop.jpg` right (aspect 4/5) |
+| Hero | Full-screen (`h-dvh`) `hero-mobile.jpg`, headline overlaid on top with a top-to-bottom scrim | Same overlay treatment, same image | Fixed `640px`-tall `hero-desktop.jpg`, headline overlaid on the left with a left-to-right scrim |
 | WhyNouriqo | 2-column icon grid | 3-column | 6-column (single row) |
 | ProductGrid | 1 column | 2 columns | 3 columns |
 | LifestyleStory / Ingredients / Gifting / BrandStory | Stacked, image first (via DOM order or `order-*` utilities) | Stacked | 12-col asymmetric grid, text and image side by side |
@@ -48,3 +48,16 @@ tablet widths, and invisible white-on-white Final CTA button text. Both
 are the kind of thing that only surfaces in an actual rendered
 screenshot, not in a code read-through — worth re-running this kind of
 visual pass after any future layout change.
+
+**Mobile hero specifically** (2026-09-05, when it became a full-screen
+overlay) was tested against a wider matrix than the rest of the site —
+width AND height both vary the risk here, since text overlaid on a
+photo can overlap the product at the wrong combination of the two.
+Checked 375×667, 390×844, 430×932, 393×851, 360×740, 320×568, 375×600,
+375×560, and 375×500 (nine device/edge-case sizes). The narrowest one
+(320×568) initially showed the CTA row sitting directly on the product
+photo with poor contrast — fixed by trimming the hero's mobile type
+scale and shortening its subhead copy (both add up: less text height
+means more clearance above the product on every narrow device, not
+just the one that first exposed it). Re-verify against this same
+width×height matrix if the hero copy or type scale changes again.

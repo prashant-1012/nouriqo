@@ -1,5 +1,55 @@
 # Changelog
 
+## 2026-09-05 — Dark mode withdrawn; mobile hero rebuilt full-screen
+
+**`ROADMAP.md` #10 withdrawn.** Client confirmed a light/dark theme
+toggle isn't needed after all — no code existed for it yet (it was
+still queued behind #8), so this is a pure scope removal, not a
+revert. `PROJECT_CONTEXT.md`'s original "no dark mode" decision stands.
+
+**Mobile hero rebuilt as a full-screen overlay**, matching the desktop
+treatment built for `ROADMAP.md` #2 instead of the boxed-card layout
+that shipped that day (text above, rounded image card below — see the
+2026-09-04 (3) entry below for why that was the safer choice at the
+time). Client asked for it directly: full-screen image, title over it.
+
+- `Hero.tsx` restructured so mobile and desktop now share the same
+  underlying pattern: a full-bleed image layer + a scrim + one
+  absolutely-positioned text layer, differing only in the image crop,
+  the section height (`h-dvh` on mobile vs. a fixed `640px` on `lg:`),
+  and the scrim direction (top-to-bottom vs. left-to-right). Used
+  `h-dvh` rather than `h-screen`/`100vh` specifically to avoid the
+  classic mobile-browser bug where `100vh` gets cut off behind the
+  address bar — `dvh` (dynamic viewport height) adjusts as browser
+  chrome shows/hides.
+- **Bug caught and fixed during QA** (the same failure mode flagged as
+  a risk back on 2026-09-04 (3), now actually hit): tested a 9-point
+  width×height matrix (375×667, 390×844, 430×932, 393×851, 360×740,
+  320×568, 375×600, 375×560, 375×500) rather than just a couple of
+  common phone sizes, because text-over-photo overlap depends on both
+  dimensions at once, not just width. The narrowest case (320×568)
+  showed the CTA row landing directly on the product photo with poor
+  contrast. Fixed by trimming the hero's mobile heading size (`text-4xl`
+  → `text-3xl` below `sm:`) and shortening the subhead ("Nouriqo crafts
+  India's most cherished mithai with real desi ghee and real dry
+  fruits — made for celebration, gifting, and everyday joy." → "Real
+  desi ghee, real dry fruits — made for celebration, gifting, and
+  everyday joy.") — both reduce the text block's height, which helps
+  every narrow device, not just the one that first exposed the problem.
+  Re-verified full matrix clean afterward, plus tablet (768) and
+  desktop (1024/1440/1920) unaffected.
+- Removed the hero's image-card shadow and rounded corners in the
+  process — no longer applicable once the hero is a full-bleed
+  background rather than a contained card at any breakpoint. Updated
+  `DESIGN_SYSTEM.md`'s "Radius & Shadows" section, which had
+  specifically called out that shadow as the one deliberate exception
+  to "no card shadows" — that exception no longer exists.
+
+**Verification:** the 9-point mobile matrix above, plus tablet/desktop
+breakpoints, all 9 site routes (zero console errors, exactly one `h1`
+each), and cart add-to-cart still working after touching `Hero.tsx`;
+`next lint` and `next build` clean.
+
 ## 2026-09-04 (8) — Active nav-item highlighting
 
 `ROADMAP.md` #7, requested with "best UI" rather than the minimal

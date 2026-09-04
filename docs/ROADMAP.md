@@ -235,17 +235,11 @@ from #6 still holds), mobile drawer lists all 5 correctly, the Gifting
 callout link on `/sweets` navigates correctly, and the cart still works
 end-to-end after the `Navbar`/`nav-links.ts` changes.
 
-## 10. Light/dark theme toggle
+## 10. Light/dark theme toggle — ❌ WITHDRAWN (2026-09-05)
 
-`PROJECT_CONTEXT.md` currently documents "no dark mode" as a deliberate
-brand decision (premium F&B sites usually commit to one fixed look).
-Client has now asked for a toggle, which reverses that decision —
-noting the reversal explicitly since it's a documented call being
-undone. Needs: a dark-mode token set for every color in
-`DESIGN_SYSTEM.md` (not just an inversion — cream/gold read very
-differently on dark), a toggle control (navbar, most likely), and
-`localStorage` + `prefers-color-scheme` handling to avoid a flash of
-wrong theme on load.
+Client confirmed a dark mode toggle is not needed after all. This
+reinstates `PROJECT_CONTEXT.md`'s original "no dark mode" decision — no
+work was started on this item, nothing to undo in code.
 
 ## 11. Reduce "AI feel," lean harder into `ui-ux-pro-max` / `ui-styling` + more motion
 
@@ -263,10 +257,13 @@ moving under items 3/4/6/9.
 
 **Suggested build order** for the remaining items:
 8 (partner strip — blocked on client confirming real partners/logos) →
-10 (theme toggle) → 11 (design polish pass, last, since earlier items
-still reshape layout).
+11 (design polish pass, last, since earlier items still reshape
+layout). 10 is withdrawn, not just deferred.
 
-**Status as of 2026-09-04 (8):** #1, #2, #3, #4, #5, #6, #7, and #9
-done (#9 and #7 both landed out of numeric order, at the client's
-request). Remaining: 8 (partner strip — blocked on client confirming
-real partners/logos), 10 (theme toggle), 11 (design polish pass).
+**Status as of 2026-09-05:** #1, #2, #3, #4, #5, #6, #7, and #9 done
+(#9 and #7 both landed out of numeric order, at the client's request).
+#10 withdrawn — client confirmed no dark mode toggle is needed.
+Remaining: 8 (partner strip — blocked on client confirming real
+partners/logos), 11 (design polish pass). Also fixed same-day, outside
+the original 11-item batch: the mobile hero redesigned as a full-screen
+overlay (see `CHANGELOG.md`).

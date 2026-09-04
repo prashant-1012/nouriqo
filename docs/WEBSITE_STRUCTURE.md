@@ -82,4 +82,7 @@ back. `/blogs/[slug]` uses its own `BlogPostHeader` instead (its `h1`
   appears before the copy on mobile, even when the image is visually
   "second" in the desktop column order.
 - The hero swaps to a dedicated portrait crop (`hero-mobile.jpg`) below
-  `lg:` rather than force-cropping the landscape desktop image.
+  `lg:` rather than force-cropping the landscape desktop image, and runs
+  full-screen (`h-dvh`) with the headline overlaid on it — same overlay
+  treatment as desktop, just a taller/narrower crop and a top-to-bottom
+  scrim instead of left-to-right (see `CHANGELOG.md` 2026-09-05).
