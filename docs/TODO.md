@@ -6,6 +6,28 @@ cards, cart + WhatsApp checkout, pricing, the blog, the nav restructure,
 and active nav-state highlighting. Not yet done: theme toggle, partner
 logo strip, and a design polish pass. This file covers everything else.
 
+## BLOCKING — must not go live as-is
+
+- [ ] **`components/sections/Certifications.tsx` renders placeholder
+      certification logos (India Organic, FDA, USOCA, FSSAI, an organic
+      seal) that Nouriqo has NOT confirmed holding.** Added 2026-09-05
+      (4) explicitly as a design-reference mockup only, per the client's
+      own answer when asked ("placeholders for design purposes only") —
+      see `CHANGELOG.md` for the full exchange. This is categorically
+      different from the other provisional content below (pricing,
+      counters): those are soft marketing claims that a disclaimer
+      legitimately softens, but a certification/registration logo is a
+      binary legal claim. **Before this can ship to a live or
+      client-facing build:** either (a) get real, confirmed
+      certifications from the client — FSSAI in particular requires a
+      real license number displayed alongside the logo, and unauthorized
+      use of the FDA mark is separately restricted regardless of the
+      product's actual regulatory status — and swap them into
+      `lib/certifications.ts`, or (b) remove the section entirely if no
+      real certifications exist yet. Do not simply remove the on-page
+      "placeholders, pending verified credentials" disclaimer without
+      doing one of those two things first.
+
 ## Needed from the client before launch
 
 - [ ] Real contact details (email, phone, address) to replace the
@@ -22,8 +44,8 @@ logo strip, and a design polish pass. This file covers everything else.
 - [ ] Confirmation on whether "Since 1958" and "Pride of India" (sourced
       from packaging photography) are approved for use as on-site copy.
 - [ ] Any certifications (FSSAI number, etc.) legally required to display
-      for an Indian food ecommerce site — not currently shown because none
-      were supplied.
+      for an Indian food ecommerce site — see the BLOCKING item above;
+      a section now exists but renders unconfirmed placeholder logos.
 - [ ] Real numbers for the home page `Counters` section (positive
       feedback %, customers, followers, retail stores) — added
       2026-09-05 (2) using the reference screenshot's numbers

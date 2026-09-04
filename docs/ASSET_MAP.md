@@ -67,6 +67,27 @@ The four figures shown alongside these icons are provisional
 placeholders, not confirmed brand metrics — see `CONTENT_GUIDELINES.md`
 and `TODO.md`.
 
+## `certifications/` (5 — home page certification logos)
+
+**PLACEHOLDER LOGOS — DESIGN REFERENCE ONLY, see the BLOCKING item in
+`TODO.md`.** These are real regulatory/certification marks; Nouriqo has
+not confirmed holding any of them. Renamed from generated filenames to
+match this map's convention. Used by `components/sections/
+Certifications.tsx` via `lib/certifications.ts`.
+
+| File | Depicts |
+|---|---|
+| `cert-india-organic.png` | India Organic mark |
+| `cert-fda.png` | FDA wordmark |
+| `cert-usoca.png` | USOCA (NPOP/NAB/0011) |
+| `cert-fssai.png` | FSSAI wordmark |
+| `cert-organic-seal.png` | Circular organic-certification seal |
+
+Do not remove the "placeholders for reference only" disclaimer under
+this section without either sourcing real, confirmed certifications
+(FSSAI requires a real license number displayed with it) or removing
+the section entirely.
+
 ## `icons/` (12 — "Why Nouriqo" benefit icons)
 
 Illustrated, circular, gold-outlined icons. Currently 4 are used on the
@@ -108,7 +129,8 @@ Currently placed: `gold-sparkle-star` + `leaf-branch-medium` (hero),
 `WhyNouriqo`, above the heading), `gold-swirl-leaf` (lifestyle story),
 `leaf-single-large` (ingredients; also reused with `leaf-branch-medium`
 as the two corner motifs on the home page `Counters` section),
-`gold-lotus-dots` (brand story), `gold-heart-leaf` (gifting),
-`gold-sunburst` (final CTA), `gold-branch-leaves` (footer background).
-The remaining motifs are available for future sections (e.g. a product
-detail page) without needing new asset generation.
+`leaf-branch-small` + `leaf-pair-small` (home page `Certifications`,
+faint corner motifs), `gold-lotus-dots` (brand story), `gold-heart-leaf`
+(gifting), `gold-sunburst` (final CTA), `gold-branch-leaves` (footer
+background). The remaining motifs are available for future sections
+(e.g. a product detail page) without needing new asset generation.

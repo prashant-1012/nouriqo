@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-09-05 (4) — Certifications section (placeholder logos — see BLOCKING note)
+
+New `Certifications` section (`components/sections/Certifications.tsx`,
+data in `lib/certifications.ts`), placed between `ProductGrid` and
+`FinalCta` on the home page: centered "Certifications" heading, a white
+rounded card holding 5 logos in a row (wraps on mobile), a soft
+rose-tinted gradient background, and two faint corner leaf motifs
+(`leaf-branch-small`, `leaf-pair-small`), per a client-provided
+reference screenshot.
+
+**This one got flagged before building, not after.** The reference
+shows real regulatory/certification marks — India Organic, FDA, USOCA,
+FSSAI, and an organic-certification seal — supplied as image files in
+`public/assets/certifications/`. Unlike the `Counters` numbers
+(2026-09-05 (2)), a certification logo isn't a claim a disclaimer can
+soften: `CONTENT_GUIDELINES.md` already listed certifications as
+never-invent territory, `TODO.md` already had an open item noting none
+were supplied, FSSAI is a legal registration that India requires a real
+license number for, and the FDA mark specifically has usage
+restrictions independent of a product's actual regulatory status. This
+was raised directly before writing any code, asking whether Nouriqo
+actually holds these. **Answer: they're placeholders for design
+purposes only** — not confirmed, not to be treated as real. Built
+accordingly: the section renders exactly as designed, but
+`lib/certifications.ts` carries a loud code comment, the page itself
+shows a visible "placeholders for reference only, pending verified
+credentials" disclaimer (same house pattern as the pricing/counters
+disclaimers), and `TODO.md` gained a new top-level "BLOCKING — must not
+go live as-is" section (not just another bullet in the usual "needed
+from client" list) spelling out exactly what has to happen — real
+confirmed certifications, or removing the section — before this can
+ship to a live or client-facing build.
+
+Logo files renamed from generated filenames to
+`cert-india-organic.png` / `cert-fda.png` / `cert-usoca.png` /
+`cert-fssai.png` / `cert-organic-seal.png` to match this project's
+asset-naming convention; see `ASSET_MAP.md`.
+
+**Verification:** `lint`/`build` clean; Playwright screenshots confirm
+the layout matches the reference at desktop and mobile widths (logos
+wrap to a 2–3 column grid on mobile).
+
 ## 2026-09-05 (3) — WhyNouriqo redesigned as photo collage + feature list
 
 `WhyNouriqo.tsx` rebuilt from a plain 6-icon grid into a two-column

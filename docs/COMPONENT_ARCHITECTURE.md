@@ -51,6 +51,9 @@ components/
                              4 stat tiles with a scroll-triggered count-up (Framer Motion
                              useInView + animate on a useMotionValue), reduced-motion aware.
                              Figures are provisional placeholders — see lib/counters.ts.
+    Certifications.tsx       Home only, between ProductGrid and FinalCta. Logos are
+                             PLACEHOLDERS ONLY, not confirmed real certifications — see the
+                             BLOCKING item in TODO.md before touching this section's content.
     LifestyleStory.tsx      `/story`
     Ingredients.tsx         `/sweets`
     OurCraft.tsx            `/sweets`
@@ -76,6 +79,9 @@ lib/
   counters.ts                 Counter type + data for the home page Counters section — icon,
                              target value, suffix, label. Figures are provisional placeholders,
                              not confirmed metrics (see CONTENT_GUIDELINES.md and TODO.md)
+  certifications.ts           Certification type + data for the home page Certifications
+                             section — logo, name. PLACEHOLDER LOGOS, not confirmed real
+                             certifications — see the BLOCKING item in TODO.md
   blog-posts.ts              BlogPost type + data (title/excerpt/date/readTime/coverImage/content
                              blocks) — same data-driven pattern as products.ts, no MDX/CMS
                              tooling; see the note below on why
