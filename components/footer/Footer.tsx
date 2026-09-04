@@ -5,10 +5,7 @@ import { Motif } from "@/components/decorative/Motif";
 
 export function Footer() {
   return (
-    <footer
-      id="contact"
-      className="scroll-mt-20 relative overflow-hidden border-t border-ink/5 bg-cream"
-    >
+    <footer className="relative overflow-hidden border-t border-ink/5 bg-cream">
       <Motif
         src="/assets/decorative/gold-branch-leaves.png"
         size={220}
@@ -42,19 +39,24 @@ export function Footer() {
             </h3>
             <ul className="mt-4 space-y-3 text-sm">
               <li>
-                <a href="#sweets" className="text-ink-soft hover:text-emerald-800">
+                <Link href="/sweets" className="text-ink-soft hover:text-emerald-800">
                   Our Sweets
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#story" className="text-ink-soft hover:text-emerald-800">
+                <Link href="/story" className="text-ink-soft hover:text-emerald-800">
                   Our Story
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#gifting" className="text-ink-soft hover:text-emerald-800">
+                <Link href="/gifting" className="text-ink-soft hover:text-emerald-800">
                   Gifting
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-ink-soft hover:text-emerald-800">
+                  Contact
+                </Link>
               </li>
             </ul>
           </div>

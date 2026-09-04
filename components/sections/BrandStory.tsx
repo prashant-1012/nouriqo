@@ -5,10 +5,7 @@ import { Reveal } from "@/components/motion/Reveal";
 
 export function BrandStory() {
   return (
-    <section
-      id="story"
-      className="scroll-mt-20 relative overflow-hidden bg-emerald-950 py-20 text-ivory sm:py-28"
-    >
+    <section className="relative overflow-hidden bg-emerald-950 py-20 text-ivory sm:py-28">
       <Motif
         src="/assets/decorative/gold-lotus-dots.png"
         size={120}

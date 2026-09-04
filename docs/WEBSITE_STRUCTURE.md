@@ -2,38 +2,59 @@
 
 ## Current Sitemap
 
-- `/` — homepage (single page, sections linked via anchor IDs)
+Converted from a single-page scroll site into separate routes on
+2026-09-04, per client feedback (`ROADMAP.md` item #1) — clicking a nav
+item now navigates to a real page instead of scrolling the homepage.
 
-Only one route exists today. `TODO.md` lists the routes an ecommerce
-build-out would add (`/products/[slug]`, `/cart`, `/checkout`, etc.).
+| Route | Page | Components (in order) |
+|---|---|---|
+| `/` | Home | `Hero`, `BrandIntro`, `WhyNouriqo`, `ProductGrid`, `FinalCta` |
+| `/sweets` | Our Sweets | `PageHeader`, `ProductGrid`, `Ingredients`, `OurCraft` |
+| `/story` | Our Story | `PageHeader`, `BrandStory`, `LifestyleStory` |
+| `/gifting` | Gifting | `PageHeader`, `Gifting`, `FinalCta` |
+| `/contact` | Contact | `PageHeader`, `ContactInfo` |
 
-## Homepage Sections (in order)
+`Navbar` and `Footer` render once, in `app/layout.tsx`, and persist
+across every route. `TODO.md` lists the routes a future ecommerce
+build-out would add (`/products/[slug]`, `/cart`, `/checkout`, etc.) and
+`ROADMAP.md` tracks the rest of the client's 2026-09-04 feedback batch
+(cart, pricing, blog, a nav restructure to Home/Shop/About/Blogs/Contact,
+etc.) — none of which is built yet.
 
-| # | Component | Anchor | Purpose |
-|---|---|---|---|
-| — | `Navbar` | — | Logo, primary nav, mobile drawer, sticky on scroll. |
-| 1 | `Hero` | — | Brand statement + primary/secondary CTA. Asymmetric text/image split, not a full-bleed banner (source photography is too low-resolution to stretch edge-to-edge without visible upscaling — see `PERFORMANCE_GUIDELINES.md`). |
-| 2 | `BrandIntro` | — | One-paragraph "why we exist," centred, low-key. Bridges hero energy into the rest of the page. |
-| 3 | `WhyNouriqo` | — | 6 benefit icons (real packaging claims), grid layout. Carries the "trust" role since no real testimonials exist yet. |
-| 4 | `ProductGrid` | `#sweets` | Data-driven product cards (`lib/products.ts`) — the actual "shop" surface today. |
-| 5 | `LifestyleStory` | — | Editorial image + short copy ("A Sweet Pause"). Breaks the grid rhythm before the next data-dense section. |
-| 6 | `Ingredients` | — | Ingredient photography + copy, image-left/text-right on desktop, reversed stacking on mobile so the image still leads. |
-| 7 | `OurCraft` | — | Three-image process strip (cooking → shaping → garnishing) with one caption line each. |
-| 8 | `BrandStory` | `#story` | Dark (`emerald-950`) anchor section — heritage note ("Since 1958"), the only two dark sections on the page are this and the Final CTA. |
-| 9 | `Gifting` | `#gifting` | Gift-box photography + CTA into contact. |
-| 10 | `FinalCta` | — | Second dark anchor section, single strong CTA back to `#sweets`. |
-| — | `Footer` | `#contact` | Logo, nav recap, contact placeholders, legal line. |
+`ProductGrid` intentionally appears on both `/` (as a "shop" teaser —
+there are only 3 SKUs today, so the teaser is the full catalog) and
+`/sweets` (as the dedicated listing, paired with supporting Ingredients/
+Craft content). Not a bug — see `COMPONENT_ARCHITECTURE.md`.
+
+## Page Purpose & Heading Structure
+
+Every route has exactly one `<h1>`. On `/`, it's inside `Hero`. On the
+four sub-pages, it's inside the shared `PageHeader` component (eyebrow +
+`h1` + short description, on a `cream` band) — deliberately worded
+*differently* from the `h2` immediately beneath it in each case (e.g.
+`/gifting`'s `h1` is "Gifting," its `Gifting` section's own `h2` is
+"Gifting, made graceful.") to avoid rendering two near-identical
+headings back to back.
+
+| Page | Purpose |
+|---|---|
+| Home | Brand awareness + a fast path into the shop. Everything a first-time visitor needs without clicking anywhere. |
+| Our Sweets | The actual product listing, plus the ingredient/craft content that supports a purchase decision. |
+| Our Story | Heritage and brand philosophy — for visitors who want context before they buy, not required to. |
+| Gifting | A dedicated pitch for gifting occasions, since it's a distinct use case from personal purchase. |
+| Contact | Real contact information (currently placeholders — see `TODO.md`) for anything not covered elsewhere. |
 
 ## CTA Strategy
 
-- **Primary path:** Hero → `#sweets` (product grid) → product card "Enquire
-  Now" → `#contact` (footer). This is the realistic conversion path today,
-  since there is no live cart/checkout.
-- **Secondary path:** Hero → `#story` for visitors who want brand context
+- **Primary path:** Home → `/sweets` (product grid) → product card
+  "Enquire Now" → `/contact`. This is the realistic conversion path
+  today, since there is no live cart/checkout (see `ROADMAP.md` #4 for
+  the planned cart + WhatsApp checkout flow that will change this).
+- **Secondary path:** Home → `/story` for visitors who want brand context
   before products.
 - Every CTA that implies a transaction ("Enquire Now", "Enquire About
-  Gifting") is honest about the current capability — it routes to contact,
-  not a fake checkout.
+  Gifting") is honest about the current capability — it routes to
+  `/contact`, not a fake checkout.
 
 ## Responsive Behavior (summary — full detail in `RESPONSIVE_GUIDELINES.md`)
 

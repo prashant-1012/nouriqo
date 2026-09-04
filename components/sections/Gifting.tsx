@@ -6,10 +6,7 @@ import { Reveal } from "@/components/motion/Reveal";
 
 export function Gifting() {
   return (
-    <section
-      id="gifting"
-      className="scroll-mt-20 relative overflow-hidden bg-cream py-20 sm:py-28"
-    >
+    <section className="relative overflow-hidden bg-ivory py-20 sm:py-28">
       <Container className="grid items-center gap-10 lg:grid-cols-12 lg:gap-8">
         <Reveal className="relative order-2 lg:order-1 lg:col-span-7">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl sm:aspect-[16/10]">
@@ -43,7 +40,7 @@ export function Gifting() {
             traditional, and finished with the kind of care that gets
             noticed.
           </p>
-          <Button href="#contact" variant="primary" className="mt-7">
+          <Button href="/contact" variant="primary" className="mt-7">
             Enquire About Gifting
           </Button>
         </Reveal>

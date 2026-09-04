@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import clsx from "clsx";
 import type { Product } from "@/lib/products";
 
@@ -51,12 +52,12 @@ export function ProductCard({ product }: { product: Product }) {
 
         <div className="mt-5 flex items-center justify-between border-t border-ink/10 pt-4">
           <span className="text-sm text-ink-soft">{product.weight}</span>
-          <a
-            href="#contact"
+          <Link
+            href="/contact"
             className="text-sm font-medium text-emerald-800 underline underline-offset-4 decoration-emerald-800/30 hover:text-emerald-700"
           >
             Enquire Now
-          </a>
+          </Link>
         </div>
       </div>
     </article>

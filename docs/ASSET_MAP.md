@@ -19,8 +19,8 @@ as PNG to preserve alpha transparency.
 
 | File | Source | Usage |
 |---|---|---|
-| `hero-desktop.jpg` | `ChatGPT Image …_r1_c1.png` | Hero image, `lg:` breakpoint and up. Bright, marble-surface plating shot with brass dish, flowers, and generous negative space upper-left/right for a text-adjacent (not text-over-image) layout. |
-| `hero-mobile.jpg` | `mobile-hero.png` | Hero image, below `lg:`. Portrait crop with a deliberately empty upper two-thirds — matches the brief's "hero image = visual, HTML = text" rule; text sits beside it in the layout rather than overlaid on the photo. |
+| `hero-desktop.jpg` | `_source/hero-desktop1.png` (client-specified 2026-09-04, see `ROADMAP.md` #2) | Hero image, `lg:` breakpoint and up. Wide (1672×941) marble-counter shot with ~55% clean negative space on the left. Used as a full-bleed background with the headline overlaid in HTML on top of that negative space (a `cream`-tinted gradient scrim guarantees text contrast regardless of the underlying photo). The original `ChatGPT Image …_r1_c1.png` crop is still in `_source/` if a boxed (non-full-bleed) hero treatment is wanted later. |
+| `hero-mobile.jpg` | `mobile-hero.png` | Hero image, below `lg:`. Portrait crop with a deliberately empty upper two-thirds. Kept as the original *boxed* card treatment (text above, rounded image card below) rather than converted to a text-overlay like the desktop version — an overlay here overflowed the image's negative space and the CTA button became illegible against the busy product/vase area; see `CHANGELOG.md` for the QA finding. |
 
 ## `products/`
 

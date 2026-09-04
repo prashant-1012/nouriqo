@@ -63,9 +63,11 @@ than clinical about health.
   claims, ingredients beyond what packaging shows, customer reviews, or
   company history beyond "Since 1958" (which is on the client's own
   packaging).
-- **No ecommerce backend exists yet.** Product CTAs point to an "Enquire"
-  contact anchor rather than a fake "Add to Cart" flow. See
-  `TODO.md` for what's needed to wire up real commerce.
+- **No ecommerce backend exists yet.** Product CTAs point to the
+  `/contact` page rather than a fake "Add to Cart" flow. See `TODO.md`
+  and `ROADMAP.md` (#4) for what's needed to wire up real commerce (a
+  WhatsApp-based checkout has been requested and scoped in `ROADMAP.md`
+  but not yet built).
 - **Real assets only.** All hero, lifestyle, product, process, icon, and
   decorative imagery comes from `/public/assets` (client-supplied). Product
   packaging photography is used unaltered.

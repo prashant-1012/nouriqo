@@ -6,7 +6,7 @@ import { products } from "@/lib/products";
 
 export function ProductGrid() {
   return (
-    <section id="sweets" className="scroll-mt-20 bg-ivory py-20 sm:py-28">
+    <section className="bg-ivory py-20 sm:py-28">
       <Container>
         <SectionHeading
           eyebrow="Our Sweets"

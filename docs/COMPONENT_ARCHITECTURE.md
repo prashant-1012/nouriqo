@@ -1,41 +1,58 @@
 # Component Architecture
 
 ```
+app/
+  layout.tsx              root layout — renders Navbar + Footer once, wraps {children}
+  page.tsx                Home ("/")
+  sweets/page.tsx         Our Sweets
+  story/page.tsx          Our Story
+  gifting/page.tsx        Gifting
+  contact/page.tsx        Contact
+
 components/
   layout/
-    Container.tsx        max-width + responsive padding wrapper
+    Container.tsx         max-width + responsive padding wrapper
+    PageHeader.tsx          shared sub-page banner: eyebrow + h1 + description, on a cream band
   navigation/
     Navbar.tsx            server component: logo, desktop nav, sticky header
     MobileMenu.tsx         "use client": hamburger + animated drawer
   hero/
-    Hero.tsx               art-directed (desktop/mobile) hero
+    Hero.tsx               art-directed (desktop/mobile) hero — Home only
   products/
     ProductCard.tsx         one product's image + copy + attributes + CTA
-    ProductGrid.tsx          section wrapper, maps lib/products.ts -> ProductCard
+    ProductGrid.tsx          section wrapper, maps lib/products.ts -> ProductCard — used on both `/` and `/sweets`
   sections/
-    BrandIntro.tsx
-    WhyNouriqo.tsx
-    LifestyleStory.tsx
-    Ingredients.tsx
-    OurCraft.tsx
-    BrandStory.tsx
-    Gifting.tsx
-    FinalCta.tsx
+    BrandIntro.tsx          Home only
+    WhyNouriqo.tsx          Home only
+    LifestyleStory.tsx      `/story`
+    Ingredients.tsx         `/sweets`
+    OurCraft.tsx            `/sweets`
+    BrandStory.tsx          `/story`
+    Gifting.tsx             `/gifting`
+    FinalCta.tsx             Home + `/gifting`
+    ContactInfo.tsx          `/contact` — the placeholder email/phone/address list
   ui/
-    Button.tsx              primary/secondary/ghost link-button
+    Button.tsx              primary/secondary/ghost/inverted link-button
     SectionHeading.tsx       eyebrow + title + description, light/dark tone
   decorative/
     Motif.tsx                thin wrapper around next/image for aria-hidden decorative PNGs
   motion/
     Reveal.tsx               Reveal / RevealGroup / RevealItem (Framer Motion, reduced-motion aware)
   footer/
-    Footer.tsx
+    Footer.tsx              renders once, in app/layout.tsx
 
 lib/
   products.ts               Product type + data (source of truth for the catalog)
   benefits.ts                "Why Nouriqo" icon/label pairs
-  nav-links.ts               shared nav link list (desktop + mobile menu)
+  nav-links.ts               shared nav link list (desktop + mobile menu) — real paths, not anchors
 ```
+
+**Navigation is route-based, not anchor-based.** Every internal link uses
+`next/link`'s `<Link>` (not a plain `<a href="#...">`) so navigating
+between pages gets a client-side transition rather than a full reload.
+This changed on 2026-09-04 when the site moved from one scrolling
+homepage to five separate routes — see `WEBSITE_STRUCTURE.md` and
+`CHANGELOG.md`.
 
 ## Responsibilities & Conventions
 
@@ -52,7 +69,9 @@ lib/
   the component itself has no opinion on where it sits.
 - **`SectionHeading` centralizes the eyebrow/title/description pattern**
   used at the top of most sections, with a `tone` prop (`dark`/`light`) so
-  it also works on the two dark anchor sections.
+  it also works on the dark sections (`BrandStory`, `FinalCta`).
+  `PageHeader` is the page-level counterpart — it renders the page's only
+  `h1`; `SectionHeading` always renders an `h2` nested under it.
 - **Typed props throughout**, no `any`. `Product["accent"]` is used as a
   discriminated key into a lookup object in `ProductCard` rather than a
   chain of conditionals.

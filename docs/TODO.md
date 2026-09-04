@@ -1,5 +1,10 @@
 # TODO
 
+See `ROADMAP.md` for the 2026-09-04 client feedback batch (multi-page
+site and the desktop hero image swap — done; cart + WhatsApp checkout,
+pricing, blog, nav restructure, theme toggle, partner logo strip, and a
+design polish pass — not yet done). This file covers everything else.
+
 ## Needed from the client before launch
 
 - [ ] Real contact details (email, phone, address) to replace the
@@ -23,16 +28,18 @@ it transactional:
 - [ ] `/products/[slug]` route + `ProductDetails`, `ProductGallery`,
       `ProductBenefits` components (architecture is ready for this —
       `lib/products.ts` already has a `slug` per product).
-- [ ] Cart state (context or a small store) + a cart drawer/page.
-- [ ] Checkout flow + a real payment gateway integration (Razorpay is the
-      common choice for Indian ecommerce, but this is the client's call).
+- [ ] Cart state + WhatsApp checkout — client has requested this
+      specifically (no payment gateway, just a `wa.me` deep link with an
+      itemized message); scoped in `ROADMAP.md` #4.
+- [ ] A real payment gateway integration (Razorpay is the common choice
+      for Indian ecommerce) remains a further-out option if WhatsApp
+      checkout isn't sufficient long-term.
 - [ ] Order management / confirmation emails.
 - [ ] Replace "Enquire Now" CTAs with "Add to Cart" once the above exists.
 
 ## Content
 
-- [ ] A real About/Story page if the brand wants to go deeper than the
-      homepage's one heritage section.
+- [x] A real About/Story page — done 2026-09-04, see `/story`.
 - [ ] Decide whether to surface the other 6 "Why Nouriqo" benefit icons
       (already in `public/assets/icons`, catalogued in `ASSET_MAP.md`) on
       a future ingredients or trust page.
@@ -43,7 +50,8 @@ it transactional:
       numbers come back tight — see `PERFORMANCE_GUIDELINES.md`.
 - [ ] Add `sitemap.xml` / `robots.txt` file conventions
       (`app/sitemap.ts`, `app/robots.ts`) once the site has a real
-      production domain and, ideally, more than one route.
+      production domain — worth doing now that 5 routes exist (was
+      lower priority when there was only `/`).
 - [ ] Add Product structured data (`schema.org/Product`) once pricing and
       availability are confirmed — not added yet since the brief forbids
       inventing structured data.

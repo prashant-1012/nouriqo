@@ -26,23 +26,23 @@ export function Navbar() {
           <ul className="flex items-center gap-9">
             {navLinks.map((link) => (
               <li key={link.href}>
-                <a
+                <Link
                   href={link.href}
                   className="text-sm font-medium tracking-wide text-ink-soft transition-colors hover:text-emerald-800"
                 >
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        <a
-          href="#sweets"
+        <Link
+          href="/sweets"
           className="hidden rounded-full bg-emerald-800 px-6 py-2.5 text-sm font-medium text-ivory transition-colors hover:bg-emerald-700 md:inline-flex"
         >
           Explore Sweets
-        </a>
+        </Link>
 
         <MobileMenu />
       </Container>
