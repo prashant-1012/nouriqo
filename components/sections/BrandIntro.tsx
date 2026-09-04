@@ -4,7 +4,7 @@ import { Reveal } from "@/components/motion/Reveal";
 
 export function BrandIntro() {
   return (
-    <section className="relative bg-ivory py-20 sm:py-28">
+    <section className="relative bg-cream py-20 sm:py-28">
       <Container>
         <Reveal className="mx-auto max-w-3xl text-center">
           <Motif

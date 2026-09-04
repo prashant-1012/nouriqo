@@ -42,16 +42,18 @@ components/
     BlogPostHeader.tsx       "Back to Journal" + date/read-time + h1 — `/blogs/[slug]`
     BlogContent.tsx          renders a post's heading/paragraph blocks
   sections/
-    BrandIntro.tsx          Home only
+    BrandIntro.tsx          Home only, between ProductGrid and WhyNouriqo. bg-cream (not
+                             ivory) specifically so it doesn't repeat ProductGrid's ivory
+                             tone right after it — see DESIGN_SYSTEM.md's rhythm rule
     WhyNouriqo.tsx          Home only — photo collage (3 process shots, CSS-grid row-span
                              layout) + heading + 4-item icon/title/description feature list,
                              sourced from lib/benefits.ts. Redesigned 2026-09-05 (3) from a
                              plain 6-icon grid to this richer two-column layout
-    Counters.tsx             "use client" — Home only, between WhyNouriqo and ProductGrid.
+    Counters.tsx             "use client" — Home only, between WhyNouriqo and Certifications.
                              4 stat tiles with a scroll-triggered count-up (Framer Motion
                              useInView + animate on a useMotionValue), reduced-motion aware.
                              Figures are provisional placeholders — see lib/counters.ts.
-    Certifications.tsx       Home only, between ProductGrid and FinalCta. Logos are
+    Certifications.tsx       Home only, between Counters and Partners. Logos are
                              PLACEHOLDERS ONLY, not confirmed real certifications — see the
                              BLOCKING item in TODO.md before touching this section's content.
     Partners.tsx             Home only, between Certifications and FinalCta. "We're Also

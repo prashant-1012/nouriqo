@@ -42,18 +42,26 @@ and needs no adjustment.
 no more than one section in a row shares a background tone, and green is
 reserved for two intentional "anchor" moments (Brand Story, Final CTA)
 rather than tinting every section. On the home page specifically, the
-sequence is `ivory` (Brand Intro) → a `beige`-based gradient (Why
-Nouriqo — see below) → a `cream`-based gradient (Counters) → `ivory`
-(Product Grid) → dark (Final CTA); each gradient section keeps to its
-own tone family (`beige` vs. `cream`) rather than repeating the
-neighbor's, so the alternation stays legible even with two gradient
-sections back to back.
+sequence is full-bleed (Hero) → `ivory` (Product Grid) → `cream` (Brand
+Intro) → a `beige`-based gradient (Why Nouriqo — see below) → a
+`cream`-based gradient (Counters) → a `rose`-based gradient
+(Certifications) → `ivory` (Partners) → dark (Final CTA). `Product
+Grid` moved to directly after Hero on 2026-09-05 (client request —
+products should be visible immediately, not several sections down);
+`Brand Intro` changed from `ivory` to `cream` at the same time
+specifically so it wouldn't repeat `Product Grid`'s `ivory` tone
+immediately after it. Each gradient section keeps to its own tone
+family (`beige`/`cream`/`rose`) rather than repeating a neighbor's, so
+the alternation stays legible even with three gradient sections in the
+back half of the page.
 
 **Gradients:** used sparingly — currently `WhyNouriqo`
-(`from-beige/70 to-ivory`, top to bottom) and `Counters` (a soft
+(`from-beige/70 to-ivory`, top to bottom), `Counters` (a soft
 diagonal `from-cream via-ivory to-cream` plus a faint radial emerald
-wash, `rgba(26,82,64,0.06)`, for depth). Every other section uses a flat
-background color; don't reach for a gradient as a default treatment.
+wash, `rgba(26,82,64,0.06)`, for depth), and `Certifications`
+(`from-rose-200/30 via-cream to-rose-200/20`, diagonal). Every other
+section uses a flat background color; don't reach for a gradient as a
+default treatment.
 
 ## Typography
 

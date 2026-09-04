@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-05 (6) — Product Grid moved directly after Hero
+
+Client request: products should be visible immediately on the home
+page, not several sections down. `ProductGrid` moved from its old
+fourth-position slot (after Hero, BrandIntro, WhyNouriqo, Counters) to
+directly after `Hero`. New order: Hero → **Product Grid** → Brand Intro
+→ Why Nouriqo → Counters → Certifications → Partners → Final CTA.
+
+**One knock-on fix**, per `DESIGN_SYSTEM.md`'s background-rhythm rule
+(no two adjacent sections share a background tone): `ProductGrid` is
+`bg-ivory`, and `BrandIntro` — now sitting directly after it — was also
+`bg-ivory`, which would have put two ivory sections back to back.
+Changed `BrandIntro` to `bg-cream` instead (not `ProductGrid`, since
+that component is shared with `/sweets`, where its neighbors are
+different and already work correctly with `ivory`). Verified the full
+resulting sequence has no repeated adjacent tone.
+
+**Verification:** `lint`/`build` clean; Playwright screenshot confirms
+the product grid now renders immediately below the hero.
+
 ## 2026-09-05 (5) — Partner/stockist logo marquee (ROADMAP.md #8, done)
 
 New `Partners` section (`components/sections/Partners.tsx`, data in

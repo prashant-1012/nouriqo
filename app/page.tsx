@@ -11,10 +11,10 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <ProductGrid />
       <BrandIntro />
       <WhyNouriqo />
       <Counters />
-      <ProductGrid />
       <Certifications />
       <Partners />
       <FinalCta />
