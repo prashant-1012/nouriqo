@@ -1,5 +1,55 @@
 # Changelog
 
+## 2026-09-04 (6) — Blog
+
+`ROADMAP.md` #6.
+
+- New `lib/blog-posts.ts`: `BlogPost`/`BlogBlock` types + three seed
+  posts ("Why Ghee Still Matters in Indian Sweets," "A Short Guide to
+  Gifting Mithai," "Papri, Explained"), each reusing an existing asset
+  from `public/assets/` as its cover image rather than sourcing new
+  photography. Content is in-house-written editorial writing, not
+  client-supplied — kept inside the "don't fabricate" rule by sticking
+  to general food/culture information plus facts already established
+  elsewhere on the site; see `CONTENT_GUIDELINES.md`'s new "Blog
+  Content" section for the exact boundary. Flagged in `TODO.md` for
+  client review before launch.
+- **Chose plain typed data over MDX**, the approach `ROADMAP.md`
+  originally suggested — for 3 posts with no embedded components or
+  rich formatting, a `BlogBlock[]` array matches every other content
+  source already in this codebase (`products.ts`, `benefits.ts`) with
+  no new dependency and no `next.config.ts` changes. Documented as a
+  deliberate deviation, with the trigger for revisiting it, in
+  `COMPONENT_ARCHITECTURE.md`.
+- New routes: `app/blogs/page.tsx` (index, `PageHeader` + `BlogGrid`)
+  and `app/blogs/[slug]/page.tsx` (individual post, using
+  `generateStaticParams` to prerender all three posts, `generateMetadata`
+  for per-post SEO, and `notFound()` for unknown slugs — verified a
+  bad slug returns a real 404, not a broken render).
+- New components: `BlogCard`, `BlogGrid`, `BlogPostHeader`,
+  `BlogContent` — same "server components by default" approach as the
+  rest of the site; none of these need client JS.
+- Added "Blogs" to the nav (`lib/nav-links.ts`) and footer.
+
+**Bug caught and fixed during QA, not directly about the blog:** adding
+a 5th nav item pushed the navbar past what fits before its mobile/
+desktop switch-over point. The desktop `<nav>` and "Explore Sweets"
+button appeared at the `md` breakpoint (768px), and at 768–1023px there
+wasn't room for logo + 5 links + cart icon + button on one line — the
+nav links wrapped to a second line and visually overlapped the "NOURIQO"
+wordmark. Fixed by moving the switch-over from `md` to `lg` (1024px) in
+both `Navbar.tsx` and `MobileMenu.tsx`. Re-verified header height stays
+a consistent 81px (no wrapping) at 320, 375, 390, 414, 768, 900, 1000,
+1023, 1024, 1152, 1280, 1440, and 1920px, and that the mobile drawer
+still lists all 5 links correctly.
+
+**Verification:** blog index sorts newest-first correctly across all
+three posts; individual post pages render their cover image, heading/
+paragraph content, and back-link correctly on both desktop and mobile;
+zero console/network errors; `next lint` and `next build` clean (12
+routes total: 5 static pages, `/blogs`, and 3 statically-generated
+`/blogs/[slug]` posts, plus root `/` and `/_not-found`).
+
 ## 2026-09-04 (5) — Pricing, cart, and WhatsApp checkout
 
 `ROADMAP.md` #4 and #5, done together since the cart total needs prices

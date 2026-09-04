@@ -107,14 +107,34 @@ the cart drawer above the checkout button. `CONTENT_GUIDELINES.md`
 updated to reflect that pricing is now shown (provisionally) rather
 than omitted.
 
-## 6. Blog
+## 6. Blog — ✅ DONE
 
-New `/blogs` (or `/blog`) index + individual post pages, plus a nav
-entry. Needs: content source decision (MDX in-repo vs. a headless CMS —
-in-repo MDX is the lower-effort starting point for a small site), a
-`BlogCard`/`BlogGrid`, and actual post content (client will need to
-supply or approve draft posts — brief's "don't fabricate content" rule
-applies to blog copy too).
+Built `/blogs` (index) + `/blogs/[slug]` (individual posts), plus a
+"Blogs" nav entry (added to the existing Our Sweets/Our Story/Gifting/
+Contact nav — the Home/Shop/About/Blogs/Contact restructure in #9 is
+still separate, not done here).
+
+**Content source:** plain typed data (`lib/blog-posts.ts`) rather than
+MDX — see the note in `COMPONENT_ARCHITECTURE.md` for why that ended up
+lower-effort than MDX for 3 posts with no rich formatting needs, and
+what would justify switching later.
+
+**Content:** three seed posts, written in-house (not client-supplied),
+staying inside the "don't fabricate" rule per the approach documented in
+`CONTENT_GUIDELINES.md`'s new "Blog Content" section — general food/
+culture writing plus facts already established elsewhere on the site,
+nothing new or Nouriqo-specific invented. **These still need client
+review/sign-off before launch** — see `TODO.md`.
+
+**Bug caught and fixed during QA, unrelated to the blog itself but
+surfaced by adding a 5th nav item:** the desktop nav switched over from
+the mobile hamburger at the `md` breakpoint (768px). Five links plus the
+logo, cart icon, and "Explore Sweets" button no longer fit in that
+width — at exactly 768–1023px the nav links wrapped to a second line and
+overlapped the logo wordmark. Fixed by moving the switch-over to `lg`
+(1024px) in both `Navbar.tsx` and `MobileMenu.tsx`; re-verified at 320,
+375, 390, 414, 768, 900, 1000, 1023, 1024, 1152, 1280, 1440, and 1920px
+— consistent 81px header height at every width, no wrapping.
 
 ## 7. Active nav-item highlighting
 
@@ -171,13 +191,12 @@ moving under items 3/4/6/9.
 ---
 
 **Suggested build order** for the remaining items, given dependencies:
-5 (pricing) → 3 (card resize + qty) → 4 (cart + WhatsApp) →
-6 (blog) → 9 (nav restructure, depends on 6) → 7 (active nav state) →
+9 (nav restructure, now that 6/blog exists) → 7 (active nav state) →
 8 (partner strip — blocked on client confirming real partners/logos) →
 10 (theme toggle) → 11 (design polish pass, last, since earlier items
 still reshape layout).
 
-**Status as of 2026-09-04 (5):** #1, #2, #3, #4, and #5 done. Remaining:
-6 (blog), 9 (nav restructure, depends on 6), 7 (active nav state),
-8 (partner strip — blocked on client confirming real partners/logos),
-10 (theme toggle), 11 (design polish pass).
+**Status as of 2026-09-04 (6):** #1–#6 done. Remaining: 9 (nav
+restructure), 7 (active nav state), 8 (partner strip — blocked on
+client confirming real partners/logos), 10 (theme toggle), 11 (design
+polish pass).

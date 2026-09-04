@@ -23,7 +23,7 @@ export function Navbar() {
           </span>
         </Link>
 
-        <nav aria-label="Primary" className="hidden md:block">
+        <nav aria-label="Primary" className="hidden lg:block">
           <ul className="flex items-center gap-9">
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -42,7 +42,7 @@ export function Navbar() {
           <CartButton />
           <Link
             href="/sweets"
-            className="hidden rounded-full bg-emerald-800 px-6 py-2.5 text-sm font-medium text-ivory transition-colors hover:bg-emerald-700 md:inline-flex"
+            className="hidden rounded-full bg-emerald-800 px-6 py-2.5 text-sm font-medium text-ivory transition-colors hover:bg-emerald-700 lg:inline-flex"
           >
             Explore Sweets
           </Link>

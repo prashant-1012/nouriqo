@@ -2,9 +2,9 @@
 
 See `ROADMAP.md` for the 2026-09-04 client feedback batch. Done so far:
 multi-page site, the desktop hero image swap, smaller/uniform product
-cards, cart + WhatsApp checkout, and pricing. Not yet done: blog, nav
-restructure, theme toggle, partner logo strip, and a design polish
-pass. This file covers everything else.
+cards, cart + WhatsApp checkout, pricing, and the blog. Not yet done:
+nav restructure, active nav-state highlighting, theme toggle, partner
+logo strip, and a design polish pass. This file covers everything else.
 
 ## Needed from the client before launch
 
@@ -53,6 +53,11 @@ it transactional:
 - [ ] Decide whether to surface the other 6 "Why Nouriqo" benefit icons
       (already in `public/assets/icons`, catalogued in `ASSET_MAP.md`) on
       a future ingredients or trust page.
+- [x] Blog — done 2026-09-04, see `/blogs` and `ROADMAP.md` #6. **Still
+      needed:** the client should review/approve the three seed posts
+      (`lib/blog-posts.ts`) before launch — they're in-house-written
+      editorial content, not client-supplied, per `CONTENT_GUIDELINES.md`'s
+      "Blog Content" section.
 
 ## Technical
 

@@ -12,14 +12,19 @@ item now navigates to a real page instead of scrolling the homepage.
 | `/sweets` | Our Sweets | `PageHeader`, `ProductGrid`, `Ingredients`, `OurCraft` |
 | `/story` | Our Story | `PageHeader`, `BrandStory`, `LifestyleStory` |
 | `/gifting` | Gifting | `PageHeader`, `Gifting`, `FinalCta` |
+| `/blogs` | Journal (blog index) | `PageHeader`, `BlogGrid` |
+| `/blogs/[slug]` | Individual post | `BlogPostHeader`, cover image, `BlogContent` |
 | `/contact` | Contact | `PageHeader`, `ContactInfo` |
 
 `Navbar` and `Footer` render once, in `app/layout.tsx`, and persist
-across every route. `TODO.md` lists the routes a future ecommerce
-build-out would add (`/products/[slug]`, `/cart`, `/checkout`, etc.) and
-`ROADMAP.md` tracks the rest of the client's 2026-09-04 feedback batch
-(cart, pricing, blog, a nav restructure to Home/Shop/About/Blogs/Contact,
-etc.) — none of which is built yet.
+across every route — as does `CartDrawer` (see `COMPONENT_ARCHITECTURE.md`
+for why it's rendered there rather than inside `Navbar`). `TODO.md`
+lists what a fuller ecommerce build-out would still add
+(`/products/[slug]` PDP routes, a real payment gateway, order
+management) and `ROADMAP.md` tracks the rest of the client's 2026-09-04
+feedback batch (nav restructure to Home/Shop/About/Blogs/Contact,
+active nav-state highlighting, a partner logo strip, a theme toggle, and
+a design polish pass — none of which is built yet).
 
 `ProductGrid` intentionally appears on both `/` (as a "shop" teaser —
 there are only 3 SKUs today, so the teaser is the full catalog) and
@@ -28,33 +33,38 @@ Craft content). Not a bug — see `COMPONENT_ARCHITECTURE.md`.
 
 ## Page Purpose & Heading Structure
 
-Every route has exactly one `<h1>`. On `/`, it's inside `Hero`. On the
-four sub-pages, it's inside the shared `PageHeader` component (eyebrow +
-`h1` + short description, on a `cream` band) — deliberately worded
-*differently* from the `h2` immediately beneath it in each case (e.g.
-`/gifting`'s `h1` is "Gifting," its `Gifting` section's own `h2` is
-"Gifting, made graceful.") to avoid rendering two near-identical
-headings back to back.
+Every route has exactly one `<h1>`. On `/`, it's inside `Hero`. On
+`/sweets`, `/story`, `/gifting`, `/contact`, and `/blogs`, it's inside
+the shared `PageHeader` component (eyebrow + `h1` + short description,
+on a `cream` band) — deliberately worded *differently* from the `h2`
+immediately beneath it in each case (e.g. `/gifting`'s `h1` is
+"Gifting," its `Gifting` section's own `h2` is "Gifting, made
+graceful.") to avoid rendering two near-identical headings back to
+back. `/blogs/[slug]` uses its own `BlogPostHeader` instead (its `h1`
+*is* the post title — there's no separate `h2` to disambiguate from).
 
 | Page | Purpose |
 |---|---|
 | Home | Brand awareness + a fast path into the shop. Everything a first-time visitor needs without clicking anywhere. |
-| Our Sweets | The actual product listing, plus the ingredient/craft content that supports a purchase decision. |
+| Our Sweets | The actual product listing (with real add-to-cart), plus the ingredient/craft content that supports a purchase decision. |
 | Our Story | Heritage and brand philosophy — for visitors who want context before they buy, not required to. |
 | Gifting | A dedicated pitch for gifting occasions, since it's a distinct use case from personal purchase. |
+| Journal (`/blogs`) | Editorial content — ingredient/technique explainers and gifting guidance. Builds trust and gives the site something worth returning to besides the (small, 3-SKU) catalog. |
 | Contact | Real contact information (currently placeholders — see `TODO.md`) for anything not covered elsewhere. |
 
 ## CTA Strategy
 
-- **Primary path:** Home → `/sweets` (product grid) → product card
-  "Enquire Now" → `/contact`. This is the realistic conversion path
-  today, since there is no live cart/checkout (see `ROADMAP.md` #4 for
-  the planned cart + WhatsApp checkout flow that will change this).
+- **Primary path:** Home → `/sweets` → "Add to Cart" on a product card →
+  cart drawer → "Checkout via WhatsApp". This is now a real, working
+  conversion path (see `ROADMAP.md` #4) — there's still no payment
+  gateway, the "checkout" is a WhatsApp handoff with an itemized order
+  message, not a fake add-to-cart that goes nowhere.
 - **Secondary path:** Home → `/story` for visitors who want brand context
-  before products.
-- Every CTA that implies a transaction ("Enquire Now", "Enquire About
-  Gifting") is honest about the current capability — it routes to
-  `/contact`, not a fake checkout.
+  before products; `/blogs` for visitors arriving via search/editorial
+  content, funneled back toward `/sweets` via its nav link and footer.
+- "Enquire Now" still appears on `/gifting` and `/contact` for requests
+  the cart doesn't cover (bulk orders, gifting customization) — it
+  routes to `/contact`, honestly, not a fake form submission.
 
 ## Responsive Behavior (summary — full detail in `RESPONSIVE_GUIDELINES.md`)
 

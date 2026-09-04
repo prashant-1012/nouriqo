@@ -7,6 +7,8 @@ app/
   sweets/page.tsx         Our Sweets
   story/page.tsx          Our Story
   gifting/page.tsx        Gifting
+  blogs/page.tsx          Journal (blog index)
+  blogs/[slug]/page.tsx   individual post — generateStaticParams + generateMetadata
   contact/page.tsx        Contact
 
 components/
@@ -29,6 +31,11 @@ components/
     AddToCartControl.tsx     "use client": owns local qty state, QuantityStepper + "Add to Cart"
     QuantityStepper.tsx      "use client", controlled (value/onChange) — used by both
                              AddToCartControl and CartDrawer's per-line qty control
+  blog/
+    BlogCard.tsx             one post's cover image + date/read-time + title + excerpt
+    BlogGrid.tsx             section wrapper, maps lib/blog-posts.ts -> BlogCard — `/blogs`
+    BlogPostHeader.tsx       "Back to Journal" + date/read-time + h1 — `/blogs/[slug]`
+    BlogContent.tsx          renders a post's heading/paragraph blocks
   sections/
     BrandIntro.tsx          Home only
     WhyNouriqo.tsx          Home only
@@ -51,6 +58,9 @@ components/
 
 lib/
   products.ts               Product type + data (source of truth for the catalog, incl. price)
+  blog-posts.ts              BlogPost type + data (title/excerpt/date/readTime/coverImage/content
+                             blocks) — same data-driven pattern as products.ts, no MDX/CMS
+                             tooling; see the note below on why
   benefits.ts                "Why Nouriqo" icon/label pairs
   nav-links.ts               shared nav link list (desktop + mobile menu) — real paths, not anchors
   cart-context.tsx            "use client": CartProvider + useCart() — slug+quantity lines,
@@ -89,10 +99,20 @@ homepage to five separate routes — see `WEBSITE_STRUCTURE.md` and
   wraps the entire app in `app/layout.tsx` — Context providers are the
   standard exception to "leaves only," since the alternative (prop-
   drilling cart state through every page) would be worse.
-- **Data-driven, not repeated JSX.** Products (`lib/products.ts`) and
-  benefit icons (`lib/benefits.ts`) are arrays mapped over in the section
-  components. Adding a fourth product means adding one object to
-  `products.ts` — no JSX changes required.
+- **Data-driven, not repeated JSX.** Products (`lib/products.ts`),
+  benefit icons (`lib/benefits.ts`), and blog posts (`lib/blog-posts.ts`)
+  are arrays mapped over in the section components. Adding a fourth
+  product, or a fourth blog post, means adding one object to the
+  relevant file — no JSX changes required.
+- **Blog posts are plain typed data, not MDX.** `ROADMAP.md` #6
+  suggested in-repo MDX as the lower-effort starting point; a typed
+  `BlogBlock[]` array (`{ type: "heading" | "paragraph", text }`)
+  ended up lower-effort still, for a 3-post blog with no embedded
+  components or rich formatting — no new dependency, no `next.config.ts`
+  changes, and it matches every other content source in this codebase
+  (`products.ts`, `benefits.ts`). Revisit if posts start needing
+  richer formatting (images mid-post, lists, embeds) — that's where
+  MDX starts earning its cost.
 - **`Motif` is intentionally dumb.** It takes a `src` and a `size` and
   renders a decorative, `aria-hidden`, non-interactive image. Sections
   decide placement (`absolute -top-5 -right-3`, etc.) via `className` —
@@ -120,3 +140,23 @@ will exist eventually:
 The architecture intentionally stops short of full PDP components
 (`ProductDetails`, `ProductGallery`, `ProductBenefits`) suggested in the
 brief — see `TODO.md` for why, and what triggers building them.
+
+## Growing the Blog
+
+1. Add a new entry to `blogPosts` in `lib/blog-posts.ts` — a unique
+   `slug`, a `coverImage` (reuse an existing asset from
+   `public/assets/` where it fits, per `ASSET_MAP.md`, rather than
+   sourcing something new), and `content` as an array of
+   `{ type: "heading" | "paragraph", text }` blocks. **Content must be
+   genuinely reviewed, not fabricated** — the three seed posts are
+   general editorial/informational writing (what ghee does, gifting
+   etiquette, what papri is) using only facts already established
+   elsewhere on the site (desi ghee, no maida/preservatives, since
+   1958); they don't invent new claims about Nouriqo specifically. Any
+   future post should hold to the same bar, and per `ROADMAP.md` #6,
+   ideally get client sign-off before publishing.
+2. `generateStaticParams` in `app/blogs/[slug]/page.tsx` maps over
+   `blogPosts` automatically — a new slug is statically generated on
+   the next build with no route changes needed.
+3. `BlogGrid` sorts by `date` (newest first) and re-flows automatically
+   (`sm:grid-cols-2 lg:grid-cols-3`) — nothing to adjust there either.
