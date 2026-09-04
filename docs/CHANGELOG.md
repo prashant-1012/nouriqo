@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-09-05 (7) — Contact page enquiry form
+
+New `EnquiryForm` (`components/sections/EnquiryForm.tsx`), added to
+`/contact` between `PageHeader` and `ContactInfo`. Fields: full name,
+contact number, email address, message — pill-shaped inputs with a
+`lucide-react` icon prefix (`User`/`Phone`/`Mail`), styled entirely in
+the site's own palette (`emerald-800` focus ring and submit button,
+`ink`/`ink-soft` text) rather than the generic indigo/slate of the
+reference component supplied for this task.
+
+**No backend exists for this site** (per `PROJECT_CONTEXT.md`), so a
+form that just showed a fake "message sent" success state would be
+exactly the kind of fake-functionality UI `CONTENT_GUIDELINES.md`
+already warns against (the same reasoning that kept "Add to Cart" off
+the site until a real cart existed). Instead, submitting builds a
+WhatsApp deep link from the four fields (new `buildEnquiryMessage` /
+`buildWhatsAppEnquiryUrl` in `lib/whatsapp.ts`, mirroring the existing
+`buildOrderMessage` / `buildWhatsAppOrderUrl` pair used by cart
+checkout) and opens it in a new tab — the same honest, already-
+established "no payment/messaging gateway, WhatsApp deep link, client
+confirms over chat" pattern, reusing the same real, confirmed
+`WHATSAPP_ORDER_NUMBER`. The button reads "Send via WhatsApp," and a
+caption underneath states plainly that it opens WhatsApp with the
+message pre-filled rather than claiming the site itself sent anything.
+`config.ts`'s comment on `WHATSAPP_ORDER_NUMBER` updated to reflect the
+dual use (order checkout + enquiries).
+
+This also makes the existing "Enquire About Gifting" CTA on `/gifting`
+(which already linked to `/contact`) land on a working form instead of
+just a placeholder contact-details list.
+
+**Verification:** `lint`/`build` clean; Playwright end-to-end test
+filled all four fields, submitted, captured the resulting popup, and
+confirmed the WhatsApp URL contains the correctly formatted, URL-
+encoded message with all four values.
+
 ## 2026-09-05 (6) — Product Grid moved directly after Hero
 
 Client request: products should be visible immediately on the home

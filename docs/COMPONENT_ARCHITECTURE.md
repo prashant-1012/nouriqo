@@ -67,6 +67,12 @@ components/
     BrandStory.tsx          `/story`
     Gifting.tsx             `/gifting`
     FinalCta.tsx             Home + `/gifting`
+    EnquiryForm.tsx           "use client" — `/contact`, above ContactInfo. Name/contact/
+                             email/message fields; submits by building a WhatsApp deep link
+                             (lib/whatsapp.ts's buildWhatsAppEnquiryUrl) and opening it in a
+                             new tab — same honest no-backend pattern as cart checkout, not
+                             a fake "message sent" claim (the page copy says "opens WhatsApp
+                             with your message pre-filled")
     ContactInfo.tsx          `/contact` — the placeholder email/phone/address list
   ui/
     Button.tsx              primary/secondary/ghost/inverted link-button
@@ -104,8 +110,12 @@ lib/
                               two different pack sizes as independent lines), persisted to
                               localStorage, product/price details looked up by slug+weight
   currency.ts                 formatINR() — Intl.NumberFormat("en-IN", { currency: "INR" })
-  whatsapp.ts                 builds the itemized order message + wa.me checkout URL
-  config.ts                   WHATSAPP_ORDER_NUMBER — the one place that number is defined
+  whatsapp.ts                 builds the itemized order message + wa.me checkout URL, and
+                             (added 2026-09-05 (7)) the name/contact/email/message enquiry
+                             message + wa.me URL used by EnquiryForm — both share the same
+                             WHATSAPP_ORDER_NUMBER
+  config.ts                   WHATSAPP_ORDER_NUMBER — the one place that number is defined,
+                             used for both order checkout and general enquiries
 ```
 
 **Fixed-position UI must not nest inside `backdrop-blur`/`filter`
