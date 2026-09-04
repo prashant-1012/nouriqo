@@ -1,0 +1,51 @@
+import Image from "next/image";
+import Link from "next/link";
+import { Container } from "@/components/layout/Container";
+import { MobileMenu } from "@/components/navigation/MobileMenu";
+import { navLinks } from "@/lib/nav-links";
+
+export function Navbar() {
+  return (
+    <header className="sticky top-0 z-50 border-b border-ink/5 bg-ivory/90 backdrop-blur-sm">
+      <Container className="relative flex h-20 items-center justify-between">
+        <Link href="/" className="flex items-center gap-2.5" aria-label="Nouriqo home">
+          <Image
+            src="/assets/logo/nouriqo-logo.png"
+            alt="Nouriqo"
+            width={40}
+            height={40}
+            priority
+            className="logo-blend h-10 w-10 object-contain"
+          />
+          <span className="font-display text-xl tracking-wide text-emerald-900">
+            NOURIQO
+          </span>
+        </Link>
+
+        <nav aria-label="Primary" className="hidden md:block">
+          <ul className="flex items-center gap-9">
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  className="text-sm font-medium tracking-wide text-ink-soft transition-colors hover:text-emerald-800"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <a
+          href="#sweets"
+          className="hidden rounded-full bg-emerald-800 px-6 py-2.5 text-sm font-medium text-ivory transition-colors hover:bg-emerald-700 md:inline-flex"
+        >
+          Explore Sweets
+        </a>
+
+        <MobileMenu />
+      </Container>
+    </header>
+  );
+}
