@@ -10,12 +10,12 @@ export function Navbar() {
       <Container className="relative flex h-20 items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5" aria-label="Nouriqo home">
           <Image
-            src="/assets/logo/nouriqo-logo.png"
+            src="/assets/logo/nouriqo-mark.png"
             alt="Nouriqo"
             width={40}
-            height={40}
+            height={26}
             priority
-            className="logo-blend h-10 w-10 object-contain"
+            className="logo-blend h-9 w-auto object-contain"
           />
           <span className="font-display text-xl tracking-wide text-emerald-900">
             NOURIQO

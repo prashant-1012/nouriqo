@@ -92,6 +92,12 @@ See `CHANGELOG.md` for a running log. Notable ones:
   `mix-blend-mode: multiply` (`.logo-blend` in `globals.css`) so the white
   drops out against the site's light backgrounds without touching the
   source pixels.
+- **Logo icon crop.** The supplied logo is a full lockup (leaf mark +
+  wordmark + tagline stacked vertically). At navbar/footer size that whole
+  lockup becomes illegible, so a second file (`nouriqo-mark.png`) crops
+  just the leaf icon — no resizing, recoloring, or redrawing of the
+  artwork — for use beside an HTML "NOURIQO" text label. See
+  `ASSET_MAP.md`.
 - **Testimonials section omitted.** No real customer testimonials were
   supplied, and the brief explicitly forbids fabricating them. The
   "Trust" role in the page flow is carried by the `WhyNouriqo` benefits

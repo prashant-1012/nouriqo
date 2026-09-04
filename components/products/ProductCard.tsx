@@ -27,7 +27,7 @@ export function ProductCard({ product }: { product: Product }) {
       </div>
 
       <div className="mt-5">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold-600">
+        <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold-700">
           {product.tagline}
         </p>
         <h3 className="mt-1.5 font-display text-xl text-ink">

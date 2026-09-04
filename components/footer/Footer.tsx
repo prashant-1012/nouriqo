@@ -20,11 +20,11 @@ export function Footer() {
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2.5" aria-label="Nouriqo home">
               <Image
-                src="/assets/logo/nouriqo-logo.png"
+                src="/assets/logo/nouriqo-mark.png"
                 alt="Nouriqo"
                 width={40}
-                height={40}
-                className="logo-blend h-10 w-10 object-contain"
+                height={26}
+                className="logo-blend h-9 w-auto object-contain"
               />
               <span className="font-display text-xl tracking-wide text-emerald-900">
                 NOURIQO
@@ -37,7 +37,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-gold-600">
+            <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-gold-700">
               Explore
             </h3>
             <ul className="mt-4 space-y-3 text-sm">
@@ -60,7 +60,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-gold-600">
+            <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-gold-700">
               Contact
             </h3>
             <ul className="mt-4 space-y-3 text-sm text-ink-soft">

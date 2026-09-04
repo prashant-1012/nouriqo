@@ -28,7 +28,7 @@ export function LifestyleStory() {
           delay={0.1}
           className="lg:col-span-4 lg:col-start-9 lg:pl-2"
         >
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.25em] text-gold-600">
+          <p className="mb-3 text-xs font-medium uppercase tracking-[0.25em] text-gold-700">
             A Sweet Pause
           </p>
           <h2 className="font-display text-3xl leading-tight text-ink sm:text-4xl">

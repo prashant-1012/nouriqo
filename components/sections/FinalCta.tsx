@@ -20,11 +20,7 @@ export function FinalCta() {
             Explore the Nouriqo collection and taste what real ghee, real
             dry fruits, and no shortcuts actually taste like.
           </p>
-          <Button
-            href="#sweets"
-            variant="primary"
-            className="mt-8 bg-ivory text-emerald-900 hover:bg-ivory/90"
-          >
+          <Button href="#sweets" variant="inverted" className="mt-8">
             Explore Our Sweets
           </Button>
         </Reveal>

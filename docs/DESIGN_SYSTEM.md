@@ -20,12 +20,22 @@ is no `tailwind.config.js`). Use the Tailwind utility (`bg-emerald-800`,
 | `emerald-700` | `#21684f` | Hover state for primary buttons |
 | `emerald-600` | `#2c7f61` | Rarely used, lighter accents |
 | `leaf-500` | `#4c8f6c` | Reserved for illustration work |
-| `gold-600` | `#a9822f` | Eyebrow labels, small caps text |
+| `gold-700` | `#7d6023` | Eyebrow labels / small caps text on light backgrounds (`ivory`/`cream`/`beige`) — meets WCAG AA (≥4.5:1) at 12px; see note below |
+| `gold-600` | `#a9822f` | Larger-scale gold accents only (borders, ≥18px text) — fails AA contrast for small text on light backgrounds, do not use for body-size copy |
 | `gold-500` | `#c9a227` | Reserved |
 | `gold-400` | `#dcb84f` | Eyebrow labels on dark backgrounds |
 | `saffron-500` | `#dd9a44` | Reserved for food-tone accents |
 | `rose-200` | `#f0d9d3` | Pastel accent — Special Kaju Papri card |
 | `lilac-200` | `#ddd0ea` | Pastel accent — Kaju Badam Papri card |
+
+**Accessibility note:** the original `gold-600` (#a9822f) measures only
+~2.8–3.5:1 against `ivory`/`cream`/`beige` — below the 4.5:1 WCAG AA
+minimum for normal-size text. All small-text eyebrow labels use the
+darker `gold-700` instead (verified 4.68–5.79:1 across all three light
+backgrounds). `gold-600`/`gold-500` remain available for larger elements
+(borders, icons, ≥18px text) where the lower AA threshold (3:1) applies.
+`gold-400` on `emerald-950`/`emerald-900` (dark sections) measures 7.85:1
+and needs no adjustment.
 
 **Rhythm rule:** sections alternate `ivory` → `beige/50` → `ivory` →
 `emerald-950` (dark) → `cream` → `emerald-900` (dark) → `cream` (footer), so

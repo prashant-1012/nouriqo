@@ -8,7 +8,7 @@ export function Hero() {
     <section className="relative overflow-hidden bg-cream">
       <Container className="grid items-center gap-10 py-14 sm:py-20 lg:grid-cols-2 lg:gap-16 lg:py-28">
         <div className="relative z-10 max-w-xl">
-          <p className="mb-5 text-xs font-medium uppercase tracking-[0.3em] text-gold-600">
+          <p className="mb-5 text-xs font-medium uppercase tracking-[0.3em] text-gold-700">
             Since 1958 · Pride of India
           </p>
           <h1 className="font-display text-4xl leading-[1.1] text-ink sm:text-5xl lg:text-6xl">
@@ -39,7 +39,7 @@ export function Hero() {
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover object-[center_30%] lg:hidden"
+              className="object-cover object-[center_35%] sm:object-bottom lg:hidden"
             />
             <Image
               src="/assets/hero/hero-desktop.jpg"

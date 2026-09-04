@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 type BaseProps = {
   children: ReactNode;
-  variant?: "primary" | "secondary" | "ghost";
+  variant?: "primary" | "secondary" | "ghost" | "inverted";
   className?: string;
 };
 
@@ -15,6 +15,8 @@ const variantStyles: Record<NonNullable<BaseProps["variant"]>, string> = {
     "border border-emerald-800/30 text-emerald-900 hover:bg-emerald-800/5 focus-visible:outline-emerald-800",
   ghost:
     "text-emerald-900 hover:text-emerald-700 underline underline-offset-4 decoration-emerald-900/30",
+  inverted:
+    "bg-ivory text-emerald-900 hover:bg-ivory/90 focus-visible:outline-ivory",
 };
 
 const baseStyles =
