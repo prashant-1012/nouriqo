@@ -41,13 +41,23 @@ Mobile keeps its earlier (pre-existing, unrelated to this request)
 boxed-card hero treatment rather than also switching to an overlay —
 see `CHANGELOG.md` for why that was tried and reverted.
 
-## 3. Smaller, uniform product card size + quantity stepper
+## 3. Smaller, uniform product card size + quantity stepper — ✅ DONE
 
-Shrink `ProductCard` and enforce one fixed aspect ratio/size across all
-three products (currently `aspect-[3/4]`, already uniform — likely means
-"smaller overall footprint," e.g. tighter grid columns or a max-width per
-card). Add a quantity stepper (−, count, +) at the bottom of each card,
-replacing/augmenting the current "Enquire Now" link.
+`ProductCard` shrunk and capped (`max-w-sm`, `aspect-[4/5]` image down
+from `aspect-[3/4]`, tighter type scale and spacing throughout) and made
+genuinely uniform in height regardless of description length —
+`line-clamp-2` on the description plus `mt-auto` on the footer block
+means all three cards measure exactly the same height
+(verified: 735.67px each at 1440px width) instead of merely sharing the
+same image aspect ratio as before.
+
+Added `components/products/QuantityStepper.tsx` — a small `"use client"`
+leaf component (−/count/+, min 1 / max 20, disabled at the bounds,
+`aria-live="polite"` on the count) — sitting alongside the existing
+"Enquire Now" link rather than replacing it, since there's no cart yet
+for it to feed into (that's `ROADMAP.md` #4). Its quantity state is
+local to each card for now and not wired to anything — item #4 will
+need to lift that state up into real cart state.
 
 ## 4. Cart + WhatsApp checkout
 
@@ -140,5 +150,6 @@ moving under items 3/4/6/9.
 10 (theme toggle) → 11 (design polish pass, last, since earlier items
 still reshape layout).
 
-**Status as of 2026-09-04 (2):** #1 and #2 done. Everything else above
-still open.
+**Status as of 2026-09-04 (4):** #1, #2, and #3 done. Everything else
+above still open — #4 (cart + WhatsApp) is next and will need to lift
+#3's per-card quantity state into real cart state.

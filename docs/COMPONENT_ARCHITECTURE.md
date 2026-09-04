@@ -19,8 +19,9 @@ components/
   hero/
     Hero.tsx               art-directed (desktop/mobile) hero — Home only
   products/
-    ProductCard.tsx         one product's image + copy + attributes + CTA
+    ProductCard.tsx         one product's image + copy + attributes + qty stepper + CTA
     ProductGrid.tsx          section wrapper, maps lib/products.ts -> ProductCard — used on both `/` and `/sweets`
+    QuantityStepper.tsx      "use client": −/count/+ control, local state only (not yet wired to a cart)
   sections/
     BrandIntro.tsx          Home only
     WhyNouriqo.tsx          Home only
@@ -56,9 +57,12 @@ homepage to five separate routes — see `WEBSITE_STRUCTURE.md` and
 
 ## Responsibilities & Conventions
 
-- **Server components by default.** Only `MobileMenu.tsx` and
-  `motion/Reveal.tsx` are `"use client"` — everything else renders on the
-  server. Client components are leaves, not wrappers around the whole page.
+- **Server components by default.** Only `MobileMenu.tsx`,
+  `motion/Reveal.tsx`, and `QuantityStepper.tsx` are `"use client"` —
+  everything else renders on the server. Client components are leaves
+  (`ProductCard` stays a server component and just renders
+  `<QuantityStepper />` as one interactive child), not wrappers around
+  the whole page.
 - **Data-driven, not repeated JSX.** Products (`lib/products.ts`) and
   benefit icons (`lib/benefits.ts`) are arrays mapped over in the section
   components. Adding a fourth product means adding one object to

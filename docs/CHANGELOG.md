@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-04 (4) — Smaller, uniform product cards + quantity stepper
+
+`ROADMAP.md` #3.
+
+- Shrunk `ProductCard`: image aspect `3/4` → `4/5`, capped card width at
+  `max-w-sm`, tightened heading/type scale and vertical spacing
+  throughout.
+- Made card height genuinely uniform rather than incidentally uniform —
+  added `line-clamp-2` to the description (previous descriptions were
+  different lengths and would have produced different card heights the
+  moment a longer product description was added) and `mt-auto` on the
+  footer block so the quantity/CTA row always sits flush at the bottom.
+  Verified via computed `getBoundingClientRect()`: all three cards
+  measure exactly 735.67px tall at 1440px viewport width.
+- Added `components/products/QuantityStepper.tsx` (−/count/+, min 1,
+  max 20, bounds-disabled, `aria-live="polite"`) as a small `"use
+  client"` leaf — `ProductCard` itself stays a server component.
+  Placed alongside "Enquire Now" rather than replacing it, since #4
+  (cart) doesn't exist yet for it to add to; its quantity state is
+  local per-card for now.
+- Verified at 390/768/1440px on both `/` and `/sweets` (the two places
+  `ProductGrid` renders); `next lint` and `next build` clean.
+
 ## 2026-09-04 (3) — New desktop hero image, overlaid text
 
 Client re-supplied `hero-desktop1.png` (added to
