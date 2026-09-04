@@ -175,18 +175,33 @@ instant jump); mobile drawer highlights correctly; cart and all 9
 routes re-verified with zero errors after the `Navbar`/`MobileMenu`
 changes; `next lint` and `next build` clean.
 
-## 8. Auto-scrolling partner/stockist logo strip
+## 8. Auto-scrolling partner/stockist logo strip — ✅ DONE (2026-09-05)
 
-Horizontal, continuously auto-scrolling row of partner logos (Amazon,
-Blinkit, Zepto, Flipkart, etc.) — a "as seen on / available on" trust
-strip. **Needs real logos and confirmed real partnerships from the
-client before this can ship** — placing recognizable third-party brand
-logos implies an actual commercial relationship; using them without one
-would be a false/misleading claim (this crosses the same "don't fabricate
-trust signals" line as the fake-testimonials rule already documented in
-`CONTENT_GUIDELINES.md`). Once confirmed, implementation is a simple CSS
-`@keyframes` marquee (translateX loop, duplicated logo set for a seamless
-loop, `prefers-reduced-motion` fallback to a static row).
+Horizontal, continuously auto-scrolling row of partner logos — a "as
+seen on / available on" trust strip. This was blocked pending real
+logos and confirmed real partnerships from the client (placing
+recognizable third-party brand logos implies an actual commercial
+relationship; using them without one would be a false/misleading claim,
+the same "don't fabricate trust signals" line as the fake-testimonials
+rule in `CONTENT_GUIDELINES.md`). **Client confirmed the 14 logos
+supplied (Tata 1mg, Amazon, Flipkart, Blinkit, Reliance Retail, Modern
+Bazaar, Nature's Basket, and 7 regional supermarkets/stores) are real
+stockist partners**, so this shipped as a genuine trust signal, not a
+placeholder.
+
+- New `components/sections/Partners.tsx` + `lib/partners.ts`, placed on
+  the home page right after `Certifications` (grouping the two trust
+  bands before the Final CTA).
+- Implemented exactly as scoped above: a CSS `@keyframes` marquee
+  (`--animate-marquee` in `globals.css`, alongside the existing
+  `--animate-fade-up` custom animation) translating a duplicated logo
+  set from `0` to `-50%` for a seamless loop. The site's existing
+  global `prefers-reduced-motion` rule (`animation-iteration-count: 1`)
+  already lands the strip at the visually-identical halfway point
+  instead of an infinite loop, so no separate static-row fallback
+  needed to be written.
+- Logo files renamed from generated filenames to `partner-<name>.png`
+  to match this project's asset-naming convention — see `ASSET_MAP.md`.
 
 ## 9. Navbar restructure: Home / Shop / About / Blogs / Contact Us — ✅ DONE
 
@@ -256,14 +271,16 @@ moving under items 3/4/6/9.
 ---
 
 **Suggested build order** for the remaining items:
-8 (partner strip — blocked on client confirming real partners/logos) →
 11 (design polish pass, last, since earlier items still reshape
 layout). 10 is withdrawn, not just deferred.
 
-**Status as of 2026-09-05:** #1, #2, #3, #4, #5, #6, #7, and #9 done
-(#9 and #7 both landed out of numeric order, at the client's request).
-#10 withdrawn — client confirmed no dark mode toggle is needed.
-Remaining: 8 (partner strip — blocked on client confirming real
-partners/logos), 11 (design polish pass). Also fixed same-day, outside
-the original 11-item batch: the mobile hero redesigned as a full-screen
-overlay (see `CHANGELOG.md`).
+**Status as of 2026-09-05:** #1, #2, #3, #4, #5, #6, #7, #8, and #9 done
+(#9, #7, and #8 all landed out of numeric order, at the client's
+request). #10 withdrawn — client confirmed no dark mode toggle is
+needed. Remaining: 11 (design polish pass). Also added same-day,
+outside the original 11-item batch: mobile hero redesigned as a
+full-screen overlay, home page `Counters`/`Certifications` sections
+(the latter shipped as explicit design placeholders — see the BLOCKING
+item in `TODO.md`), `WhyNouriqo` redesigned as a photo collage, and
+product cards/cart restyled with pack-size pricing (see `CHANGELOG.md`
+for all of the above).

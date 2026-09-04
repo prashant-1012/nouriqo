@@ -3,8 +3,9 @@
 See `ROADMAP.md` for the 2026-09-04 client feedback batch. Done so far:
 multi-page site, the desktop hero image swap, smaller/uniform product
 cards, cart + WhatsApp checkout, pricing, the blog, the nav restructure,
-and active nav-state highlighting. Not yet done: theme toggle, partner
-logo strip, and a design polish pass. This file covers everything else.
+active nav-state highlighting, and the partner logo strip. Not yet done:
+a design polish pass (theme toggle was withdrawn, not deferred — see
+`ROADMAP.md`). This file covers everything else.
 
 ## BLOCKING — must not go live as-is
 

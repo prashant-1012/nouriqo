@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-09-05 (5) — Partner/stockist logo marquee (ROADMAP.md #8, done)
+
+New `Partners` section (`components/sections/Partners.tsx`, data in
+`lib/partners.ts`), placed right after `Certifications` on the home
+page: centered "We're Also On" heading, then a full-bleed row of 14
+partner logos in bordered white tiles, continuously auto-scrolling
+left via a duplicated-list CSS marquee.
+
+**Checked before building, matching the Certifications precedent** —
+`ROADMAP.md` #8 already blocked this exact feature pending confirmed
+real partnerships (recognizable third-party logos imply an actual
+commercial relationship). Asked directly; **client confirmed all 14
+supplied logos (Tata 1mg, Amazon, Flipkart, Blinkit, Reliance Retail,
+Modern Bazaar, Nature's Basket, Meolisa, and 6 more regional
+supermarkets/stores) are real Nouriqo stockists** — unlike
+`Certifications`, this one ships as a genuine, unqualified trust
+signal, no placeholder disclaimer needed. `ROADMAP.md` #8 marked done.
+
+**Implementation matches what `ROADMAP.md` #8 had already scoped**: a
+CSS `@keyframes marquee` (`--animate-marquee`, added to `globals.css`
+next to the existing `--animate-fade-up` custom animation) translating
+a duplicated logo list from `0` to `-50%` for a seamless loop. The
+site's existing global `prefers-reduced-motion` rule (which forces
+`animation-iteration-count: 1`) already lands the strip at the
+visually-identical halfway point instead of looping — so the "static
+row for reduced motion" requirement was satisfied by CSS already in
+place, no extra component logic needed.
+
+Logo files renamed from generated filenames to `partner-<name>.png` —
+see `ASSET_MAP.md`. One name (`partner-meolisa.png`) is a best-effort
+reading of a stylized wordmark; worth a quick visual double-check
+against the source logo for correct spelling.
+
+**Verification:** `lint`/`build` clean; Playwright screenshots 3
+seconds apart confirm the row visibly advances (not a frozen
+animation), and mobile wraps correctly.
+
 ## 2026-09-05 (4) — Certifications section (placeholder logos — see BLOCKING note)
 
 New `Certifications` section (`components/sections/Certifications.tsx`,

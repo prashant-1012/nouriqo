@@ -54,6 +54,11 @@ components/
     Certifications.tsx       Home only, between ProductGrid and FinalCta. Logos are
                              PLACEHOLDERS ONLY, not confirmed real certifications — see the
                              BLOCKING item in TODO.md before touching this section's content.
+    Partners.tsx             Home only, between Certifications and FinalCta. "We're Also
+                             On" — 14 real, client-confirmed stockist logos (ROADMAP.md #8)
+                             in a continuously auto-scrolling CSS marquee (--animate-marquee
+                             in globals.css). No placeholder disclaimer — unlike
+                             Certifications, these are confirmed real.
     LifestyleStory.tsx      `/story`
     Ingredients.tsx         `/sweets`
     OurCraft.tsx            `/sweets`
@@ -82,6 +87,8 @@ lib/
   certifications.ts           Certification type + data for the home page Certifications
                              section — logo, name. PLACEHOLDER LOGOS, not confirmed real
                              certifications — see the BLOCKING item in TODO.md
+  partners.ts                 Partner type + data for the home page Partners marquee —
+                             logo, name. Real, client-confirmed stockists (ROADMAP.md #8)
   blog-posts.ts              BlogPost type + data (title/excerpt/date/readTime/coverImage/content
                              blocks) — same data-driven pattern as products.ts, no MDX/CMS
                              tooling; see the note below on why

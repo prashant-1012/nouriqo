@@ -125,3 +125,9 @@ Defined in `components/ui/Button.tsx`:
   (`viewport={{ once: true }}`) — no repeated bounce on re-scroll.
 - The mobile menu drawer uses a short (`0.2s`) fade/slide, not a spring
   bounce.
+- The `Partners` marquee is the one continuous (non-scroll-triggered)
+  animation on the site — a plain CSS `@keyframes` loop
+  (`--animate-marquee` in `globals.css`), not Framer Motion, since it
+  needs to run indefinitely rather than react to scroll position. The
+  site's global `prefers-reduced-motion` media query (forcing
+  `animation-iteration-count: 1`) applies to it automatically.

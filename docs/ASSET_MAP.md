@@ -88,6 +88,33 @@ this section without either sourcing real, confirmed certifications
 (FSSAI requires a real license number displayed with it) or removing
 the section entirely.
 
+## `partners/` (14 — home page "We're Also On" stockist logos)
+
+Client-confirmed real retail/stockist partners (`ROADMAP.md` #8),
+renamed from generated filenames to match this map's convention. Used
+by `components/sections/Partners.tsx` via `lib/partners.ts` in a
+continuously auto-scrolling marquee.
+
+| File | Depicts |
+|---|---|
+| `partner-tata-1mg.png` | Tata 1mg |
+| `partner-meolisa.png` | Meolisa (best-effort reading of a stylized wordmark — worth a quick visual double-check) |
+| `partner-the-goodness-store.png` | The Goodness Store |
+| `partner-sodhis-super-market.png` | Sodhi's Super Market |
+| `partner-planet-jr.png` | Planet JR (The Supermarket) |
+| `partner-food-square.png` | Food Square (World Food Market) |
+| `partner-holistic-basket.png` | Holistic Basket |
+| `partner-flipkart.png` | Flipkart |
+| `partner-blinkit.png` | Blinkit |
+| `partner-amazon.png` | Amazon |
+| `partner-fresh-n-easy.png` | Fresh n Easy |
+| `partner-reliance-retail.png` | Reliance Retail |
+| `partner-modern-bazaar.png` | Modern Bazaar (department store) |
+| `partner-natures-basket.png` | Nature's Basket |
+
+Unlike `certifications/` above, these are confirmed real and ship
+without a placeholder disclaimer.
+
 ## `icons/` (12 — "Why Nouriqo" benefit icons)
 
 Illustrated, circular, gold-outlined icons. Currently 4 are used on the
