@@ -2,13 +2,16 @@
 
 import { useState, useEffect, useId } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { navLinks } from "@/lib/nav-links";
+import clsx from "clsx";
+import { navLinks, isNavLinkActive } from "@/lib/nav-links";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
   const menuId = useId();
+  const pathname = usePathname();
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -52,16 +55,25 @@ export function MobileMenu() {
               aria-label="Mobile"
               className="flex flex-col gap-1 px-6 py-6"
             >
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-3 font-display text-lg text-ink hover:bg-emerald-800/5"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = isNavLinkActive(pathname, link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    aria-current={isActive ? "page" : undefined}
+                    className={clsx(
+                      "rounded-lg px-3 py-3 font-display text-lg transition-colors",
+                      isActive
+                        ? "bg-emerald-800/5 text-emerald-800"
+                        : "text-ink hover:bg-emerald-800/5"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
             </nav>
           </motion.div>
         )}

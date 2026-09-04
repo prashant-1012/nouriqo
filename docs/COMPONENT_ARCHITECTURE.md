@@ -16,8 +16,10 @@ components/
     Container.tsx         max-width + responsive padding wrapper
     PageHeader.tsx          shared sub-page banner: eyebrow + h1 + description, on a cream band
   navigation/
-    Navbar.tsx            server component: logo, desktop nav, sticky header, renders CartButton
-    MobileMenu.tsx         "use client": hamburger + animated drawer
+    Navbar.tsx            server component: logo, sticky header, renders NavLinks + CartButton
+    NavLinks.tsx           "use client" (needs usePathname()): desktop nav, animated
+                           active-link underline via Framer Motion layoutId
+    MobileMenu.tsx         "use client": hamburger + animated drawer, active-row highlight
   cart/
     CartButton.tsx          "use client": navbar icon + item-count badge, opens the drawer
     CartDrawer.tsx           "use client": line items, qty steppers, total, WhatsApp checkout —
@@ -62,7 +64,8 @@ lib/
                              blocks) — same data-driven pattern as products.ts, no MDX/CMS
                              tooling; see the note below on why
   benefits.ts                "Why Nouriqo" icon/label pairs
-  nav-links.ts               shared nav link list (desktop + mobile menu) — real paths, not anchors
+  nav-links.ts               shared nav link list + isNavLinkActive(pathname, href) — real
+                              paths, not anchors; used by both NavLinks and MobileMenu
   cart-context.tsx            "use client": CartProvider + useCart() — slug+quantity lines,
                               persisted to localStorage, product details looked up by slug
   currency.ts                 formatINR() — Intl.NumberFormat("en-IN", { currency: "INR" })
@@ -80,6 +83,17 @@ instead of the viewport, breaking it. `CartDrawer` now renders directly
 in `app/layout.tsx` instead. Keep this in mind before adding any other
 `fixed`-positioned overlay as a descendant of `Navbar`.
 
+**`NavLinks`' animated underline depends on the root layout staying
+mounted across navigations.** `Navbar` (and therefore `NavLinks`) lives
+in `app/layout.tsx`, and Next.js App Router keeps shared layouts
+mounted across route transitions — only `{children}` swaps out. That's
+what lets Framer Motion's `layoutId="nav-active-underline"` animate the
+underline sliding from the old active link to the new one, instead of
+it just disappearing and reappearing. If `Navbar` ever moves somewhere
+that gets remounted on navigation, this animation silently degrades to
+an instant jump (still correct, just less polished) — not a functional
+bug, but worth knowing if the underline animation stops working.
+
 **Navigation is route-based, not anchor-based.** Every internal link uses
 `next/link`'s `<Link>` (not a plain `<a href="#...">`) so navigating
 between pages gets a client-side transition rather than a full reload.
@@ -89,10 +103,11 @@ homepage to five separate routes — see `WEBSITE_STRUCTURE.md` and
 
 ## Responsibilities & Conventions
 
-- **Server components by default.** `MobileMenu.tsx`, `motion/Reveal.tsx`,
-  `QuantityStepper.tsx`, `AddToCartControl.tsx`, `CartButton.tsx`,
-  `CartDrawer.tsx`, and `cart-context.tsx` are `"use client"` —
-  everything else renders on the server. Client components are leaves
+- **Server components by default.** `MobileMenu.tsx`, `NavLinks.tsx`,
+  `motion/Reveal.tsx`, `QuantityStepper.tsx`, `AddToCartControl.tsx`,
+  `CartButton.tsx`, `CartDrawer.tsx`, and `cart-context.tsx` are
+  `"use client"` — everything else renders on the server. Client
+  components are leaves
   (`ProductCard` stays a server component and just renders
   `<AddToCartControl />` as one interactive child), not wrappers around
   the whole page. The one necessary exception is `CartProvider`, which

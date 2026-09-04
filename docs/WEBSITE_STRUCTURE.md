@@ -6,25 +6,33 @@ Converted from a single-page scroll site into separate routes on
 2026-09-04, per client feedback (`ROADMAP.md` item #1) — clicking a nav
 item now navigates to a real page instead of scrolling the homepage.
 
-| Route | Page | Components (in order) |
-|---|---|---|
-| `/` | Home | `Hero`, `BrandIntro`, `WhyNouriqo`, `ProductGrid`, `FinalCta` |
-| `/sweets` | Our Sweets | `PageHeader`, `ProductGrid`, `Ingredients`, `OurCraft` |
-| `/story` | Our Story | `PageHeader`, `BrandStory`, `LifestyleStory` |
-| `/gifting` | Gifting | `PageHeader`, `Gifting`, `FinalCta` |
-| `/blogs` | Journal (blog index) | `PageHeader`, `BlogGrid` |
-| `/blogs/[slug]` | Individual post | `BlogPostHeader`, cover image, `BlogContent` |
-| `/contact` | Contact | `PageHeader`, `ContactInfo` |
+| Route | Nav label | Page `<h1>` | Components (in order) |
+|---|---|---|---|
+| `/` | Home | (no separate h1 needed — `Hero`'s headline serves as it) | `Hero`, `BrandIntro`, `WhyNouriqo`, `ProductGrid`, `FinalCta` |
+| `/sweets` | Shop | "Our Sweets" | `PageHeader`, Gifting callout link, `ProductGrid`, `Ingredients`, `OurCraft` |
+| `/story` | About | "Our Story" | `PageHeader`, `BrandStory`, `LifestyleStory` |
+| `/gifting` | *(footer only — see note below)* | "Gifting" | `PageHeader`, `Gifting`, `FinalCta` |
+| `/blogs` | Blogs | "From the Nouriqo Kitchen" | `PageHeader`, `BlogGrid` |
+| `/blogs/[slug]` | *(reached from `/blogs`)* | the post title | `BlogPostHeader`, cover image, `BlogContent` |
+| `/contact` | Contact Us | "Get in touch" | `PageHeader`, `ContactInfo` |
+
+**Nav label ≠ route slug, deliberately.** As of the 2026-09-04 nav
+restructure (`ROADMAP.md` #9), the main nav shows Home/Shop/About/Blogs/
+Contact Us, but the underlying routes and page `<h1>`s were left as
+`/sweets` ("Our Sweets"), `/story` ("Our Story"), `/contact` — renaming
+folders would have meant touching every internal reference across the
+codebase for no functional benefit. `/gifting` dropped out of the main
+nav entirely (no room for a 6th item) but still exists, linked from the
+footer and from a small callout on `/sweets`.
 
 `Navbar` and `Footer` render once, in `app/layout.tsx`, and persist
 across every route — as does `CartDrawer` (see `COMPONENT_ARCHITECTURE.md`
 for why it's rendered there rather than inside `Navbar`). `TODO.md`
 lists what a fuller ecommerce build-out would still add
 (`/products/[slug]` PDP routes, a real payment gateway, order
-management) and `ROADMAP.md` tracks the rest of the client's 2026-09-04
-feedback batch (nav restructure to Home/Shop/About/Blogs/Contact,
-active nav-state highlighting, a partner logo strip, a theme toggle, and
-a design polish pass — none of which is built yet).
+management) and `ROADMAP.md` tracks what's left of the client's
+2026-09-04 feedback batch (active nav-state highlighting, a partner
+logo strip, a theme toggle, and a design polish pass).
 
 `ProductGrid` intentionally appears on both `/` (as a "shop" teaser —
 there are only 3 SKUs today, so the teaser is the full catalog) and

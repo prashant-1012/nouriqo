@@ -136,12 +136,44 @@ overlapped the logo wordmark. Fixed by moving the switch-over to `lg`
 375, 390, 414, 768, 900, 1000, 1023, 1024, 1152, 1280, 1440, and 1920px
 — consistent 81px header height at every width, no wrapping.
 
-## 7. Active nav-item highlighting
+## 7. Active nav-item highlighting — ✅ DONE
 
-Once multiple real routes exist (done in #1), highlight the current
-page's nav link (e.g. via `usePathname()` from `next/navigation`,
-compared against each link's `href`). Small, mechanical — good candidate
-to bundle with whichever future pass touches `Navbar.tsx` next.
+Client asked for "best UI" rather than the minimal version this item
+originally scoped, so it got a proper animated indicator rather than
+just a color swap:
+
+- New `isNavLinkActive(pathname, href)` in `lib/nav-links.ts` — exact
+  match for Home (`/`), prefix match for everything else, so
+  `/blogs/[slug]` correctly keeps "Blogs" highlighted (verified on
+  `/blogs/papri-explained`). `/gifting` correctly shows no active item,
+  since #9 removed it from the main nav.
+- New `components/navigation/NavLinks.tsx` (`"use client"`, since
+  `usePathname()` requires it) renders the desktop nav and gives the
+  active link an animated underline using Framer Motion's `layoutId`
+  shared-layout transition — the underline slides between nav items on
+  navigation rather than just appearing/disappearing, a "magic move"
+  that reads as considerably more premium than a static state change.
+  This works because `Navbar` lives in the root layout and Next.js
+  keeps shared layouts mounted across route changes, so `NavLinks`'
+  component instance persists and the `layoutId` animation has
+  something to animate *from*. Respects `prefers-reduced-motion`
+  (`useReducedMotion()` — instant, no spring, when set) and adds
+  `aria-current="page"` for screen readers.
+- `Navbar.tsx` now renders `<NavLinks />` instead of mapping
+  `navLinks` inline directly — keeps `Navbar` itself a server
+  component; only the small piece that needs the pathname is client.
+- `MobileMenu.tsx` gets the same `isNavLinkActive` logic with a
+  treatment suited to a vertical list instead of an underline: a
+  subtle `bg-emerald-800/5` tint + emerald text on the active row, plus
+  `aria-current="page"`.
+
+Verified: exact-match highlighting on `/`, `/sweets`, `/story`,
+`/blogs`, `/contact`; prefix-match keeps "Blogs" active on a blog post
+detail page; `/gifting` shows none (correct); the underline visibly
+animates mid-transition when clicking between nav items (not just an
+instant jump); mobile drawer highlights correctly; cart and all 9
+routes re-verified with zero errors after the `Navbar`/`MobileMenu`
+changes; `next lint` and `next build` clean.
 
 ## 8. Auto-scrolling partner/stockist logo strip
 
@@ -156,13 +188,52 @@ trust signals" line as the fake-testimonials rule already documented in
 `@keyframes` marquee (translateX loop, duplicated logo set for a seamless
 loop, `prefers-reduced-motion` fallback to a static row).
 
-## 9. Navbar restructure: Home / Shop / About / Blogs / Contact Us
+## 9. Navbar restructure: Home / Shop / About / Blogs / Contact Us — ✅ DONE
 
-Supersedes today's Home/Our Sweets/Our Story/Gifting/Contact nav once
-Blog (#6) exists. Likely mapping: Our Sweets → Shop, Our Story → About,
-Gifting → folds into Shop (or stays as a Shop sub-section), Contact →
-Contact Us. Should land in the same pass as #6, since it depends on the
-blog route existing.
+`lib/nav-links.ts` (shared by `Navbar`'s desktop nav and `MobileMenu`'s
+drawer) is now exactly the five items above:
+
+```ts
+[
+  { label: "Home", href: "/" },
+  { label: "Shop", href: "/sweets" },
+  { label: "About", href: "/story" },
+  { label: "Blogs", href: "/blogs" },
+  { label: "Contact Us", href: "/contact" },
+]
+```
+
+**Deliberately labels-only, not a URL rename.** "Shop" links to
+`/sweets`, "About" links to `/story` — the routes, page `<h1>`s
+("Our Sweets", "Our Story"), and every other internal reference to
+those paths (`Hero`, `FinalCta`, `CartDrawer`, `ProductGrid`'s own
+eyebrow, `BrandStory`'s eyebrow) were left untouched. Renaming the
+actual folders (`app/sweets` → `app/shop`, `app/story` → `app/about`)
+would have meant updating every one of those references plus the docs,
+for no functional benefit — a nav label and a URL slug not matching
+exactly is completely normal (plenty of real sites have a "Shop" nav
+item pointing at `/collections/all` or similar). If the client
+specifically wants the URLs renamed too, that's a separate, larger,
+explicitly-scoped follow-up.
+
+**Gifting dropped from the main nav, not deleted.** The target list has
+no room for a 6th item, and the client's own suggested mapping said
+Gifting should "fold into Shop... or stay as a Shop sub-section." Went
+with the sub-section reading: `/gifting` still exists exactly as
+before, still linked from the footer's Explore column, and `/sweets`
+(Shop) now has a small "Shopping for a gift? See our Gifting
+collection →" link right under its page header so it's still
+discoverable from the page a shopper actually lands on.
+
+**Footer's Explore column** relabeled to match (Shop / About / Gifting
+/ Blogs / Contact Us) for consistency, even though the footer isn't
+bound by the 5-item nav constraint (it kept Gifting as its own line).
+
+Re-verified: no horizontal overflow or nav wrapping at 1024/1152/1280/
+1440px (same item count as before — 5 — so the `lg:` breakpoint fix
+from #6 still holds), mobile drawer lists all 5 correctly, the Gifting
+callout link on `/sweets` navigates correctly, and the cart still works
+end-to-end after the `Navbar`/`nav-links.ts` changes.
 
 ## 10. Light/dark theme toggle
 
@@ -190,13 +261,12 @@ moving under items 3/4/6/9.
 
 ---
 
-**Suggested build order** for the remaining items, given dependencies:
-9 (nav restructure, now that 6/blog exists) → 7 (active nav state) →
+**Suggested build order** for the remaining items:
 8 (partner strip — blocked on client confirming real partners/logos) →
 10 (theme toggle) → 11 (design polish pass, last, since earlier items
 still reshape layout).
 
-**Status as of 2026-09-04 (6):** #1–#6 done. Remaining: 9 (nav
-restructure), 7 (active nav state), 8 (partner strip — blocked on
-client confirming real partners/logos), 10 (theme toggle), 11 (design
-polish pass).
+**Status as of 2026-09-04 (8):** #1, #2, #3, #4, #5, #6, #7, and #9
+done (#9 and #7 both landed out of numeric order, at the client's
+request). Remaining: 8 (partner strip — blocked on client confirming
+real partners/logos), 10 (theme toggle), 11 (design polish pass).

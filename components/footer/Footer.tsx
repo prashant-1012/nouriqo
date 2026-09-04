@@ -40,12 +40,12 @@ export function Footer() {
             <ul className="mt-4 space-y-3 text-sm">
               <li>
                 <Link href="/sweets" className="text-ink-soft hover:text-emerald-800">
-                  Our Sweets
+                  Shop
                 </Link>
               </li>
               <li>
                 <Link href="/story" className="text-ink-soft hover:text-emerald-800">
-                  Our Story
+                  About
                 </Link>
               </li>
               <li>
@@ -60,7 +60,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/contact" className="text-ink-soft hover:text-emerald-800">
-                  Contact
+                  Contact Us
                 </Link>
               </li>
             </ul>

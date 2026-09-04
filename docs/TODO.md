@@ -2,8 +2,8 @@
 
 See `ROADMAP.md` for the 2026-09-04 client feedback batch. Done so far:
 multi-page site, the desktop hero image swap, smaller/uniform product
-cards, cart + WhatsApp checkout, pricing, and the blog. Not yet done:
-nav restructure, active nav-state highlighting, theme toggle, partner
+cards, cart + WhatsApp checkout, pricing, the blog, the nav restructure,
+and active nav-state highlighting. Not yet done: theme toggle, partner
 logo strip, and a design polish pass. This file covers everything else.
 
 ## Needed from the client before launch
@@ -78,6 +78,13 @@ it transactional:
 
 ## Explicitly deferred, not forgotten
 
+- URL slugs (`/sweets`, `/story`) weren't renamed to match the new nav
+  labels (Shop, About) — see `ROADMAP.md` #9 for why. If the client
+  wants `/shop` and `/about` as the actual URLs too (not just nav text),
+  that's a well-defined but separate follow-up: rename the two route
+  folders and update every internal `Link`/`Button` `href` that points
+  to them (`Hero`, `FinalCta`, `CartDrawer`, `Footer`, `nav-links.ts`),
+  plus the `docs/` references to those paths.
 - Cart is `localStorage`-only: it doesn't sync across devices/browsers
   and clears if the visitor clears site data. Fine for a WhatsApp-
   handoff checkout with no accounts; would need real backend-backed

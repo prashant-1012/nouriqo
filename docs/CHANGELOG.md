@@ -1,5 +1,69 @@
 # Changelog
 
+## 2026-09-04 (8) — Active nav-item highlighting
+
+`ROADMAP.md` #7, requested with "best UI" rather than the minimal
+color-swap originally scoped.
+
+- New `isNavLinkActive(pathname, href)` in `lib/nav-links.ts`: exact
+  match for Home, prefix match for everything else, so a blog post
+  detail page (`/blogs/[slug]`) correctly keeps "Blogs" highlighted.
+- New `components/navigation/NavLinks.tsx` — extracted the desktop nav
+  out of `Navbar.tsx` into its own `"use client"` leaf (needed for
+  `usePathname()`), keeping `Navbar` itself a server component. Gives
+  the active link an animated underline via Framer Motion's
+  `layoutId` — it slides between nav items on navigation instead of
+  just appearing, which works because `Navbar` lives in the root
+  layout and Next.js keeps shared layouts mounted across route
+  changes (documented as a load-bearing detail in
+  `COMPONENT_ARCHITECTURE.md`, since moving `Navbar` later would
+  silently degrade the animation to an instant jump). Respects
+  `prefers-reduced-motion` and adds `aria-current="page"`.
+- `MobileMenu.tsx` gets the same active-state logic with a treatment
+  suited to a vertical list — a subtle background tint + emerald text
+  on the current row, plus `aria-current="page"`.
+
+**Verification:** exact-match highlighting confirmed on all 5 main-nav
+routes; prefix-match confirmed keeping "Blogs" active on
+`/blogs/papri-explained`; confirmed `/gifting` shows no active item
+(correct, since #9 removed it from the main nav); captured a mid-
+transition screenshot showing the underline actually sliding between
+positions, not just jumping; mobile drawer highlight confirmed on
+`/story`; cart still works and all 9 routes clean after touching
+`Navbar`/`MobileMenu` again; `next lint` and `next build` clean.
+
+## 2026-09-04 (7) — Nav restructure: Home / Shop / About / Blogs / Contact Us
+
+`ROADMAP.md` #9, done out of numeric order at the client's request
+(only depended on #6/blog, already done).
+
+- `lib/nav-links.ts` now reads Home / Shop / About / Blogs / Contact Us
+  — shared by both `Navbar`'s desktop nav and `MobileMenu`'s drawer, so
+  one change updated both automatically.
+- **Labels changed, routes didn't.** "Shop" still points at `/sweets`,
+  "About" at `/story` — renaming the actual folders would have meant
+  touching every internal reference across the codebase (`Hero`,
+  `FinalCta`, `CartDrawer`, `ProductGrid`, `BrandStory`, `Footer`) for
+  no functional benefit. Documented as a deliberate choice, with the
+  follow-up steps written down, in `ROADMAP.md` #9 and `TODO.md`, in
+  case the client wants the URLs renamed too later.
+- Gifting dropped out of the main nav (the target list has no room for
+  a 6th item) but the page itself is untouched — still linked from the
+  footer, and now also from a new "Shopping for a gift? See our Gifting
+  collection →" link added to `/sweets` just under its page header, so
+  it stays one click from the page a shopper actually lands on.
+- Footer's Explore column relabeled to match (Shop / About / Gifting /
+  Blogs / Contact Us).
+
+**Verification:** re-checked for the exact nav-overflow bug class fixed
+in the previous entry (item count is unchanged at 5, so the existing
+`lg:` breakpoint switch-over still applies) — no wrapping or overflow
+at 1024/1152/1280/1440px; mobile drawer lists all 5 new labels
+correctly; the new Gifting callout link navigates to `/gifting`
+correctly; cart add-to-cart still works after the `Navbar` changes; all
+9 routes re-checked for console/network errors (none) and exactly one
+`<h1>` each; `next lint` and `next build` clean.
+
 ## 2026-09-04 (6) — Blog
 
 `ROADMAP.md` #6.

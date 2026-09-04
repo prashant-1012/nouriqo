@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { MobileMenu } from "@/components/navigation/MobileMenu";
+import { NavLinks } from "@/components/navigation/NavLinks";
 import { CartButton } from "@/components/cart/CartButton";
-import { navLinks } from "@/lib/nav-links";
 
 export function Navbar() {
   return (
@@ -24,18 +24,7 @@ export function Navbar() {
         </Link>
 
         <nav aria-label="Primary" className="hidden lg:block">
-          <ul className="flex items-center gap-9">
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="text-sm font-medium tracking-wide text-ink-soft transition-colors hover:text-emerald-800"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <NavLinks />
         </nav>
 
         <div className="flex items-center gap-2">
