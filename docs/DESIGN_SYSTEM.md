@@ -42,15 +42,17 @@ and needs no adjustment.
 no more than one section in a row shares a background tone, and green is
 reserved for two intentional "anchor" moments (Brand Story, Final CTA)
 rather than tinting every section. On the home page specifically, the
-sequence is `ivory` (Brand Intro) → `beige/50` (Why Nouriqo) → a
-`cream`-based gradient (Counters — see below) → `ivory` (Product Grid) →
-dark (Final CTA); `Counters` sits between two light-neutral sections, so
-it deliberately uses `cream` rather than repeating `ivory`/`beige` to
-keep the alternation intact.
+sequence is `ivory` (Brand Intro) → a `beige`-based gradient (Why
+Nouriqo — see below) → a `cream`-based gradient (Counters) → `ivory`
+(Product Grid) → dark (Final CTA); each gradient section keeps to its
+own tone family (`beige` vs. `cream`) rather than repeating the
+neighbor's, so the alternation stays legible even with two gradient
+sections back to back.
 
-**Gradients:** used sparingly, and only on `Counters` so far — a soft
-diagonal `from-cream via-ivory to-cream` plus a faint radial emerald wash
-(`rgba(26,82,64,0.06)`) for depth. Every other section uses a flat
+**Gradients:** used sparingly — currently `WhyNouriqo`
+(`from-beige/70 to-ivory`, top to bottom) and `Counters` (a soft
+diagonal `from-cream via-ivory to-cream` plus a faint radial emerald
+wash, `rgba(26,82,64,0.06)`, for depth). Every other section uses a flat
 background color; don't reach for a gradient as a default treatment.
 
 ## Typography

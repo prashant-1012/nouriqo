@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-09-05 (3) — WhyNouriqo redesigned as photo collage + feature list
+
+`WhyNouriqo.tsx` rebuilt from a plain 6-icon grid into a two-column
+layout (client-provided reference screenshot): a 3-photo collage (CSS
+grid, one tall image spanning two stacked squares) on the left, and a
+heading + 4-item icon/title/description feature list on the right, on
+a soft `beige`-to-`ivory` gradient background.
+
+**Photos are real, reused assets** — `process-cooking.jpg`,
+`process-shaping.jpg`, and `process-garnishing.jpg` (already used on
+`/sweets`'s Our Craft section), not new stock photography. The
+reference's own images (farm/harvest photos) aren't Nouriqo assets, so
+they were not used.
+
+**Feature copy reuses only already-established claims** — no new
+claims invented to match the reference's "100% Fresh" / "From Native
+Seeds" copy, which describes a different brand. `lib/benefits.ts`
+changed shape from icon/label pairs to icon/title/description, and was
+trimmed from 6 items to 4 (folding "No Artificial Colour" and "No
+Preservatives" into one "Nothing Artificial" row) to match the
+reference's 4-row layout without dropping any real claim — the two
+folded-in claims are still shown individually as `ProductCard`
+attribute chips. See `ASSET_MAP.md` for which icons are used vs. still
+available.
+
+A small `gold-quatrefoil-pearl` motif was added above the heading,
+consistent with the one-motif-per-section restraint used elsewhere.
+
+**Verification:** `lint`/`build` clean; Playwright screenshots
+confirmed the collage grid layout (row-span-2 image correctly matches
+the combined height of the two stacked squares) and mobile stacking
+(text first, then collage, per existing content-priority convention).
+
 ## 2026-09-05 (2) — Home page trust-counters section; product cards restyled with pack-size pricing
 
 **New `Counters` section** (`components/sections/Counters.tsx`, data in

@@ -43,7 +43,10 @@ components/
     BlogContent.tsx          renders a post's heading/paragraph blocks
   sections/
     BrandIntro.tsx          Home only
-    WhyNouriqo.tsx          Home only
+    WhyNouriqo.tsx          Home only — photo collage (3 process shots, CSS-grid row-span
+                             layout) + heading + 4-item icon/title/description feature list,
+                             sourced from lib/benefits.ts. Redesigned 2026-09-05 (3) from a
+                             plain 6-icon grid to this richer two-column layout
     Counters.tsx             "use client" — Home only, between WhyNouriqo and ProductGrid.
                              4 stat tiles with a scroll-triggered count-up (Framer Motion
                              useInView + animate on a useMotionValue), reduced-motion aware.
@@ -76,7 +79,9 @@ lib/
   blog-posts.ts              BlogPost type + data (title/excerpt/date/readTime/coverImage/content
                              blocks) — same data-driven pattern as products.ts, no MDX/CMS
                              tooling; see the note below on why
-  benefits.ts                "Why Nouriqo" icon/label pairs
+  benefits.ts                Benefit type + data for WhyNouriqo's feature list — icon, title,
+                             description (4 items; not every icon.png in public/assets/icons
+                             is referenced here, see ASSET_MAP.md)
   nav-links.ts               shared nav link list + isNavLinkActive(pathname, href) — real
                               paths, not anchors; used by both NavLinks and MobileMenu
   cart-context.tsx            "use client": CartProvider + useCart() — lines are keyed by

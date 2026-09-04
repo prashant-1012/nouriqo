@@ -1,26 +1,32 @@
-export const benefits = [
+export type Benefit = {
+  icon: string;
+  title: string;
+  description: string;
+};
+
+export const benefits: Benefit[] = [
   {
     icon: "/assets/icons/icon-desi-ghee.png",
-    label: "Made with Desi Ghee",
+    title: "Real Desi Ghee",
+    description:
+      "Every batch is finished with real desi ghee, the way it's been made since 1958.",
   },
   {
     icon: "/assets/icons/icon-no-maida.png",
-    label: "No Maida",
-  },
-  {
-    icon: "/assets/icons/icon-no-chemicals.png",
-    label: "No Artificial Colour",
-  },
-  {
-    icon: "/assets/icons/icon-no-preservatives.png",
-    label: "No Preservatives",
+    title: "Nothing Artificial",
+    description:
+      "No maida, no artificial colour, no preservatives — ever.",
   },
   {
     icon: "/assets/icons/icon-natural-ingredients.png",
-    label: "Natural Ingredients",
+    title: "Natural Ingredients",
+    description:
+      "Real almonds, cashews, pistachios, and saffron — nothing else.",
   },
   {
     icon: "/assets/icons/icon-handcrafted.png",
-    label: "Handcrafted in Small Batches",
+    title: "Handcrafted in Small Batches",
+    description:
+      "Finished by hand, in small batches, the way it's always been done.",
   },
 ];

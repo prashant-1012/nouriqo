@@ -45,10 +45,10 @@ no regenerated packaging, per the brief's explicit rule.
 
 | File | Source | Usage |
 |---|---|---|
-| `process-ingredients.jpg` | `process-1.png` | Ingredients section — raw cashews, almonds, saffron, rice, ghee. |
-| `process-cooking.jpg` | `process-2.png` | Our Craft — hand-stirring the mixture in a brass kadhai. |
-| `process-shaping.jpg` | `process-3.png` | Our Craft — hand-rolling a ladoo. |
-| `process-garnishing.jpg` | `process-4.png` | Our Craft — garnishing a tray of papri with nuts. |
+| `process-ingredients.jpg` | `process-1.png` | Ingredients section (`/sweets`) — raw cashews, almonds, saffron, rice, ghee. |
+| `process-cooking.jpg` | `process-2.png` | Our Craft (`/sweets`) and home page `WhyNouriqo` photo collage — hand-stirring the mixture in a brass kadhai. |
+| `process-shaping.jpg` | `process-3.png` | Our Craft (`/sweets`) and home page `WhyNouriqo` photo collage — hand-rolling a ladoo. |
+| `process-garnishing.jpg` | `process-4.png` | Our Craft (`/sweets`) and home page `WhyNouriqo` photo collage — garnishing a tray of papri with nuts. |
 
 ## `counters/` (4 — home page stat-counter icons)
 
@@ -69,18 +69,18 @@ and `TODO.md`.
 
 ## `icons/` (12 — "Why Nouriqo" benefit icons)
 
-Illustrated, circular, gold-outlined icons. Currently 6 are used on the
-homepage (`lib/benefits.ts`); the remaining 6 are catalogued here for reuse
+Illustrated, circular, gold-outlined icons. Currently 4 are used on the
+homepage (`lib/benefits.ts`); the remaining 8 are catalogued here for reuse
 on a future ingredients/trust or product detail page.
 
 | File | Depicts | Status |
 |---|---|---|
-| `icon-desi-ghee.png` | Ghee pot with spoon | Used — "Made with Desi Ghee" |
-| `icon-no-maida.png` | Crossed-out flour bowl + wheat | Used — "No Maida" |
-| `icon-no-chemicals.png` | Crossed-out flask | Used — "No Artificial Colour" |
-| `icon-no-preservatives.png` | Crossed-out test tube | Used — "No Preservatives" |
+| `icon-desi-ghee.png` | Ghee pot with spoon | Used — "Real Desi Ghee" |
+| `icon-no-maida.png` | Crossed-out flour bowl + wheat | Used — "Nothing Artificial" (also covers no artificial colour/preservatives) |
 | `icon-natural-ingredients.png` | Leaf sprig | Used — "Natural Ingredients" |
 | `icon-handcrafted.png` | Hands cupping a ladoo | Used — "Handcrafted in Small Batches" |
+| `icon-no-chemicals.png` | Crossed-out flask | Available — no-artificial-colour messaging (claim still shown as a `ProductCard` attribute chip; dropped from the home page list 2026-09-05 (3) to keep it to 4 feature rows) |
+| `icon-no-preservatives.png` | Crossed-out test tube | Available — no-preservatives messaging (same note as above) |
 | `icon-traditional-preparation.png` | Mortar and pestle | Available — traditional-preparation messaging |
 | `icon-quality-assured.png` | Ribbon/rosette award | Available — quality/trust messaging |
 | `icon-freshly-made.png` | Steaming bowl | Available — freshness messaging |
@@ -104,9 +104,11 @@ floating decoration." Full list (all transparent PNG):
 `leaf-branch-medium`, `gold-heart-leaf`, `gold-lotus-dots`.
 
 Currently placed: `gold-sparkle-star` + `leaf-branch-medium` (hero),
-`gold-lotus-mini` (brand intro), `gold-swirl-leaf` (lifestyle story),
-`leaf-single-large` (ingredients), `gold-lotus-dots` (brand story),
-`gold-heart-leaf` (gifting), `gold-sunburst` (final CTA),
-`gold-branch-leaves` (footer background). The remaining motifs are
-available for future sections (e.g. a product detail page) without
-needing new asset generation.
+`gold-lotus-mini` (brand intro), `gold-quatrefoil-pearl` (home page
+`WhyNouriqo`, above the heading), `gold-swirl-leaf` (lifestyle story),
+`leaf-single-large` (ingredients; also reused with `leaf-branch-medium`
+as the two corner motifs on the home page `Counters` section),
+`gold-lotus-dots` (brand story), `gold-heart-leaf` (gifting),
+`gold-sunburst` (final CTA), `gold-branch-leaves` (footer background).
+The remaining motifs are available for future sections (e.g. a product
+detail page) without needing new asset generation.
