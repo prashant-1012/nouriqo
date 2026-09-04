@@ -1,22 +1,21 @@
 "use client";
 
-import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import clsx from "clsx";
 
 export function QuantityStepper({
-  initialValue = 1,
+  value,
+  onChange,
   min = 1,
   max = 20,
   className,
 }: {
-  initialValue?: number;
+  value: number;
+  onChange: (next: number) => void;
   min?: number;
   max?: number;
   className?: string;
 }) {
-  const [quantity, setQuantity] = useState(initialValue);
-
   return (
     <div
       className={clsx(
@@ -26,8 +25,8 @@ export function QuantityStepper({
     >
       <button
         type="button"
-        onClick={() => setQuantity((q) => Math.max(min, q - 1))}
-        disabled={quantity <= min}
+        onClick={() => onChange(Math.max(min, value - 1))}
+        disabled={value <= min}
         aria-label="Decrease quantity"
         className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-emerald-800/5 disabled:opacity-30 disabled:hover:bg-transparent"
       >
@@ -37,12 +36,12 @@ export function QuantityStepper({
         className="w-6 text-center text-sm font-medium tabular-nums text-ink"
         aria-live="polite"
       >
-        {quantity}
+        {value}
       </span>
       <button
         type="button"
-        onClick={() => setQuantity((q) => Math.min(max, q + 1))}
-        disabled={quantity >= max}
+        onClick={() => onChange(Math.min(max, value + 1))}
+        disabled={value >= max}
         aria-label="Increase quantity"
         className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-emerald-800/5 disabled:opacity-30 disabled:hover:bg-transparent"
       >

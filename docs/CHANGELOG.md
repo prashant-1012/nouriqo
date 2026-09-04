@@ -1,5 +1,79 @@
 # Changelog
 
+## 2026-09-04 (5) — Pricing, cart, and WhatsApp checkout
+
+`ROADMAP.md` #4 and #5, done together since the cart total needs prices
+to exist first.
+
+**Pricing**
+
+- Added `price: number` to `Product` (`lib/products.ts`): ₹500 / ₹550 /
+  ₹600 for Special Ghee Papri / Kaju Badam Papri / Special Kaju Papri.
+  Client-supplied, explicitly provisional — flagged via a field-level
+  comment plus a visible "Prices shown are indicative and may change"
+  disclaimer everywhere a price appears (`ProductGrid`, `CartDrawer`).
+- New `lib/currency.ts` (`formatINR`, `Intl.NumberFormat("en-IN", ...)`)
+  so every price renders consistently (`₹500`, `₹1,000`, etc.).
+
+**Cart**
+
+- New `lib/cart-context.tsx`: `CartProvider` + `useCart()`. Cart lines
+  are just `{ slug, quantity }` — product name/price/image are always
+  looked up live from `lib/products.ts`, so the cart can never go stale
+  relative to the catalog. Persisted to `localStorage`
+  (`nouriqo-cart-v1`); hydrates in a post-mount effect rather than
+  during the initial render, so server and client agree on the first
+  paint (starts empty, then syncs) with no hydration-mismatch warning.
+- `QuantityStepper` (from the previous entry) converted from an
+  uncontrolled component to a controlled one (`value`/`onChange`) so it
+  can be shared between `AddToCartControl` (product card) and
+  `CartDrawer` (per-line quantity in the cart) without duplicating the
+  stepper UI.
+- New `components/products/AddToCartControl.tsx`: owns the "how many am
+  I adding" quantity locally, calls `addItem()` on click, and shows a
+  brief "Added ✓" confirmation. Replaces the old stepper-plus-"Enquire
+  Now" row on `ProductCard` — "Enquire Now" remains on `/gifting` and
+  `/contact` for non-catalog enquiries, just not on every product card
+  now that there's a real add-to-cart action.
+- New `components/cart/CartButton.tsx` (navbar icon + item-count badge)
+  and `components/cart/CartDrawer.tsx` (line items, per-line qty/remove,
+  running total, checkout) — same interaction patterns as the existing
+  `MobileMenu` (Escape to close, body-scroll lock, `aria-modal`).
+
+**WhatsApp checkout**
+
+- New `lib/config.ts` (`WHATSAPP_ORDER_NUMBER`, one named constant —
+  not hardcoded inline anywhere) and `lib/whatsapp.ts`
+  (`buildOrderMessage` / `buildWhatsAppOrderUrl`), producing a
+  `wa.me` link with an itemized, URL-encoded message (line items, qty,
+  line totals, grand total). Rendered as a plain `target="_blank"`
+  anchor — no backend, no JS `window.open` needed. Verified the decoded
+  message end-to-end for a 2-product cart; formatting and totals were
+  correct on the first try.
+
+**Bug caught and fixed during QA**
+
+- `CartDrawer` was initially rendered inside `Navbar`'s `<header>`
+  (alongside the new `CartButton`). It rendered as a barely-visible
+  sliver — only the header row and footer showed, with the entire line-
+  item list squeezed to nothing. Root cause: `header` has
+  `backdrop-blur-sm` (a `backdrop-filter`), and per the CSS Transforms
+  spec, `filter`/`backdrop-filter` makes an element the containing block
+  for its `position: fixed` descendants. `CartDrawer` uses
+  `fixed inset-y-0`, expecting to size against the *viewport* — instead
+  it was sizing against `header`'s own ~80px height. Fixed by moving
+  `CartDrawer` out of `Navbar` entirely and rendering it once in
+  `app/layout.tsx` as a sibling of `Navbar`/`main`/`Footer` (still
+  inside `CartProvider`). Re-verified full-height rendering at 1280px
+  and 390px, plus cart persistence across a page reload, the empty-cart
+  state, and removing a line item.
+
+**Verification:** full add→view→adjust-quantity→remove→checkout-link
+flow tested end-to-end via Playwright on `/sweets`; confirmed the same
+cart is shared correctly between `/` and `/sweets` (both render
+`ProductGrid`); all 5 routes re-checked for console/network errors and
+horizontal overflow; `next lint` and `next build` clean throughout.
+
 ## 2026-09-04 (4) — Smaller, uniform product cards + quantity stepper
 
 `ROADMAP.md` #3.

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { MobileMenu } from "@/components/navigation/MobileMenu";
+import { CartButton } from "@/components/cart/CartButton";
 import { navLinks } from "@/lib/nav-links";
 
 export function Navbar() {
@@ -37,14 +38,16 @@ export function Navbar() {
           </ul>
         </nav>
 
-        <Link
-          href="/sweets"
-          className="hidden rounded-full bg-emerald-800 px-6 py-2.5 text-sm font-medium text-ivory transition-colors hover:bg-emerald-700 md:inline-flex"
-        >
-          Explore Sweets
-        </Link>
-
-        <MobileMenu />
+        <div className="flex items-center gap-2">
+          <CartButton />
+          <Link
+            href="/sweets"
+            className="hidden rounded-full bg-emerald-800 px-6 py-2.5 text-sm font-medium text-ivory transition-colors hover:bg-emerald-700 md:inline-flex"
+          >
+            Explore Sweets
+          </Link>
+          <MobileMenu />
+        </div>
       </Container>
     </header>
   );

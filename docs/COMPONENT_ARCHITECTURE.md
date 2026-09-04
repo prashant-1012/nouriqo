@@ -2,7 +2,7 @@
 
 ```
 app/
-  layout.tsx              root layout — renders Navbar + Footer once, wraps {children}
+  layout.tsx              root layout — CartProvider wraps Navbar + Footer + CartDrawer + {children}
   page.tsx                Home ("/")
   sweets/page.tsx         Our Sweets
   story/page.tsx          Our Story
@@ -14,14 +14,21 @@ components/
     Container.tsx         max-width + responsive padding wrapper
     PageHeader.tsx          shared sub-page banner: eyebrow + h1 + description, on a cream band
   navigation/
-    Navbar.tsx            server component: logo, desktop nav, sticky header
+    Navbar.tsx            server component: logo, desktop nav, sticky header, renders CartButton
     MobileMenu.tsx         "use client": hamburger + animated drawer
+  cart/
+    CartButton.tsx          "use client": navbar icon + item-count badge, opens the drawer
+    CartDrawer.tsx           "use client": line items, qty steppers, total, WhatsApp checkout —
+                             rendered once in app/layout.tsx, NOT inside Navbar's <header>
+                             (see the stacking-context note below)
   hero/
     Hero.tsx               art-directed (desktop/mobile) hero — Home only
   products/
-    ProductCard.tsx         one product's image + copy + attributes + qty stepper + CTA
+    ProductCard.tsx         one product's image + copy + price + AddToCartControl
     ProductGrid.tsx          section wrapper, maps lib/products.ts -> ProductCard — used on both `/` and `/sweets`
-    QuantityStepper.tsx      "use client": −/count/+ control, local state only (not yet wired to a cart)
+    AddToCartControl.tsx     "use client": owns local qty state, QuantityStepper + "Add to Cart"
+    QuantityStepper.tsx      "use client", controlled (value/onChange) — used by both
+                             AddToCartControl and CartDrawer's per-line qty control
   sections/
     BrandIntro.tsx          Home only
     WhyNouriqo.tsx          Home only
@@ -43,10 +50,25 @@ components/
     Footer.tsx              renders once, in app/layout.tsx
 
 lib/
-  products.ts               Product type + data (source of truth for the catalog)
+  products.ts               Product type + data (source of truth for the catalog, incl. price)
   benefits.ts                "Why Nouriqo" icon/label pairs
   nav-links.ts               shared nav link list (desktop + mobile menu) — real paths, not anchors
+  cart-context.tsx            "use client": CartProvider + useCart() — slug+quantity lines,
+                              persisted to localStorage, product details looked up by slug
+  currency.ts                 formatINR() — Intl.NumberFormat("en-IN", { currency: "INR" })
+  whatsapp.ts                 builds the itemized order message + wa.me checkout URL
+  config.ts                   WHATSAPP_ORDER_NUMBER — the one place that number is defined
 ```
+
+**Fixed-position UI must not nest inside `backdrop-blur`/`filter`
+ancestors.** `CartDrawer` was originally rendered inside `Navbar`'s
+`<header>`, which has `backdrop-blur-sm` (`backdrop-filter`). Per the
+CSS Transforms spec, `filter`/`backdrop-filter` makes an element the
+containing block for its `position: fixed` descendants — so the
+drawer's `inset-y-0` resolved against `header`'s own ~80px height
+instead of the viewport, breaking it. `CartDrawer` now renders directly
+in `app/layout.tsx` instead. Keep this in mind before adding any other
+`fixed`-positioned overlay as a descendant of `Navbar`.
 
 **Navigation is route-based, not anchor-based.** Every internal link uses
 `next/link`'s `<Link>` (not a plain `<a href="#...">`) so navigating
@@ -57,12 +79,16 @@ homepage to five separate routes — see `WEBSITE_STRUCTURE.md` and
 
 ## Responsibilities & Conventions
 
-- **Server components by default.** Only `MobileMenu.tsx`,
-  `motion/Reveal.tsx`, and `QuantityStepper.tsx` are `"use client"` —
+- **Server components by default.** `MobileMenu.tsx`, `motion/Reveal.tsx`,
+  `QuantityStepper.tsx`, `AddToCartControl.tsx`, `CartButton.tsx`,
+  `CartDrawer.tsx`, and `cart-context.tsx` are `"use client"` —
   everything else renders on the server. Client components are leaves
   (`ProductCard` stays a server component and just renders
-  `<QuantityStepper />` as one interactive child), not wrappers around
-  the whole page.
+  `<AddToCartControl />` as one interactive child), not wrappers around
+  the whole page. The one necessary exception is `CartProvider`, which
+  wraps the entire app in `app/layout.tsx` — Context providers are the
+  standard exception to "leaves only," since the alternative (prop-
+  drilling cart state through every page) would be worse.
 - **Data-driven, not repeated JSX.** Products (`lib/products.ts`) and
   benefit icons (`lib/benefits.ts`) are arrays mapped over in the section
   components. Adding a fourth product means adding one object to

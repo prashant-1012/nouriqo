@@ -39,9 +39,14 @@ Per the brief, none of the following are invented anywhere on the site:
 - Company history beyond "Since 1958" (sourced from the client's own
   packaging, not invented) — no founder story, no specific city/factory
   location, no founding narrative details.
-- Delivery/shipping claims, return policy specifics, or pricing — none
-  were supplied, so none appear. Product cards show weight (from
-  packaging) but no price.
+- Delivery/shipping claims or return policy specifics — none were
+  supplied, so none appear.
+- **Pricing (updated 2026-09-04):** the client supplied placeholder
+  prices (₹500/₹550/₹600) explicitly described as provisional, not
+  final retail pricing. These now appear on `ProductCard` and in the
+  cart, but always paired with a visible "Prices shown are indicative
+  and may change" line — never presented as confirmed. See
+  `lib/products.ts`'s `price` field and `ROADMAP.md` #5.
 
 ## Placeholder Convention
 

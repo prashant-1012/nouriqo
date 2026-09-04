@@ -5,6 +5,8 @@ export type Product = {
   tagline: string;
   description: string;
   weight: string;
+  /** Indicative price in INR, per box — provisional, see CONTENT_GUIDELINES.md */
+  price: number;
   attributes: string[];
   image: {
     src: string;
@@ -22,6 +24,7 @@ export const products: Product[] = [
     description:
       "Our original recipe — layers of papri slow-cooked in desi ghee and finished with almonds and pistachios.",
     weight: "500 gram",
+    price: 500,
     attributes: ["No Maida", "No Artificial Color", "No Preservatives"],
     image: {
       src: "/assets/products/classic-ghee-papri.jpg",
@@ -37,6 +40,7 @@ export const products: Product[] = [
     description:
       "A velvety delicacy layered generously with cashews and almonds for a richer, nuttier bite.",
     weight: "500 gram",
+    price: 550,
     attributes: ["No Maida", "No Artificial Color", "No Preservatives"],
     image: {
       src: "/assets/products/kaju-badam-papri.jpg",
@@ -52,6 +56,7 @@ export const products: Product[] = [
     description:
       "Our signature cashew papri, finished with pistachio and a touch of rose for a lighter, fragrant finish.",
     weight: "500 gram",
+    price: 600,
     attributes: ["No Maida", "No Artificial Color", "No Preservatives"],
     image: {
       src: "/assets/products/special-kaju-papri.jpg",
@@ -60,3 +65,7 @@ export const products: Product[] = [
     accent: "rose",
   },
 ];
+
+export function getProductBySlug(slug: string): Product | undefined {
+  return products.find((product) => product.slug === slug);
+}

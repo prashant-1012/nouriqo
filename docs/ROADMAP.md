@@ -59,26 +59,53 @@ for it to feed into (that's `ROADMAP.md` #4). Its quantity state is
 local to each card for now and not wired to anything — item #4 will
 need to lift that state up into real cart state.
 
-## 4. Cart + WhatsApp checkout
+## 4. Cart + WhatsApp checkout — ✅ DONE
 
-- Add cart state (item + quantity per product), persisted at least for
-  the session (localStorage is reasonable for a no-backend cart).
-- Cart icon/count in the navbar, opening a drawer or mini-cart.
-- "Checkout via WhatsApp": build a formatted message (line items, qty,
-  unit price, line total, grand total) and open
-  `https://wa.me/917972052896?text=<url-encoded message>`. This requires
-  no backend — it's a `wa.me` deep link — but the phone number
-  (+91 7972052896) needs to be stored somewhere reviewable (env var or
-  a constant with a comment), not hardcoded invisibly in three places.
+- `lib/cart-context.tsx`: `CartProvider` + `useCart()` — React Context
+  holding `{ slug, quantity }` lines (product details are looked up from
+  `lib/products.ts` by slug at render time, never duplicated into cart
+  state), persisted to `localStorage` under `nouriqo-cart-v1`. Hydrates
+  from storage in a post-mount effect (starts empty to match the server
+  render, then syncs once) so there's no SSR/client hydration mismatch.
+  Wraps the whole app in `app/layout.tsx`.
+- `components/cart/CartButton.tsx` — navbar icon with an item-count
+  badge, opens the drawer.
+- `components/cart/CartDrawer.tsx` — line items (thumbnail, qty stepper,
+  remove), running total, and "Checkout via WhatsApp".
+- `components/products/AddToCartControl.tsx` replaces the plain
+  `QuantityStepper` on `ProductCard` — owns the quantity value locally
+  and calls `addItem()` on click (briefly shows "Added ✓"). This is the
+  cart-state lift-up that `ROADMAP.md` #3 flagged as needed.
+- WhatsApp: `lib/whatsapp.ts` builds an itemized message (line items,
+  qty, line total, grand total) and a `https://wa.me/<number>?text=...`
+  link, opened as a plain `target="_blank"` anchor (no JS `window.open`
+  needed). The number lives in **`lib/config.ts`** as
+  `WHATSAPP_ORDER_NUMBER`, one named, commented constant — not
+  hardcoded inline anywhere.
 
-## 5. Pricing
+**Bug caught and fixed during QA:** the drawer was first rendered as a
+child of `Navbar`'s `<header>`. `header` has `backdrop-blur-sm`
+(a `backdrop-filter`), and per the CSS Transforms spec, an element with
+`filter`/`backdrop-filter` applied becomes the containing block for its
+`position: fixed` (and absolutely positioned) descendants — so the
+drawer's `inset-y-0` was resolving against `header`'s own ~80px height
+instead of the viewport, clipping the entire cart contents into a sliver
+and leaving the item list invisible. Fixed by rendering `CartDrawer`
+directly in `app/layout.tsx` (a sibling of `Navbar`/`main`/`Footer`,
+still inside `CartProvider`) instead of nesting it inside `header`.
+Verified full-height rendering at 1280px and 390px afterward.
 
-Add price per product: ₹500 / ₹550 / ₹600 per piece (placeholder
-pricing "for now," per the client, not yet final/confirmed retail
-pricing — flag clearly in the UI or a code comment that this is
-provisional so it doesn't get mistaken for confirmed pricing later. This
-also reopens `CONTENT_GUIDELINES.md`'s current "no price shown, none
-supplied" note.
+## 5. Pricing — ✅ DONE
+
+Added `price: number` (INR, per box) to `Product` in `lib/products.ts` —
+₹500 / ₹550 / ₹600 for Special Ghee Papri / Kaju Badam Papri / Special
+Kaju Papri respectively, per the client's 2026-09-04 instruction.
+Flagged as provisional in three places: a JSDoc comment on the `price`
+field itself, a disclaimer line under the product grid ("Prices shown
+are indicative and may change."), and the same disclaimer repeated in
+the cart drawer above the checkout button. `CONTENT_GUIDELINES.md`
+updated to reflect that pricing is now shown (provisionally) rather
+than omitted.
 
 ## 6. Blog
 
@@ -150,6 +177,7 @@ moving under items 3/4/6/9.
 10 (theme toggle) → 11 (design polish pass, last, since earlier items
 still reshape layout).
 
-**Status as of 2026-09-04 (4):** #1, #2, and #3 done. Everything else
-above still open — #4 (cart + WhatsApp) is next and will need to lift
-#3's per-card quantity state into real cart state.
+**Status as of 2026-09-04 (5):** #1, #2, #3, #4, and #5 done. Remaining:
+6 (blog), 9 (nav restructure, depends on 6), 7 (active nav state),
+8 (partner strip — blocked on client confirming real partners/logos),
+10 (theme toggle), 11 (design polish pass).

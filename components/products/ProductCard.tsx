@@ -1,8 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import clsx from "clsx";
 import type { Product } from "@/lib/products";
-import { QuantityStepper } from "@/components/products/QuantityStepper";
+import { AddToCartControl } from "@/components/products/AddToCartControl";
+import { formatINR } from "@/lib/currency";
 
 const accentRing: Record<Product["accent"], string> = {
   gold: "group-hover:ring-gold-400/60",
@@ -50,15 +50,14 @@ export function ProductCard({ product }: { product: Product }) {
         </ul>
 
         <div className="mt-auto pt-4">
-          <p className="text-sm text-ink-soft">{product.weight}</p>
-          <div className="mt-3 flex items-center justify-between gap-3 border-t border-ink/10 pt-3">
-            <QuantityStepper />
-            <Link
-              href="/contact"
-              className="text-sm font-medium text-emerald-800 underline underline-offset-4 decoration-emerald-800/30 hover:text-emerald-700"
-            >
-              Enquire Now
-            </Link>
+          <div className="flex items-baseline justify-between">
+            <span className="text-sm text-ink-soft">{product.weight}</span>
+            <span className="font-display text-lg text-ink">
+              {formatINR(product.price)}
+            </span>
+          </div>
+          <div className="mt-3 border-t border-ink/10 pt-3">
+            <AddToCartControl product={product} />
           </div>
         </div>
       </div>
