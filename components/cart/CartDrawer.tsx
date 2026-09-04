@@ -6,7 +6,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Trash2 } from "lucide-react";
 import { useCart, type CartLine } from "@/lib/cart-context";
-import { getProductBySlug, type Product } from "@/lib/products";
+import { getProductBySlug, type Product, type WeightOption } from "@/lib/products";
 import { formatINR } from "@/lib/currency";
 import { buildWhatsAppOrderUrl } from "@/lib/whatsapp";
 import { QuantityStepper } from "@/components/products/QuantityStepper";
@@ -29,23 +29,24 @@ export function CartDrawer() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [closeCart]);
 
-  type CartDisplayItem = { line: CartLine; product: Product };
+  type CartDisplayItem = { line: CartLine; product: Product; option: WeightOption };
 
   const items: CartDisplayItem[] = lines.flatMap((line) => {
     const product = getProductBySlug(line.slug);
-    return product ? [{ line, product }] : [];
+    const option = product?.weightOptions.find((o) => o.weight === line.weight);
+    return product && option ? [{ line, product, option }] : [];
   });
 
   const total = items.reduce(
-    (sum, { line, product }) => sum + line.quantity * product.price,
+    (sum, { line, option }) => sum + line.quantity * option.price,
     0
   );
 
   const whatsappUrl = buildWhatsAppOrderUrl(
-    items.map(({ line, product }) => ({
-      name: product.name,
+    items.map(({ line, product, option }) => ({
+      name: `${product.name} (${line.weight})`,
       quantity: line.quantity,
-      price: product.price,
+      price: option.price,
     }))
   );
 
@@ -98,39 +99,47 @@ export function CartDrawer() {
             ) : (
               <>
                 <ul className="flex-1 divide-y divide-ink/10 overflow-y-auto px-6">
-                  {items.map(({ line, product }) => (
-                    <li key={product.slug} className="flex gap-4 py-5">
-                      <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-lg bg-white ring-1 ring-ink/5 ring-inset">
+                  {items.map(({ line, product, option }) => (
+                    <li
+                      key={`${product.slug}-${line.weight}`}
+                      className="flex gap-4 py-5"
+                    >
+                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-white ring-1 ring-ink/5 ring-inset">
                         <Image
                           src={product.image.src}
                           alt=""
                           fill
-                          sizes="64px"
+                          sizes="80px"
                           className="object-cover"
                         />
                       </div>
                       <div className="flex flex-1 flex-col">
                         <div className="flex items-start justify-between gap-2">
-                          <p className="font-display text-base text-ink">
-                            {product.name}
+                          <div>
+                            <p className="font-display text-base text-ink">
+                              {product.name}
+                            </p>
+                            <p className="mt-0.5 text-xs text-ink-soft">
+                              {product.variant} &middot; {line.weight}
+                            </p>
+                          </div>
+                          <p className="shrink-0 text-sm font-medium text-ink">
+                            {formatINR(option.price)}
                           </p>
+                        </div>
+                        <div className="mt-auto flex items-center justify-end gap-3 pt-2">
                           <button
                             type="button"
-                            onClick={() => removeItem(product.slug)}
-                            aria-label={`Remove ${product.name} from cart`}
+                            onClick={() => removeItem(product.slug, line.weight)}
+                            aria-label={`Remove ${product.name} (${line.weight}) from cart`}
                             className="text-ink-soft hover:text-emerald-800"
                           >
                             <Trash2 size={16} />
                           </button>
-                        </div>
-                        <p className="mt-0.5 text-sm text-ink-soft">
-                          {formatINR(product.price)} each
-                        </p>
-                        <div className="mt-auto pt-2">
                           <QuantityStepper
                             value={line.quantity}
                             onChange={(next) =>
-                              updateQuantity(product.slug, next)
+                              updateQuantity(product.slug, line.weight, next)
                             }
                           />
                         </div>

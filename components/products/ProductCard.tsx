@@ -2,21 +2,20 @@ import Image from "next/image";
 import clsx from "clsx";
 import type { Product } from "@/lib/products";
 import { AddToCartControl } from "@/components/products/AddToCartControl";
-import { formatINR } from "@/lib/currency";
 
-const accentRing: Record<Product["accent"], string> = {
-  gold: "group-hover:ring-gold-400/60",
-  lilac: "group-hover:ring-lilac-200",
-  rose: "group-hover:ring-rose-200",
+const accentWash: Record<Product["accent"], string> = {
+  gold: "bg-gold-400/10",
+  lilac: "bg-lilac-200/40",
+  rose: "bg-rose-200/40",
 };
 
 export function ProductCard({ product }: { product: Product }) {
   return (
-    <article className="group mx-auto flex h-full w-full max-w-sm flex-col">
+    <article className="group mx-auto flex h-full w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-ink/10 bg-ivory transition-colors duration-300 hover:border-ink/20">
       <div
         className={clsx(
-          "relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-white ring-1 ring-ink/5 ring-inset transition-all duration-300",
-          accentRing[product.accent]
+          "relative aspect-square w-full overflow-hidden",
+          accentWash[product.accent]
         )}
       >
         <Image
@@ -26,39 +25,16 @@ export function ProductCard({ product }: { product: Product }) {
           sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 24vw"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
+        <span className="absolute left-3 top-3 rounded-full bg-ivory/95 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-gold-700 ring-1 ring-gold-700/20">
+          {product.tagline}
+        </span>
       </div>
 
-      <div className="mt-4 flex flex-1 flex-col">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold-700">
-          {product.tagline}
-        </p>
-        <h3 className="mt-1 font-display text-lg text-ink">{product.name}</h3>
-        <p className="mt-0.5 text-sm text-ink-soft">{product.variant}</p>
-        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink-soft">
-          {product.description}
-        </p>
-
-        <ul className="mt-3 flex flex-wrap gap-1.5">
-          {product.attributes.map((attribute) => (
-            <li
-              key={attribute}
-              className="rounded-full border border-emerald-800/15 px-2.5 py-0.5 text-[11px] font-medium text-emerald-800"
-            >
-              {attribute}
-            </li>
-          ))}
-        </ul>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-display text-lg text-ink">{product.name}</h3>
 
         <div className="mt-auto pt-4">
-          <div className="flex items-baseline justify-between">
-            <span className="text-sm text-ink-soft">{product.weight}</span>
-            <span className="font-display text-lg text-ink">
-              {formatINR(product.price)}
-            </span>
-          </div>
-          <div className="mt-3 border-t border-ink/10 pt-3">
-            <AddToCartControl product={product} />
-          </div>
+          <AddToCartControl product={product} />
         </div>
       </div>
     </article>

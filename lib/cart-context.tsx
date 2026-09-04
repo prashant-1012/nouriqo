@@ -13,6 +13,7 @@ const MAX_QUANTITY = 20;
 
 export type CartLine = {
   slug: string;
+  weight: string;
   quantity: number;
 };
 
@@ -22,9 +23,9 @@ type CartContextValue = {
   isOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
-  addItem: (slug: string, quantity: number) => void;
-  updateQuantity: (slug: string, quantity: number) => void;
-  removeItem: (slug: string) => void;
+  addItem: (slug: string, weight: string, quantity: number) => void;
+  updateQuantity: (slug: string, weight: string, quantity: number) => void;
+  removeItem: (slug: string, weight: string) => void;
   clearCart: () => void;
 };
 
@@ -55,33 +56,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [lines, hasHydrated]);
 
-  function addItem(slug: string, quantity: number) {
+  function addItem(slug: string, weight: string, quantity: number) {
     setLines((prev) => {
-      const existing = prev.find((line) => line.slug === slug);
+      const existing = prev.find(
+        (line) => line.slug === slug && line.weight === weight
+      );
       if (existing) {
         return prev.map((line) =>
-          line.slug === slug
+          line.slug === slug && line.weight === weight
             ? { ...line, quantity: Math.min(MAX_QUANTITY, line.quantity + quantity) }
             : line
         );
       }
-      return [...prev, { slug, quantity: Math.min(MAX_QUANTITY, quantity) }];
+      return [...prev, { slug, weight, quantity: Math.min(MAX_QUANTITY, quantity) }];
     });
     setIsOpen(true);
   }
 
-  function updateQuantity(slug: string, quantity: number) {
+  function updateQuantity(slug: string, weight: string, quantity: number) {
     setLines((prev) =>
       prev.map((line) =>
-        line.slug === slug
+        line.slug === slug && line.weight === weight
           ? { ...line, quantity: Math.max(1, Math.min(MAX_QUANTITY, quantity)) }
           : line
       )
     );
   }
 
-  function removeItem(slug: string) {
-    setLines((prev) => prev.filter((line) => line.slug !== slug));
+  function removeItem(slug: string, weight: string) {
+    setLines((prev) =>
+      prev.filter((line) => !(line.slug === slug && line.weight === weight))
+    );
   }
 
   function clearCart() {
