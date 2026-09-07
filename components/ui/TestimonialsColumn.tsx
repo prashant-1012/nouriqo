@@ -19,7 +19,7 @@ export function TestimonialsColumn({
   const cards = testimonials.map((testimonial, i) => (
     <div
       key={i}
-      className="w-full max-w-xs rounded-2xl border border-ink/10 bg-ivory p-8"
+      className="w-full max-w-xs rounded-2xl border border-ink/10 bg-ivory p-8 shadow-lg shadow-emerald-900/10"
     >
       <p className="text-sm leading-relaxed text-ink-soft">{testimonial.text}</p>
       <div className="mt-5 flex items-center gap-3">

@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-08 (5) — Testimonial cards: shadow restored
+
+User pointed out the testimonial cards were missing the shadow shown in
+their reference screenshot and asked directly why, given they'd
+supplied it in the original prompt. It was dropped intentionally back
+in the first testimonials pass to match `DESIGN_SYSTEM.md`'s site-wide
+"no card shadows" rule — but the user has now asked for it twice
+(original prompt + this correction), so restored it as an explicit,
+scoped exception rather than re-litigating the site-wide rule.
+`TestimonialsColumn.tsx` cards gained `shadow-lg shadow-emerald-900/10`
+— same `shadow-lg` size as the reference component's
+`shadow-lg shadow-primary/10`, recolored to this project's actual
+brand token (`--color-primary` doesn't exist here) instead of a raw
+default gray shadow. `DESIGN_SYSTEM.md`'s Radius & Shadows section
+updated to record this as a named, scoped exception rather than
+silently contradicting itself.
+
+**Verification:** `lint`/`build` clean; Playwright screenshot confirmed
+the soft shadow now renders under each card.
+
 ## 2026-09-08 (4) — Nav leaf indicator: outline, not filled
 
 User compared the line—leaf—line motif against a bare-leaf-only

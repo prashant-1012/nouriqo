@@ -92,11 +92,17 @@ default treatment.
   hero is the one deliberate exception — full-bleed, no radius — since
   it runs edge-to-edge as a background with the headline overlaid on it,
   not as a contained card (see `WEBSITE_STRUCTURE.md`).
-- No card shadows anywhere on the site — kept out deliberately, to avoid
-  the generic "elevated card" template style the brief warns against.
-  (An earlier version of the hero used one soft long shadow on its image
-  card; removed 2026-09-05 when the hero became full-bleed and stopped
-  being a card at all.)
+- No card shadows on the site as the default — kept out deliberately, to
+  avoid the generic "elevated card" template style the brief warns
+  against. (An earlier version of the hero used one soft long shadow on
+  its image card; removed 2026-09-05 when the hero became full-bleed
+  and stopped being a card at all.) **One explicit, scoped exception:**
+  `/testimonials` cards (`components/ui/TestimonialsColumn.tsx`) use
+  `shadow-lg shadow-emerald-900/10` — the reference component supplied
+  for that task had a shadow, it was dropped to match this rule, then
+  restored at the user's explicit repeated request. Don't treat this as
+  license to add shadows elsewhere without the same kind of explicit
+  ask — see `CHANGELOG.md` 2026-09-08.
 - No glassmorphism, no blur panels, no neumorphism.
 
 ## Buttons
