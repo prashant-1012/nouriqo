@@ -9,6 +9,7 @@ app/
   gifting/page.tsx        Gifting
   blogs/page.tsx          Journal (blog index)
   blogs/[slug]/page.tsx   individual post — generateStaticParams + generateMetadata
+  testimonials/page.tsx   Testimonials
   contact/page.tsx        Contact
 
 components/
@@ -66,6 +67,11 @@ components/
     OurCraft.tsx            `/sweets`
     BrandStory.tsx          `/story`
     Gifting.tsx             `/gifting`
+    Testimonials.tsx         `/testimonials` — three auto-scrolling columns
+                             (components/ui/TestimonialsColumn.tsx) built from
+                             lib/testimonials.ts. Content is illustrative, not
+                             from real named customers — see the note atop
+                             lib/testimonials.ts and CONTENT_GUIDELINES.md
     FinalCta.tsx             Home + `/gifting`
     EnquiryForm.tsx           "use client" — `/contact`, above ContactInfo. Name/contact/
                              email/message fields; submits by building a WhatsApp deep link
@@ -77,6 +83,14 @@ components/
   ui/
     Button.tsx              primary/secondary/ghost/inverted link-button
     SectionHeading.tsx       eyebrow + title + description, light/dark tone
+    TestimonialsColumn.tsx   "use client" — one auto-scrolling column of
+                             testimonial cards (framer-motion translateY
+                             loop, reduced-motion aware — same if/return
+                             pattern as motion/Reveal.tsx). Each card's
+                             avatar is a next/image render of a photo from
+                             lib/testimonials.ts's image field — see the
+                             note there and in ASSET_MAP.md's testimonials/
+                             section on where those photos came from
   decorative/
     Motif.tsx                thin wrapper around next/image for aria-hidden decorative PNGs
   motion/
@@ -103,6 +117,9 @@ lib/
   benefits.ts                Benefit type + data for WhyNouriqo's feature list — icon, title,
                              description (4 items; not every icon.png in public/assets/icons
                              is referenced here, see ASSET_MAP.md)
+  testimonials.ts             Testimonial type + data (name, role, text) for the
+                             /testimonials page — illustrative content, not from real named
+                             customers; see the source comment and CONTENT_GUIDELINES.md
   nav-links.ts               shared nav link list + isNavLinkActive(pathname, href) — real
                               paths, not anchors; used by both NavLinks and MobileMenu
   cart-context.tsx            "use client": CartProvider + useCart() — lines are keyed by

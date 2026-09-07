@@ -35,10 +35,35 @@ Per the brief, none of the following are invented anywhere on the site:
 - Ingredients beyond what is visible in the supplied photography (cashews,
   almonds, pistachios, saffron, ghee, rice)
 - Awards or press mentions
-- Customer reviews or testimonials — **the Trust/Testimonials section from
-  the suggested homepage flow was deliberately omitted** rather than
-  filled with placeholder reviews, since a fake review reads as real
-  content to a visitor in a way a bracketed placeholder does not.
+- Customer reviews or testimonials — **originally deliberately omitted**
+  from the site rather than filled with placeholder reviews, since a
+  fake review reads as real content to a visitor in a way a bracketed
+  placeholder does not. **Overridden 2026-09-08:** a `/testimonials`
+  page now exists (`components/sections/Testimonials.tsx`,
+  `lib/testimonials.ts`) with nine illustrative, fabricated
+  testimonials — fictional names, no photos (see note below), and
+  copy limited to sentiment already consistent with facts established
+  elsewhere on the site (desi ghee, no maida, Since 1958, gifting), not
+  new claims. This was built at the user's explicit instruction after
+  this exact conflict was raised and flagged as a departure from the
+  rule above — see `CHANGELOG.md`. **Before this can be treated as
+  launch-ready**, the client should be made aware fabricated
+  testimonials are live and may want them replaced with real ones or
+  removed, given the ASCI/consumer-protection risk of publishing
+  testimonials attributed to people who never said them.
+
+  Photos were initially left out for exactly this reason: the reference
+  component supplied for this task used real Unsplash stock headshots,
+  but Unsplash's own license prohibits using a photographed person's
+  image to imply they endorse a product without their consent — exactly
+  what a fake-customer headshot would do. **Overridden again,
+  2026-09-08:** the user sourced their own stock photos independently
+  (not from Unsplash — filenames match Freepik's convention) and placed
+  them directly in `public/assets/testimonials/` with an explicit
+  instruction to use them as the testimonial profile pictures. Wired in
+  as given. Whatever license terms apply to those specific photos are
+  the user's responsibility, same as any other asset placed directly
+  into this project — see `ASSET_MAP.md`'s `testimonials/` section.
 - Company history beyond "Since 1958" (sourced from the client's own
   packaging, not invented) — no founder story, no specific city/factory
   location, no founding narrative details.

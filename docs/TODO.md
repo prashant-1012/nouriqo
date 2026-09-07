@@ -29,14 +29,36 @@ a design polish pass (theme toggle was withdrawn, not deferred — see
       "placeholders, pending verified credentials" disclaimer without
       doing one of those two things first.
 
+- [ ] **`components/sections/Testimonials.tsx` (`/testimonials`) renders
+      nine fabricated testimonials attributed to fictional named
+      people.** Added 2026-09-08 at the user's explicit instruction,
+      after this exact request was flagged as conflicting with
+      `CONTENT_GUIDELINES.md`'s original "no fake reviews" rule — see
+      `CHANGELOG.md` and the note atop `lib/testimonials.ts`. Unlike
+      Certifications, this ships with **no on-page disclaimer** (that
+      option was explicitly declined). **Before this goes to a live or
+      client-facing build:** confirm the client is aware fabricated
+      testimonials are on the site and is comfortable with that risk
+      (consumer-protection/advertising-standards rules in most
+      jurisdictions, including India's ASCI code, restrict presenting
+      testimonials that don't come from real customers), or replace
+      `lib/testimonials.ts` with real customer quotes.
+
 ## Needed from the client before launch
 
 - [ ] Real contact details (email, phone, address) to replace the
       bracketed placeholders in `Footer.tsx`.
 - [ ] Real social media URLs, if any exist — none are currently linked
       (deliberately, per the brief's "no fabricated links" rule).
-- [ ] Real customer testimonials, if the brand wants a trust section —
-      currently omitted rather than faked.
+- [ ] **Real customer testimonials.** A `/testimonials` page shipped
+      2026-09-08 with nine fabricated illustrative testimonials (see
+      `CONTENT_GUIDELINES.md`'s "What We Do NOT Claim Without
+      Confirmation" section and `lib/testimonials.ts`) — built at
+      explicit user instruction, overriding this project's original
+      "no fake reviews" rule. Flagging here the same way as the
+      Certifications BLOCKING item above: the client should confirm
+      they're aware fabricated testimonials are live before this goes
+      to a real launch, and ideally supply real ones to replace them.
 - [x] Pricing — added 2026-09-04 (see `ROADMAP.md` #5), but it's
       placeholder pricing the client explicitly called provisional.
       **Still needed:** confirmation of real, final retail pricing

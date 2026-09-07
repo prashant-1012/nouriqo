@@ -1,5 +1,100 @@
 # Changelog
 
+## 2026-09-08 (2) — Testimonial profile photos
+
+The testimonials shipped earlier the same day used a plain initials
+avatar instead of a photo, specifically because Unsplash's license
+(the source used by the reference component for that task) prohibits
+implying a photographed person endorses a product without their
+consent. User then supplied 11 of their own stock photos directly into
+`public/assets/profile pics face/` (Freepik-style filenames) with an
+explicit instruction to use them as the testimonial profile pictures.
+
+- Reorganized into `public/assets/testimonials/testimonial-<name>.jpg`
+  (this project's standard asset-naming convention — see `ASSET_MAP.md`)
+  instead of leaving a folder with spaces in its name, which also would
+  have produced broken/awkward `next/image` `src` paths.
+- Originals preserved untouched (original filenames) in
+  `public/assets/_source/`, matching how every other client-supplied
+  asset in this project is handled.
+- 9 of the 11 photos matched to the 9 existing testimonial names by
+  gender; the remaining 2 catalogued in `ASSET_MAP.md` as spares for a
+  future testimonial, same pattern as the unused "Why Nouriqo" benefit
+  icons.
+- `Testimonial` type (`lib/testimonials.ts`) gained an `image` field;
+  `TestimonialsColumn.tsx` now renders `next/image` instead of an
+  initials div.
+- `CONTENT_GUIDELINES.md` updated: the Unsplash-license reasoning still
+  stands as the reason initials were used *first*, but no longer
+  describes the current state — these photos aren't from Unsplash, and
+  whatever license applies to them is the user's own responsibility as
+  the one who sourced and supplied them directly, same as any other
+  asset placed into this project.
+
+**Verification:** `lint`/`build` clean; Playwright screenshot at
+1440px and 390px confirmed all 9 photos render correctly (no broken
+images, no 4xx/5xx image requests, no console errors) with correct
+name/photo pairing.
+
+## 2026-09-08 — Testimonials page (nav item #6)
+
+New `/testimonials` route (`PageHeader` + `components/sections/
+Testimonials.tsx`), added to the main nav between Blogs and Contact Us
+(`lib/nav-links.ts`) and to the footer's Explore column, per direct
+user request. Three auto-scrolling columns
+(`components/ui/TestimonialsColumn.tsx`, `"use client"`, `framer-motion`
+`translateY` loop, reduced-motion aware via the same if/return pattern
+as `motion/Reveal.tsx`) built from a new `lib/testimonials.ts`.
+
+**Content-policy conflict, raised and then explicitly overridden.**
+`CONTENT_GUIDELINES.md` already had a rule against fabricated
+testimonials, with a stated reason ("a fake review reads as real
+content to a visitor in a way a bracketed placeholder does not") — this
+project had previously omitted a testimonials section for exactly that
+reason. Flagged this directly to the user before writing any content;
+the user explicitly chose to proceed with fabricated testimonials
+anyway. Nine illustrative testimonials were written (fictional Indian
+names, sentiment consistent with facts already established elsewhere
+on the site — desi ghee, no maida, Since 1958, gifting — no new claims,
+no health/certification claims). Logged as a BLOCKING item in
+`TODO.md` (same treatment as the `Certifications` placeholder-logo
+item) and noted inline in `CONTENT_GUIDELINES.md` and
+`lib/testimonials.ts`, since the client should be made aware this
+content is fabricated before a real launch — this override changes the
+site's actual content, unlike an internal engineering decision, so it
+needed to stay visible in the docs even though the user declined an
+on-page disclaimer.
+
+**Reference component adapted, not pasted verbatim.** A 21st.dev-style
+component was supplied for this task (`motion/react` import, generic
+`shadow-primary` card shadow, Unsplash headshot photos, ERP-software
+copy). Rewrote it against this project's actual stack and rules
+instead:
+- `framer-motion` (already a dependency) instead of adding the separate
+  `motion` package as a duplicate animation library.
+- No card shadow — `DESIGN_SYSTEM.md` explicitly rules them out
+  site-wide ("no shadows... to avoid the generic 'elevated card'
+  template style"). Cards use `border border-ink/10` only, matching
+  `Partners.tsx`'s logo tiles.
+- No stock photography. Unsplash's license prohibits using a
+  photographed person's image to imply they endorse a product without
+  consent — precisely what a fake-customer headshot would do — and this
+  site otherwise uses zero stock imagery of real people anywhere
+  (`PROJECT_CONTEXT.md`'s "real assets only" rule). Cards render a
+  plain initials avatar instead.
+- Copy rewritten entirely — the supplied testimonials were about
+  implementing an ERP system, unrelated to a sweets brand.
+
+**Nav capacity re-verified, not assumed.** `ROADMAP.md` #9 had capped
+the main nav at 5 items, having found 5 already tight (wrapped at the
+`md` breakpoint before that item moved the switch-over to `lg`). Rather
+than assume a 6th item was safe, re-ran the same kind of check this
+project already does for nav changes: `next build`/lint clean, then a
+Playwright pass at 1024/1152/1280/1440px (the tightest four widths)
+confirmed no wrapping, no horizontal overflow, and a consistent 81px
+header height at every width; a 390px mobile-drawer check confirmed all
+6 links render correctly with active-state highlighting.
+
 ## 2026-09-05 (7) — Contact page enquiry form
 
 New `EnquiryForm` (`components/sections/EnquiryForm.tsx`), added to

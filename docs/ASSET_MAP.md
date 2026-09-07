@@ -136,6 +136,32 @@ on a future ingredients/trust or product detail page.
 | `icon-gifting.png` | Wrapped gift box | Available — could accent the Gifting section |
 | `icon-trust-shield.png` | Shield with leaf | Available — quality/trust messaging |
 
+## `testimonials/` (11 — `/testimonials` page profile photos)
+
+**Not client-supplied.** Unlike every other asset in this map, these
+are stock photography the user sourced independently (filenames match
+Freepik's download-filename convention) and placed directly into the
+project, specifically to serve as profile photos for the fabricated
+testimonials in `lib/testimonials.ts` — see `CONTENT_GUIDELINES.md`
+for the content-policy context and `CHANGELOG.md` 2026-09-08 for how
+this happened. Originals preserved untouched (original filenames) in
+`_source/`; renamed here to match this map's `testimonial-<name>.jpg`
+convention, matching how `lib/testimonials.ts` references them.
+
+| File | Depicts | Used for |
+|---|---|---|
+| `testimonial-ananya-iyer.jpg` | Young woman, outdoor portrait | Ananya Iyer |
+| `testimonial-rohan-malhotra.jpg` | Indian man, park | Rohan Malhotra |
+| `testimonial-priya-deshmukh.jpg` | Indian woman, indoor portrait | Priya Deshmukh |
+| `testimonial-arjun-nair.jpg` | Bearded Indian man, outdoor portrait | Arjun Nair |
+| `testimonial-meera-krishnan.jpg` | Indian woman, indoor portrait | Meera Krishnan |
+| `testimonial-karan-bhatia.jpg` | Man with mustache/beard | Karan Bhatia |
+| `testimonial-sana-qureshi.jpg` | Young woman, park | Sana Qureshi |
+| `testimonial-devika-rao.jpg` | Woman, studio portrait | Devika Rao |
+| `testimonial-vikram-chauhan.jpg` | Young man, studio portrait | Vikram Chauhan |
+| `testimonial-spare-01.jpg` | Woman, outdoor/forest | Not currently used — available for a future testimonial |
+| `testimonial-spare-02.jpg` | Young woman, studio portrait | Not currently used — available for a future testimonial |
+
 ## `decorative/` (24 — botanical & gold motifs)
 
 Used sparingly (1–2 per section, small scale, `aria-hidden`) via the

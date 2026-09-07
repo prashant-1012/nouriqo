@@ -59,6 +59,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/testimonials" className="text-ink-soft hover:text-emerald-800">
+                  Testimonials
+                </Link>
+              </li>
+              <li>
                 <Link href="/contact" className="text-ink-soft hover:text-emerald-800">
                   Contact Us
                 </Link>

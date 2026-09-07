@@ -14,6 +14,7 @@ item now navigates to a real page instead of scrolling the homepage.
 | `/gifting` | *(footer only — see note below)* | "Gifting" | `PageHeader`, `Gifting`, `FinalCta` |
 | `/blogs` | Blogs | "From the Nouriqo Kitchen" | `PageHeader`, `BlogGrid` |
 | `/blogs/[slug]` | *(reached from `/blogs`)* | the post title | `BlogPostHeader`, cover image, `BlogContent` |
+| `/testimonials` | Testimonials | "Testimonials" | `PageHeader`, `Testimonials` |
 | `/contact` | Contact Us | "Get in touch" | `PageHeader`, `ContactInfo` |
 
 **Nav label ≠ route slug, deliberately.** As of the 2026-09-04 nav
@@ -22,8 +23,16 @@ Contact Us, but the underlying routes and page `<h1>`s were left as
 `/sweets` ("Our Sweets"), `/story` ("Our Story"), `/contact` — renaming
 folders would have meant touching every internal reference across the
 codebase for no functional benefit. `/gifting` dropped out of the main
-nav entirely (no room for a 6th item) but still exists, linked from the
-footer and from a small callout on `/sweets`.
+nav entirely but still exists, linked from the footer and from a small
+callout on `/sweets`.
+
+**Testimonials added as a 6th main nav item (see `CHANGELOG.md`).**
+`ROADMAP.md` #9 had assumed 5 items was the ceiling the `lg:` (1024px)
+breakpoint could hold without wrapping — re-verified with Playwright at
+1024/1152/1280/1440px with the 6th item in place: still a consistent
+81px header, no wrapping, no horizontal overflow. `/gifting` still sits
+out of the main nav (footer + `/sweets` callout only), so there was no
+need to revisit that call.
 
 `Navbar` and `Footer` render once, in `app/layout.tsx`, and persist
 across every route — as does `CartDrawer` (see `COMPONENT_ARCHITECTURE.md`
