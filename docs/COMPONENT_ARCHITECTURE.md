@@ -19,7 +19,8 @@ components/
   navigation/
     Navbar.tsx            server component: logo, sticky header, renders NavLinks + CartButton
     NavLinks.tsx           "use client" (needs usePathname()): desktop nav, animated
-                           active-link underline via Framer Motion layoutId
+                           active-link indicator (line — lucide Leaf — line, echoing the
+                           brand mark) via Framer Motion layoutId
     MobileMenu.tsx         "use client": hamburger + animated drawer, active-row highlight
   cart/
     CartButton.tsx          "use client": navbar icon + item-count badge, opens the drawer
@@ -145,16 +146,32 @@ instead of the viewport, breaking it. `CartDrawer` now renders directly
 in `app/layout.tsx` instead. Keep this in mind before adding any other
 `fixed`-positioned overlay as a descendant of `Navbar`.
 
-**`NavLinks`' animated underline depends on the root layout staying
-mounted across navigations.** `Navbar` (and therefore `NavLinks`) lives
-in `app/layout.tsx`, and Next.js App Router keeps shared layouts
-mounted across route transitions — only `{children}` swaps out. That's
-what lets Framer Motion's `layoutId="nav-active-underline"` animate the
-underline sliding from the old active link to the new one, instead of
-it just disappearing and reappearing. If `Navbar` ever moves somewhere
+**`NavLinks`' animated active indicator depends on the root layout
+staying mounted across navigations.** `Navbar` (and therefore
+`NavLinks`) lives in `app/layout.tsx`, and Next.js App Router keeps
+shared layouts mounted across route transitions — only `{children}`
+swaps out. That's what lets Framer Motion's
+`layoutId="nav-active-indicator"` animate the line—leaf—line motif
+sliding (and resizing, since it spans `inset-x-0` of each link and link
+widths differ) from the old active link to the new one, instead of it
+just disappearing and reappearing. If `Navbar` ever moves somewhere
 that gets remounted on navigation, this animation silently degrades to
 an instant jump (still correct, just less polished) — not a functional
-bug, but worth knowing if the underline animation stops working.
+bug, but worth knowing if the animation stops working.
+
+**Why a leaf glyph, not the underline bar it replaced (2026-09-08).**
+Originally a flat 2px `bg-emerald-800` bar. Replaced with a small
+`lucide-react` `Leaf` icon flanked by two thin lines
+(`h-px flex-1 bg-emerald-800/40`), echoing the two-leaf logo mark
+instead of a generic underline — per `ui-ux-pro-max`'s
+`no-emoji-icons` rule, an actual SVG icon (already a dependency, matches
+`DESIGN_SYSTEM.md`'s "UI chrome uses lucide-react" convention) rather
+than a literal 🍃 emoji character. `size={12}`, default lucide outline
+style (no `fill` override — an earlier pass set `fill="currentColor"`
+for legibility, but that renders a solid silhouette rather than the
+actual lucide icon and was reverted at the user's explicit request);
+the whole indicator is `aria-hidden` since `aria-current="page"` on the
+`Link` itself already carries the semantic state.
 
 **Navigation is route-based, not anchor-based.** Every internal link uses
 `next/link`'s `<Link>` (not a plain `<a href="#...">`) so navigating

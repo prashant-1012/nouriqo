@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
+import { Leaf } from "lucide-react";
 import clsx from "clsx";
 import { navLinks, isNavLinkActive } from "@/lib/nav-links";
 
@@ -30,14 +31,23 @@ export function NavLinks() {
               {link.label}
               {isActive && (
                 <motion.span
-                  layoutId="nav-active-underline"
-                  className="absolute inset-x-0 -bottom-1 h-[2px] rounded-full bg-emerald-800"
+                  layoutId="nav-active-indicator"
+                  aria-hidden="true"
+                  className="absolute inset-x-0 -bottom-3 flex items-center justify-center gap-1"
                   transition={
                     prefersReducedMotion
                       ? { duration: 0 }
                       : { type: "spring", stiffness: 380, damping: 32 }
                   }
-                />
+                >
+                  <span className="h-px flex-1 bg-emerald-800/40" />
+                  <Leaf
+                    size={12}
+                    strokeWidth={1.5}
+                    className="shrink-0 text-emerald-800"
+                  />
+                  <span className="h-px flex-1 bg-emerald-800/40" />
+                </motion.span>
               )}
             </Link>
           </li>

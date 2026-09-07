@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-09-08 (4) — Nav leaf indicator: outline, not filled
+
+User compared the line—leaf—line motif against a bare-leaf-only
+variant (no flanking lines); kept the line—leaf—line version. Separately
+flagged that the leaf was rendering as a solid silhouette instead of a
+plain lucide outline icon — caused by an explicit `fill="currentColor"`
+prop set in the previous pass (to improve legibility at 12px), which
+overrides lucide's default `fill="none"`. Removed the `fill` prop
+entirely so it renders as the actual default lucide `Leaf` outline
+(stroke only, `strokeWidth={1.5}`), matching what the user expected
+from a plain `<Leaf />` import.
+
+**Verification:** `lint`/`build` clean; Playwright close-up screenshot
+confirmed the icon now renders as a thin outline, not filled.
+
+## 2026-09-08 (3) — Nav active-link indicator: leaf motif, not a bar
+
+Replaced the desktop nav's flat 2px underline bar with a small
+line—leaf—line motif (`─── 🍃 ───`, but built as an actual `lucide-react`
+`Leaf` SVG rather than the emoji — flagged by the `ui-ux-pro-max` skill's
+`no-emoji-icons` rule) that echoes the brand's two-leaf logo mark.
+`components/navigation/NavLinks.tsx`: `layoutId` renamed
+`nav-active-underline` → `nav-active-indicator`; same Framer Motion
+spring transition and reduced-motion handling as before (unchanged),
+now animating a flex row (`line — Leaf size=12 fill="currentColor" —
+line`) instead of a single bar. Still spans `inset-x-0` of each link, so
+the shared-layout animation still resizes smoothly between short
+("Home") and long ("Contact Us") labels, not just sliding position.
+
+Consulted `ui-ux-pro-max` and `ui-styling` per the user's explicit
+request before implementing. Icon choice (`lucide-react`, already a
+dependency) follows `DESIGN_SYSTEM.md`'s existing "UI chrome uses
+lucide-react" convention rather than introducing a new icon library or
+reaching for one of the botanical PNG decorative motifs (those are
+sized/positioned for page-content decoration via `Motif`, not a
+10-12px functional nav-state indicator).
+
+**Verification:** `lint`/`build` clean; Playwright screenshots at
+1280px confirmed the motif renders correctly on both a short active
+label (Home) and a long one (Contact Us), and a mid-transition capture
+confirmed the slide/resize animation between nav items still works.
+
 ## 2026-09-08 (2) — Testimonial profile photos
 
 The testimonials shipped earlier the same day used a plain initials
