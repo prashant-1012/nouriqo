@@ -7,6 +7,7 @@ import {
   useState,
   ReactNode,
 } from "react";
+import type { Product } from "@/lib/products";
 
 const STORAGE_KEY = "nouriqo-cart-v1";
 const MAX_QUANTITY = 20;
@@ -27,11 +28,27 @@ type CartContextValue = {
   updateQuantity: (slug: string, weight: string, quantity: number) => void;
   removeItem: (slug: string, weight: string) => void;
   clearCart: () => void;
+  /** True once the one-time localStorage hydration effect below has run.
+   * A consumer that wants to clear the cart on mount (ClearCartOnMount)
+   * must wait for this first — child effects fire before parent effects
+   * on mount, so clearing immediately would just get overwritten by this
+   * provider's own hydration effect reading the still-stale storage. */
+  hasHydrated: boolean;
+  /** Snapshot of the product catalog, fetched server-side in app/layout.tsx
+   * and passed in as a prop — lets client components (CartDrawer) look up
+   * product/price details without querying the database themselves. */
+  products: Product[];
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-export function CartProvider({ children }: { children: ReactNode }) {
+export function CartProvider({
+  children,
+  products,
+}: {
+  children: ReactNode;
+  products: Product[];
+}) {
   const [lines, setLines] = useState<CartLine[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [hasHydrated, setHasHydrated] = useState(false);
@@ -107,6 +124,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         updateQuantity,
         removeItem,
         clearCart,
+        hasHydrated,
+        products,
       }}
     >
       {children}

@@ -76,6 +76,36 @@ a design polish pass (theme toggle was withdrawn, not deferred — see
       company-identification lines. Currently set to the brand name,
       "Nouriqo," per the client's explicit answer — flagging only in
       case PayU's own KYC needs a distinct registered entity name.
+- [ ] **Real shipping charge.** `lib/config.ts`'s `SHIPPING_CHARGE` is a
+      flat ₹50 per order — an explicit placeholder the client asked for
+      rather than a courier-rate calculation, added 2026-09-13 alongside
+      the checkout build. Confirm the real rate (or rule, if it should
+      vary by weight/location) before launch.
+- [ ] **PayU live credentials, at cutover.** The checkout/payment flow
+      (`lib/payu.ts`, `.env`'s `PAYU_KEY`/`PAYU_SALT`/`PAYU_ENV`) is built
+      and tested against sandbox-shaped placeholder credentials — see
+      `ECOMMERCE_BUILDOUT.md` Phase 3. Before this goes live: (1) a real
+      PayU **test** key/salt (from the PayU dashboard, Test Mode toggle)
+      to run one real transaction through PayU's actual hosted page —
+      not yet done, since that needs the client's PayU account access,
+      not just the placeholder values used for local development; (2)
+      at cutover, the real **live** key/salt and `PAYU_ENV=production`.
+- [x] The real Super Admin account — created 2026-09-14 via
+      `scripts/create-admin.ts` (phone `7972052896`, name "Super Admin"
+      as a placeholder display name — there's no self-edit-profile
+      screen yet to change it; ask if that's wanted). Password was
+      generated and shared with the client directly, not recorded here.
+      **Still worth doing:** the client should change this password
+      once a self-service "change password" screen exists (not built
+      yet — `scripts/create-admin.ts` re-run is the only reset path
+      today).
+- [ ] **Product image uploads are out of scope for now.** Admin can
+      add/edit/delete products (`/admin/products`), but the image field
+      is a text path (e.g. `/assets/products/example.jpg`), not a file
+      upload — the actual image file still needs to be placed into
+      `public/assets/products/` some other way (by a developer, or a
+      future upload feature). A deliberate scope limit, not an
+      oversight — see `ECOMMERCE_BUILDOUT.md` Phase 4.
 
 - [x] Phone — `+91 99606 25495` added 2026-09-13 to `ContactInfo.tsx`,
       `Footer.tsx`, and `WHATSAPP_ORDER_NUMBER` (`lib/config.ts`), per
@@ -116,24 +146,22 @@ a design polish pass (theme toggle was withdrawn, not deferred — see
       it's a client-specified rule, not invented, but still pairs with
       the same "indicative and may change" pricing disclaimer above.
 
-## Ecommerce build-out (not started — brief explicitly says don't fake it)
+## Ecommerce build-out
 
-The current site is a brand + catalog page, not a working store. To make
-it transactional:
+Full plan now lives in **`ECOMMERCE_BUILDOUT.md`** (added 2026-09-13)
+— a 5-phase plan (Website → Backend/Postgres → PayU → Admin →
+Shiprocket) covering the real payment gateway, order system, admin
+dashboard, and shipping that this section used to stub out. This
+section now just keeps the historical log of what shipped before that
+plan existed:
 
-- [ ] `/products/[slug]` route + `ProductDetails`, `ProductGallery`,
-      `ProductBenefits` components (architecture is ready for this —
-      `lib/products.ts` already has a `slug` per product).
 - [x] Cart state + WhatsApp checkout — done 2026-09-04, see `ROADMAP.md`
       #4 and `lib/cart-context.tsx` / `components/cart/`. No payment
       gateway involved — checkout is a `wa.me` deep link with an
       itemized message; the client confirms/adjusts the order over chat.
-- [ ] A real payment gateway integration (Razorpay is the common choice
-      for Indian ecommerce) remains a further-out option if WhatsApp
-      checkout isn't sufficient long-term.
-- [ ] Order management / confirmation emails — currently the WhatsApp
-      message itself *is* the order; there's no record of it on the
-      site side (no order history, no confirmation email).
+      Whether this stays as a fallback once PayU checkout ships (per
+      `ECOMMERCE_BUILDOUT.md`) is an open decision — see that doc's
+      "Open Decisions" section.
 - [x] "Enquire Now" replaced with "Add to Cart" on `ProductCard` — done
       2026-09-04. (It remains as an explicit link on `/gifting` and
       `/contact` for non-catalog enquiries.)

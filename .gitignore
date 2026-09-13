@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# prisma
+/generated/
+
+# AI-agent skill docs — .agents/skills/ is the real, portable copy;
+# these two are symlinks to it using an absolute, machine-specific path
+# (added by `prisma init`) that would be broken on any other machine/clone
+/.claude/
+/.windsurf/

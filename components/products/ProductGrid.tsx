@@ -2,9 +2,11 @@ import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 import { ProductCard } from "@/components/products/ProductCard";
-import { products } from "@/lib/products";
+import { getProducts } from "@/lib/products-db";
 
-export function ProductGrid() {
+export async function ProductGrid() {
+  const products = await getProducts();
+
   return (
     <section className="bg-ivory py-20 sm:py-28">
       <Container>

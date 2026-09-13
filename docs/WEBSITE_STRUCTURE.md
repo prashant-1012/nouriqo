@@ -1,5 +1,17 @@
 # Website Structure
 
+## Admin panel is a separate app, not part of this sitemap
+
+`/admin/*` (login, dashboard, products, orders, users) is internal
+staff tooling, not a customer-facing route — see
+`COMPONENT_ARCHITECTURE.md` for its structure and `ECOMMERCE_BUILDOUT.md`
+Phase 4 for what it does. Added 2026-09-14, it required restructuring
+every route below into an `app/(site)/` route group, since Next.js
+only allows one `<html>/<body>` root layout per top-level segment tree
+and the admin panel deliberately has its own (no customer Navbar/
+Footer/cart). The route group is invisible in the URL — every path in
+the table below is unchanged.
+
 ## Current Sitemap
 
 Converted from a single-page scroll site into separate routes on
@@ -16,10 +28,15 @@ item now navigates to a real page instead of scrolling the homepage.
 | `/blogs/[slug]` | *(reached from `/blogs`)* | the post title | `BlogPostHeader`, cover image, `BlogContent` |
 | `/testimonials` | Testimonials | "Testimonials" | `PageHeader`, `Testimonials` |
 | `/contact` | Contact Us | "Get in touch" | `PageHeader`, `ContactInfo` |
+| `/products/[slug]` | *(reached from a `ProductCard`)* | the product name | `ProductDetails` — image + copy + `AddToCartControl`, no shared `PageHeader` (its own "Back to Our Sweets" link instead) |
 | `/privacy-policy` | *(footer only)* | "Privacy Policy" | `PageHeader`, `LegalContent` |
 | `/terms-of-service` | *(footer only)* | "Terms of Service" | `PageHeader`, `LegalContent` |
 | `/refund-policy` | *(footer only)* | "Refund & Cancellation Policy" | `PageHeader`, `LegalContent` |
 | `/shipping-policy` | *(footer only)* | "Shipping & Delivery Policy" | `PageHeader`, `LegalContent` |
+| `/checkout` | *(not linked yet — see note below)* | "Checkout" | `PageHeader`, `CheckoutForm` — delivery-details form + order summary |
+| `/checkout/payu-redirect` | *(reached only via order creation)* | none — auto-submits to PayU | `PayuAutoSubmitForm`, no header chrome |
+| `/checkout/failed` | *(reached only via a failed PayU callback)* | "Payment didn't go through" | plain message + "Try Again" link back to `/checkout` |
+| `/order-success` | *(reached only via a successful PayU callback)* | "Thank you, [name]!" | order confirmation + `ClearCartOnMount` |
 
 **Nav label ≠ route slug, deliberately.** As of the 2026-09-04 nav
 restructure (`ROADMAP.md` #9), the main nav shows Home/Shop/About/Blogs/
@@ -65,6 +82,13 @@ there are only 3 SKUs today, so the teaser is the full catalog) and
 `/sweets` (as the dedicated listing, paired with supporting Ingredients/
 Craft content). Not a bug — see `COMPONENT_ARCHITECTURE.md`.
 
+**`/products/[slug]` added 2026-09-13** (`ECOMMERCE_BUILDOUT.md` Phase
+2), reachable by clicking a `ProductCard`'s image or name (previously
+inert — the card was the dead end). No `generateStaticParams`,
+deliberately: unlike `/blogs/[slug]`'s fixed seed posts, products will
+be admin-editable once Phase 4 ships, so this route renders fresh on
+every request rather than freezing prices/descriptions at build time.
+
 ## Page Purpose & Heading Structure
 
 Every route has exactly one `<h1>`. On `/`, it's inside `Hero`. On
@@ -88,11 +112,23 @@ back. `/blogs/[slug]` uses its own `BlogPostHeader` instead (its `h1`
 
 ## CTA Strategy
 
-- **Primary path:** Home → `/sweets` → "Add to Cart" on a product card →
+- **Primary path:** Home → `/sweets` → "Add to Cart" on a product card
+  (or a detour through `/products/[slug]` first, added 2026-09-13, for
+  a visitor who wants the full description/attributes before adding) →
   cart drawer → "Checkout via WhatsApp". This is now a real, working
   conversion path (see `ROADMAP.md` #4) — there's still no payment
   gateway, the "checkout" is a WhatsApp handoff with an itemized order
   message, not a fake add-to-cart that goes nowhere.
+- **The real PayU checkout exists as of 2026-09-13 but isn't linked yet
+  — deliberately.** `/checkout` → `/checkout/payu-redirect` →
+  PayU's hosted page → `/order-success` or `/checkout/failed` is fully
+  built and tested end-to-end against sandbox-shaped credentials (see
+  `ECOMMERCE_BUILDOUT.md` Phase 3), but the cart drawer's button still
+  says "Checkout via WhatsApp" and doesn't point here. Per the agreed
+  plan, WhatsApp checkout stays the only *linked* checkout path until
+  the client's real PayU account is ready — that single swap (point the
+  button at `/checkout`, remove the WhatsApp one) is the Phase 3
+  "cutover" moment, not something that happens piecemeal.
 - **Secondary path:** Home → `/story` for visitors who want brand context
   before products; `/blogs` for visitors arriving via search/editorial
   content, funneled back toward `/sweets` via its nav link and footer.

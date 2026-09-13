@@ -6,13 +6,14 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Trash2 } from "lucide-react";
 import { useCart, type CartLine } from "@/lib/cart-context";
-import { getProductBySlug, type Product, type WeightOption } from "@/lib/products";
+import type { Product, WeightOption } from "@/lib/products";
 import { formatINR } from "@/lib/currency";
 import { buildWhatsAppOrderUrl } from "@/lib/whatsapp";
 import { QuantityStepper } from "@/components/products/QuantityStepper";
 
 export function CartDrawer() {
-  const { lines, isOpen, closeCart, updateQuantity, removeItem } = useCart();
+  const { lines, isOpen, closeCart, updateQuantity, removeItem, products } =
+    useCart();
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
@@ -32,7 +33,7 @@ export function CartDrawer() {
   type CartDisplayItem = { line: CartLine; product: Product; option: WeightOption };
 
   const items: CartDisplayItem[] = lines.flatMap((line) => {
-    const product = getProductBySlug(line.slug);
+    const product = products.find((p) => p.slug === line.slug);
     const option = product?.weightOptions.find((o) => o.weight === line.weight);
     return product && option ? [{ line, product, option }] : [];
   });

@@ -1,3 +1,11 @@
+/**
+ * As of 2026-09-13 (ECOMMERCE_BUILDOUT.md Phase 2), this file is the seed
+ * source for the database (see prisma/seed.ts) — the live site reads
+ * products from the database via lib/products-db.ts instead. Edit prices
+ * or add products through the database (or the future admin dashboard),
+ * not here; this file only matters again if you deliberately re-seed.
+ */
+
 export type WeightOption = {
   weight: string;
   /** Indicative price in INR for this pack size — provisional, see CONTENT_GUIDELINES.md */

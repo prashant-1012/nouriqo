@@ -4,7 +4,16 @@ import { Navbar } from "@/components/navigation/Navbar";
 import { Footer } from "@/components/footer/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { CartProvider } from "@/lib/cart-context";
-import "./globals.css";
+import { getProducts } from "@/lib/products-db";
+import "../globals.css";
+
+// Every route reads through this layout, and several (Home, /sweets, the
+// cart drawer via CartProvider) depend on getProducts()'s live database
+// read. A plain Prisma call — unlike fetch() — doesn't opt a route into
+// dynamic rendering on its own, so without this the product catalog would
+// freeze at build time and admin edits (once Phase 4 ships) would need a
+// redeploy to show up. ISR keeps pages fast while staying reasonably fresh.
+export const revalidate = 60;
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -57,14 +66,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const products = await getProducts();
+
   return (
     <html
       lang="en"
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-ivory text-ink">
-        <CartProvider>
+        <CartProvider products={products}>
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />

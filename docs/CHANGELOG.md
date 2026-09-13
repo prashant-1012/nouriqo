@@ -1,5 +1,383 @@
 # Changelog
 
+## 2026-09-14 (2) — Real Super Admin account created; phone UI treatment
+
+Follow-up to the admin dashboard build: the client asked why they
+couldn't see `/admin/login` yet (answer: nothing from this build-out
+had been committed/pushed — it's all local, uncommitted work; the dev
+server was running locally the whole time) and clarified the phone
+number's format before the real account got created.
+
+**Decision:** `+91` is a fixed UI label, never typed or stored — the
+database holds only the bare 10-digit number (`7972052896`, not
+`+917972052896`). `LoginForm`/`CreateUserForm` now show a static "+91"
+next to the phone input (`pattern="[0-9]{10}"` + `maxLength={10}` for
+a numeric-only, exactly-10-digit field), the Users list displays
+`+91 {phone}`, and `createAdminUser`'s server action enforces the same
+10-digit rule server-side too — the form's `pattern` attribute is a UX
+nicety, not a security boundary, and phone was the only field without
+an equivalent server-side check before this. `scripts/create-admin.ts`
+gained the same validation plus a usage-comment update.
+
+**Real Super Admin account created** via `scripts/create-admin.ts`
+— phone `7972052896`, a cryptographically random password (generated,
+shared with the client directly, never written to a file). Verified
+with a real login (not a test account this time): correct redirect to
+`/admin`, dashboard renders with the real product count. Display name
+is currently the placeholder "Super Admin" — no self-edit-profile
+screen exists yet to change it, noted in `TODO.md`.
+
+## 2026-09-14 — Admin dashboard: auth, products, orders, users
+
+Phase 4 of `ECOMMERCE_BUILDOUT.md`, the last major piece of the
+ecommerce build-out plan before the PayU/Shiprocket cutover steps.
+
+**Decision resolved first:** the user's "mobile and password" phrasing
+in the original plan was ambiguous — asked directly rather than
+assuming, and confirmed login is by **phone number**, not email (still
+a plain password, no OTP/SMS provider). Also confirmed: no public
+admin-signup page (a real security hole — anyone finding the URL could
+try registering as an admin), so the first Super Admin gets bootstrapped
+directly into the database via a script, using a password generated
+for the client rather than one they'd have to think up themselves.
+
+**Schema:** `AdminUser` switched from `email` to `phone` (unique) +
+gained a `name` field; added `AdminSession` (one row per login — DB-
+backed sessions, not JWT, so revoking access is just deleting a row).
+Hit a real CLI limitation applying this: `prisma migrate dev` refuses
+to run at all in a non-interactive shell whenever there's a warning to
+confirm (this migration had one, harmless — the table was empty).
+Worked around it with `prisma migrate diff --from-config-datasource
+--to-schema prisma/schema.prisma --script` to generate the SQL
+directly, then `prisma migrate deploy` (which doesn't prompt) to apply
+it — same non-interactive-friendly pattern worth remembering for any
+future schema change that trips this.
+
+**Structural change required:** the admin panel needed its own root
+layout (no customer Navbar/Footer/cart), but Next.js only allows more
+than one `<html>/<body>` root layout via route groups, where every
+top-level route must belong to exactly one. Moved every existing route
+into `app/(site)/` to make room for `app/admin/` as an independent
+second root layout — the route group is invisible in the URL, nothing
+about the site's actual paths changed. One import (`CheckoutForm.tsx`'s
+`@/app/checkout/actions`) needed updating to the new
+`@/app/(site)/checkout/actions` path; everything else used the `@/`
+alias to files that didn't move.
+
+**New:**
+- `lib/admin-auth.ts` — bcrypt hashing, session create/destroy,
+  `getCurrentAdmin()`, and `requireAdmin()`/`requireSuperAdmin()` for
+  gating pages *and* Server Actions (a layout only gates rendering; an
+  action is independently invocable, so every admin action calls one
+  of these itself — see the note in `COMPONENT_ARCHITECTURE.md`).
+- `/admin/login` (public) → `/admin/(protected)/*` (gated by a layout,
+  `/admin/login` sits outside that route group as a sibling so it
+  isn't itself gated) → dashboard home, products (list/create/edit/
+  delete), orders (list/detail/shipment-status), users (Super-Admin-
+  only: list/create/delete, can't delete yourself or the last Super
+  Admin).
+- `scripts/create-admin.ts` — the only way to create/reset a Super
+  Admin login (`npx tsx scripts/create-admin.ts "<name>" <phone>
+  <password> [role]`); re-running with an existing phone resets the
+  password, doubling as forgot-password recovery for now.
+- Seven new `components/admin/*` client components (`LoginForm`,
+  `AdminShell`, `ProductForm`, `CreateUserForm`, `DeleteButton`,
+  `StatusBadge`, `ShipmentStatusControl`).
+
+**Scope limit, flagged not hidden:** product image handling is a text
+path field, not a file upload — the image itself still needs to land
+in `public/assets/products/` some other way. Building a real upload
+pipeline wasn't asked for and would have meaningfully expanded this
+pass; noted in `TODO.md` as a deliberate limit, not an oversight.
+
+**Verification:** `tsc --noEmit`, `next lint`, `next build` all clean.
+End-to-end with Playwright using temporary test accounts (a Super
+Admin and an Admin/Manager, deleted afterward): unauthenticated
+`/admin` redirects to login; login works and the dashboard's counts
+render correctly (verified by dumping the actual rendered HTML, not
+just a flaky text-match check); the products list shows the 3 real
+seeded products; creating, editing, and deleting a test product all
+worked *and* `/sweets` reflected each change immediately
+(`revalidatePath` confirmed working, not just called); logging out
+actually ends the session — a subsequent visit to a protected page
+redirects to login again, not just the UI looking logged out; and an
+Admin/Manager account was confirmed genuinely blocked from
+`/admin/users` (server-side redirect to `/admin`), not merely hidden
+from the sidebar.
+
+**Bug the tests found in the test itself, not the app:** an early pass
+used a generic `button[type="submit"]` selector on the product-create
+page, which matched the admin sidebar's "Log Out" button instead of
+the form's own submit button — both share that type, and the sidebar
+renders first in the DOM. Explains a confusing first run where the
+session appeared to vanish mid-flow; the dev server log's own
+`logout()` action-call trace gave it away. Fixed by scoping every
+selector to the specific button text/container.
+
+**Not yet done:** the real Super Admin account — needs the actual
+phone number, tracked in `TODO.md`.
+
+`ECOMMERCE_BUILDOUT.md`, `WEBSITE_STRUCTURE.md`, and
+`COMPONENT_ARCHITECTURE.md` updated to match.
+
+## 2026-09-13 (8) — Real checkout + PayU payment flow, built and tested
+
+The biggest slice yet of `ECOMMERCE_BUILDOUT.md`: a genuine checkout
+page, order creation, and a full PayU hosted-checkout integration —
+not yet linked from the live site (WhatsApp checkout stays as the only
+linked path until cutover, per the agreed plan), but built and tested
+end-to-end.
+
+**Researched before writing any code:** PayU's actual current
+integration docs (docs.payu.in), rather than relying on training-data
+memory for a payment integration. This caught and corrected two wrong
+assumptions already sitting in `ECOMMERCE_BUILDOUT.md`: (1) there's no
+anonymous public PayU test credential — a test key/salt still needs a
+PayU account and dashboard login (Test Mode toggle), just not the full
+business KYC that gates live credentials; (2) PayU's classic
+integration doesn't have a true async push webhook — the "webhook"
+role in the original plan is actually played by the surl/furl redirect
+plus a `verify_payment` server-to-server reconciliation call PayU
+itself recommends running afterward. Also pinned down the exact
+production API hostname (`info.payu.in/merchant/postservice.php`,
+with the `.php` — an earlier search result had suggested the same path
+without it).
+
+**New:**
+- `lib/payu.ts` — request-hash generation, reverse-hash verification
+  (constant-time compare via `timingSafeEqual`, since this is a
+  security check), and the `verify_payment` reconciliation call.
+  Sandbox by default; only `PAYU_ENV=production` switches endpoints.
+- `lib/orders-db.ts` — `createOrderFromCart()`: re-reads every line's
+  price from the database (never trusts the client's cart prices),
+  computes subtotal/shipping/total, and creates the Order/OrderItems
+  (snapshotting product details)/initial Payment row together.
+- `/checkout` (`CheckoutForm`) — delivery-details form + order summary,
+  calling a new `submitOrder` server action directly as a function
+  (cart lines come from `useCart()`, not form fields).
+- `/checkout/payu-redirect` (`PayuAutoSubmitForm`) — loads the pending
+  Payment/Order, computes the PayU hash, auto-submits a hidden form to
+  PayU's hosted page.
+- `/api/payu/callback` — PayU's `surl` and `furl` both point here.
+  Verifies the reverse hash, reconciles via `verify_payment` (falling
+  back to the hash-verified redirect status if that call itself fails,
+  so a PayU-side hiccup doesn't wrongly fail a real payment), updates
+  the Payment/Order, redirects to `/order-success` or `/checkout/failed`.
+- `/order-success` — 404s unless the order's `paymentStatus` is
+  actually `PAID` (never renders an unpaid order's details, even to
+  someone who guesses/reuses the URL); mounts `ClearCartOnMount`.
+- `/checkout/failed` — "your cart is still saved" + a way back.
+- `lib/config.ts` gained `SHIPPING_CHARGE` (flat ₹50/order — an
+  explicit placeholder the client asked for, see `TODO.md`) and
+  `SITE_URL` (builds PayU's callback URL from Vercel's own
+  `VERCEL_URL`, since PayU needs a public HTTPS address).
+
+**Real bug caught during verification, unrelated to PayU itself:** the
+cart wasn't actually clearing on `/order-success`. `ClearCartOnMount`
+called `clearCart()` on mount, but React fires child effects before
+parent effects in the same commit — `CartProvider`'s own one-time
+localStorage-hydration effect (a parent, higher in the tree) ran
+*after*, read the still-stale stored cart, and silently overwrote the
+clear a moment later. `localStorage` and the navbar badge both still
+showed the old item after "successful" clearing. Fixed by exposing a
+new `hasHydrated` flag from `CartProvider` and having
+`ClearCartOnMount` wait for it before calling `clearCart()`.
+
+**Verification:** `tsc --noEmit`, `next lint`, `next build` all clean
+throughout. End-to-end with Playwright against placeholder
+`PAYU_KEY`/`PAYU_SALT` (real values need the client's PayU dashboard
+access — see below): added an item, filled out checkout, confirmed the
+real DB rows and correct PayU form fields (amount, hash, etc.);
+simulated a correctly-signed PayU success callback and confirmed it
+updates the order and lands on a working `/order-success` that
+actually clears the cart (re-verified after the fix above); separately
+POSTed a **tampered** callback (wrong amount) and confirmed it's
+rejected to `/checkout/failed` instead of being accepted — proving the
+hash check is a real security boundary, not just present in the code.
+All test orders deleted from the database afterward.
+
+**Not yet done — needs the client's PayU dashboard access, not more
+code:** a real test key/salt, to run one actual transaction through
+PayU's real hosted page rather than a simulated callback (everything
+above proves the code is correct; it hasn't touched PayU's real
+servers yet). Also needs a deployed URL for that specific leg, since
+PayU can't redirect back to `localhost`.
+
+`ECOMMERCE_BUILDOUT.md`, `WEBSITE_STRUCTURE.md`,
+`COMPONENT_ARCHITECTURE.md`, and `TODO.md` updated to match.
+
+## 2026-09-13 (7) — Product catalog migrated to the database + PDP route
+
+Continuation of Phase 2: the site's read side now queries the live
+database instead of `lib/products.ts`, and a Product Details page
+finally exists.
+
+**New:**
+- `lib/products-db.ts` — `getProducts()`/`getProductBySlug()`, wrapped
+  in React's `cache()` (so a request touching both `app/layout.tsx` and
+  a page only queries the database once), mapping Prisma's generated
+  row types back into the exact `Product`/`WeightOption` shape
+  `lib/products.ts` always exposed — so `ProductCard`, `AddToCartControl`,
+  and `CartDrawer` needed no prop-type changes at all.
+- `app/products/[slug]/page.tsx` + `components/products/ProductDetails.tsx`
+  — the PDP `TODO.md` had listed as not-started since the original
+  ecommerce-build-out stub. Image + eyebrow/h1/variant/description/
+  attribute chips + `AddToCartControl`, same asymmetric grid pattern as
+  `Gifting.tsx`. `ProductCard`'s image and title now link to it — it
+  was a completely dead end before this.
+
+**Changed:**
+- `ProductGrid` is now an async server component reading
+  `lib/products-db.ts` instead of importing the static array.
+- `CartProvider` (`lib/cart-context.tsx`) takes a new `products` prop —
+  `app/layout.tsx` fetches the catalog once, server-side, and passes it
+  down, since `CartDrawer` is a client component and Prisma can't run
+  in the browser. `CartDrawer` now looks products up from that context
+  field instead of importing `getProductBySlug` from `lib/products.ts`.
+- `lib/products.ts` is now seed-only (`prisma/seed.ts` is its only
+  remaining reader) — a comment at the top of the file says so.
+
+**Bug caught during verification, unrelated to the feature itself but
+surfaced by it:** the first build came back with every route marked
+fully static (`○`), including `/` and `/sweets`. A plain Prisma call —
+unlike `fetch()` — doesn't signal to Next.js that a route needs dynamic
+rendering, so `getProducts()`'s result would have frozen at build time;
+once Phase 4 lets admin edit a product, that edit wouldn't reach the
+live site until the next deploy. Fixed with `export const revalidate = 60`
+on the root layout (applies site-wide since every route sits under it —
+harmless for pages with no product data, like `/story`). `/products/[slug]`
+was already fully dynamic on its own, since it has no `generateStaticParams`.
+
+**Verification:** `tsc --noEmit`, `next lint`, `next build` all clean.
+Playwright (system Chrome via `playwright-core`) confirmed: Home and
+`/sweets` list all 3 database-backed products; the PDP renders with
+correct copy/attributes and 404s on an unknown slug; adding an item
+from the PDP and opening the cart drawer shows the correct product
+name, variant, weight, and price — the full client-side lookup path
+through the new `products` context field, not just a compile check.
+
+`WEBSITE_STRUCTURE.md`, `COMPONENT_ARCHITECTURE.md`, and
+`ECOMMERCE_BUILDOUT.md` updated to match.
+
+## 2026-09-13 (6) — Phase 2 started: live database, schema, and seed data
+
+First implementation step of `ECOMMERCE_BUILDOUT.md`. User created the
+Vercel Postgres database and ran `vercel login` / `vercel link`
+locally; from there this was all code/CLI work.
+
+**Prisma version note:** `npm install prisma` currently resolves to
+`8.0.0-rc.14` — a release candidate that rewrites the CLI into a
+platform-coupled product (`project`, `deploy`, `service` commands,
+Prisma's own hosting concepts), a poor fit for "just an ORM talking to
+our own Vercel Postgres." Pinned to **7.10.0** instead, the last
+stable pre-v8 release. Still meant reading Prisma's own bundled
+AI-agent skill docs (`.claude/skills/prisma-*`, installed automatically
+by `prisma init`) rather than assuming pre-v7 patterns still apply — v7
+made driver adapters mandatory for SQL providers and moved datasource
+URLs out of `schema.prisma` into a new `prisma7.config.ts`. One of
+those skill docs' own examples (a `datasource.directUrl` config field)
+didn't match this exact installed version's type — worth remembering
+that even Prisma's own current docs can drift slightly from a specific
+patch release; `tsc` caught it immediately.
+
+**New:**
+- `prisma/schema.prisma` — `Product` + `ProductWeightOption`, `Order` +
+  `OrderItem` (price/product details snapshotted per line at order
+  time — editing or deleting a product later never rewrites past
+  orders), `Payment` (one row per PayU attempt), `AdminUser` (`role`
+  field for Phase 4's Super Admin / Admin-Manager split).
+- `lib/db.ts` — Prisma Client singleton using the `@prisma/adapter-pg`
+  driver adapter (mandatory in v7), Next.js hot-reload-safe.
+- `prisma/seed.ts` — migrates the 3 SKUs out of `lib/products.ts`.
+  Run via `prisma db seed` (not directly with `tsx`) so it inherits
+  the env vars `prisma7.config.ts` loads.
+- `prisma7.config.ts` — loads `.env` then `.env.local` (Prisma 7
+  doesn't auto-load env files, and `vercel env pull` writes to
+  `.env.local`, which plain `dotenv/config` ignores by default);
+  points the CLI's `url` at Vercel Postgres's **non-pooled** connection
+  string (`DATABASE_URL_UNPOOLED`) since Prisma's migration engine
+  needs session-level locks that don't reliably work through Neon's
+  pgbouncer pool — `lib/db.ts` keeps using the pooled `DATABASE_URL`
+  for the app itself.
+
+**Verification:** `prisma migrate dev --name init` applied cleanly
+against the live database; `prisma db seed` populated all 3 products;
+a throwaway query script (deleted after) confirmed all 3 rows and
+their weight-option prices match `lib/products.ts` exactly. `tsc
+--noEmit`, `next lint`, and `next build` all clean throughout.
+
+`ECOMMERCE_BUILDOUT.md` updated (status snapshot, Phase 2 section,
+manual-vs-coded table) to reflect Phase 2 as in progress rather than
+not started.
+
+## 2026-09-13 (5) — Ecommerce build-out plan: open decisions resolved
+
+Follow-up discussion (still docs only, no code) resolved every item
+`ECOMMERCE_BUILDOUT.md` had flagged as open:
+
+- **WhatsApp checkout is fully replaced, not a permanent fallback** —
+  but stays live and untouched in production until a single cutover
+  moment, once the client's live PayU account exists. No in-between
+  state where checkout doesn't work.
+- **Shiprocket confirmed not started** — and confirmed fine to defer
+  entirely to the end, since Phase 5's manual first stage has no
+  earlier dependency on the account existing at all.
+- **Admin auth is role-based**: Super Admin + Admin/Manager, with
+  identical day-to-day access — the only thing gated to Super Admin is
+  creating/removing other Admin/Manager logins.
+- **Reframed "PayU setup at the end":** the user wants the *account*
+  from the client at the end, but that doesn't need to gate the
+  *code* — PayU publishes public sandbox credentials for exactly this
+  purpose, so the full transaction/redirect/webhook flow can be built
+  and tested now. This changed the suggested build order: Phase 1's
+  remaining pages and Phase 3 now merge into one slice (a real
+  PayU-backed checkout built against sandbox from day one), with a
+  distinct "cutover" step — swap to live credentials, remove WhatsApp
+  checkout — as the only piece actually gated on the client.
+
+`ECOMMERCE_BUILDOUT.md` updated throughout (status snapshot, all five
+phase sections, the manual-vs-coded table, build order) and its old
+"Open Decisions / Risks" section replaced with a "Decisions Log" now
+that nothing is outstanding.
+
+## 2026-09-13 (4) — Ecommerce build-out plan confirmed and documented
+
+User laid out a 5-phase plan (Website → Backend/Postgres → PayU →
+Admin → Shiprocket) to turn Nouriqo into a real transactional store,
+and asked to discuss it before any code — this entry is docs only, no
+code changed.
+
+Corrected one assumption going in: the user described Phase 1
+(Website) as "almost done." Checking the actual routes showed Home and
+the product listing are done, but `/products/[slug]`, a real checkout
+page, and an order-success page don't exist — today's "checkout" is
+still just the cart drawer's WhatsApp deep link. Surfaced that before
+scoping the rest so Phase 2/3 planning wasn't built on a wrong
+starting point.
+
+Discussion resolved several decisions that would otherwise have
+blocked writing the plan down: admin will manage products through the
+dashboard (not just code), guest checkout only (no customer accounts),
+Vercel Postgres as the database (site's already on Vercel), and
+confirmation the site's already deployed with PayU KYC already in
+progress (which explains why PayU asked for the legal pages shipped
+earlier today).
+
+**New:** `docs/ECOMMERCE_BUILDOUT.md` — the full plan, phase by phase,
+with a manual-vs-coded breakdown per phase, a suggested build order
+(Phase 1's checkout/PDP work is really the same slice as Phase 2's
+backend, not separable), and an "Open Decisions" section for what's
+still unresolved (WhatsApp checkout's fate once PayU ships, Shiprocket
+account status, single- vs. multi-admin auth).
+
+**Updated:** `TODO.md`'s old "Ecommerce build-out" section now points
+to the new doc instead of duplicating (and drifting from) it — kept
+only the historical done-items log. `PROJECT_CONTEXT.md`'s "No
+ecommerce backend exists yet" constraint was also stale (it still said
+product CTAs point to `/contact`, predating the 2026-09-04 cart/
+WhatsApp-checkout ship) — corrected to reflect what's actually built
+and point at the new plan.
+
 ## 2026-09-13 (3) — Four legal pages added, ahead of PayU integration
 
 User asked for a Privacy Policy, Terms of Service, and a "Contact Us"

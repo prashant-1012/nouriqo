@@ -63,11 +63,13 @@ than clinical about health.
   claims, ingredients beyond what packaging shows, customer reviews, or
   company history beyond "Since 1958" (which is on the client's own
   packaging).
-- **No ecommerce backend exists yet.** Product CTAs point to the
-  `/contact` page rather than a fake "Add to Cart" flow. See `TODO.md`
-  and `ROADMAP.md` (#4) for what's needed to wire up real commerce (a
-  WhatsApp-based checkout has been requested and scoped in `ROADMAP.md`
-  but not yet built).
+- **No real payment gateway or order backend exists yet.** A working
+  cart and "Add to Cart" flow shipped 2026-09-04 (`ROADMAP.md` #4),
+  with checkout handled as a WhatsApp deep link rather than a fake
+  payment flow — there's still no database, no order records, and no
+  online payment. `ECOMMERCE_BUILDOUT.md` is the confirmed 5-phase
+  plan (backend/Postgres, PayU, admin dashboard, Shiprocket) to change
+  that.
 - **Real assets only.** All hero, lifestyle, product, process, icon, and
   decorative imagery comes from `/public/assets` (client-supplied). Product
   packaging photography is used unaltered.

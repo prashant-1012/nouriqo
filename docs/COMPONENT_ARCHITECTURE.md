@@ -1,22 +1,121 @@
 # Component Architecture
 
+**Two root layouts, added 2026-09-14 (ECOMMERCE_BUILDOUT.md Phase 4).**
+Next.js allows more than one `<html>/<body>` root layout only via route
+groups, and every top-level route must belong to exactly one. The
+admin panel needed its own root layout (no customer Navbar/Footer/
+cart), so every pre-existing route moved into `app/(site)/` — the
+group is invisible in the URL, `app/(site)/page.tsx` is still just
+`/`. `app/admin/layout.tsx` is the second, independent root layout.
+`app/globals.css` and `app/favicon.ico` stay at the true top level and
+are imported/referenced by both.
+
 ```
 app/
-  layout.tsx              root layout — CartProvider wraps Navbar + Footer + CartDrawer + {children}
-  page.tsx                Home ("/")
-  sweets/page.tsx         Our Sweets
-  story/page.tsx          Our Story
-  gifting/page.tsx        Gifting
-  blogs/page.tsx          Journal (blog index)
-  blogs/[slug]/page.tsx   individual post — generateStaticParams + generateMetadata
-  testimonials/page.tsx   Testimonials
-  contact/page.tsx        Contact
-  privacy-policy/page.tsx      Privacy Policy
-  terms-of-service/page.tsx    Terms of Service
-  refund-policy/page.tsx       Refund & Cancellation Policy
-  shipping-policy/page.tsx     Shipping & Delivery Policy
+  (site)/
+    layout.tsx              root layout — CartProvider wraps Navbar + Footer + CartDrawer + {children}
+    page.tsx                Home ("/")
+    sweets/page.tsx         Our Sweets
+    story/page.tsx          Our Story
+    gifting/page.tsx        Gifting
+    blogs/page.tsx          Journal (blog index)
+    blogs/[slug]/page.tsx   individual post — generateStaticParams + generateMetadata
+    testimonials/page.tsx   Testimonials
+    contact/page.tsx        Contact
+    privacy-policy/page.tsx      Privacy Policy
+    terms-of-service/page.tsx    Terms of Service
+    refund-policy/page.tsx       Refund & Cancellation Policy
+    shipping-policy/page.tsx     Shipping & Delivery Policy
+    products/[slug]/page.tsx     added 2026-09-13 (Phase 2) — PDP,
+                               generateMetadata only, no generateStaticParams (see
+                               WEBSITE_STRUCTURE.md for why: renders fresh every request)
+    checkout/page.tsx            added 2026-09-13 (Phase 3) — delivery-details form + order
+                               summary (CheckoutForm), not yet linked from the cart drawer
+    checkout/actions.ts           "use server" — submitOrder(customer, lines): creates the
+                               Order/OrderItem/Payment rows via lib/orders-db.ts, then
+                               redirect()s to /checkout/payu-redirect?txnid=... on success,
+                               or returns { error } for CheckoutForm to show inline
+    checkout/payu-redirect/page.tsx   reads ?txnid=, loads the Payment+Order, computes the
+                               PayU request hash, renders PayuAutoSubmitForm. Fully dynamic
+                               (no generateStaticParams — every txnid is a fresh payment)
+    checkout/failed/page.tsx      reached only via a failed/rejected PayU callback — "your
+                               cart is still saved" message + link back to /checkout
+    order-success/page.tsx        reads ?order=<orderNumber>, 404s unless that order's
+                               paymentStatus is PAID (never shows an unpaid order's details,
+                               even to someone who guesses/reuses the URL) — renders the
+                               confirmation and mounts ClearCartOnMount
+  admin/                      added 2026-09-14 (Phase 4) — own root layout, no
+                             Navbar/Footer/CartProvider (see the note above)
+    layout.tsx                 root layout — fonts + globals.css only, no auth check
+                             (it wraps /admin/login too — see below)
+    login/page.tsx              public — phone + password (LoginForm)
+    login/actions.ts             "use server" — login(phone, password): same generic
+                             error for "no such phone" and "wrong password" (don't let
+                             the form reveal which phone numbers are registered admins)
+    (protected)/layout.tsx        requireAdmin() gate + AdminShell (sidebar/header/logout)
+                             — a route group so it applies to every /admin/* route
+                             EXCEPT /admin/login, which sits outside it as a sibling
+    (protected)/actions.ts         "use server" — logout()
+    (protected)/page.tsx            dashboard home ("/admin") — product/order/revenue counts
+    (protected)/products/page.tsx    list, links to new/edit, DeleteButton per row
+    (protected)/products/new/page.tsx        ProductForm (create mode)
+    (protected)/products/[id]/edit/page.tsx  ProductForm (edit mode)
+    (protected)/products/actions.ts           "use server" — createProduct/updateProduct/
+                             deleteProduct, each calling requireAdmin() independently (see
+                             the security note below — a page-level gate alone isn't enough)
+    (protected)/orders/page.tsx      list — order number, customer, total, payment/shipment
+                             status badges
+    (protected)/orders/[id]/page.tsx  detail — customer/address/items/payment-attempt
+                             history + ShipmentStatusControl
+    (protected)/orders/actions.ts     "use server" — updateShipmentStatus()
+    (protected)/users/page.tsx       Super-Admin-only — list + CreateUserForm + DeleteButton
+                             per row (can't delete yourself; can't delete the last Super Admin)
+    (protected)/users/actions.ts      "use server" — createAdminUser/deleteAdminUser, each
+                             calling requireSuperAdmin() independently
+  api/payu/callback/route.ts    POST-only — both PayU's surl and furl point here. Verifies
+                             the reverse hash (lib/payu.ts), looks up the Payment by
+                             txnid, calls PayU's verify_payment API as a second server-to-
+                             server reconciliation (falls back to the hash-verified
+                             redirect status if that call itself fails/times out — see the
+                             code comment), updates Payment + Order, then redirects to
+                             /order-success or /checkout/failed. Never trusts the redirect
+                             payload without the hash check first
+```
 
+**Every admin Server Action calls `requireAdmin()`/`requireSuperAdmin()` itself
+— the `(protected)` layout's gate isn't enough on its own.** A layout only
+gates *page rendering*; a Server Action is independently invocable (the
+client holds a reference to it once the page that uses it has loaded), so
+skipping the check inside e.g. `deleteProduct()` on the theory that "the
+page already checked" would let that one action be called without a
+valid session. Same reasoning for `deleteAdminUser`/`createAdminUser`
+needing their own `requireSuperAdmin()` call, not just `requireAdmin()` —
+and `/admin/users/page.tsx` itself also calls `requireSuperAdmin()`
+directly, since the `(protected)` layout only checks *some* admin is
+logged in, not which role.
+
+```
 components/
+  admin/                      added 2026-09-14 (Phase 4) — all "use client"; these are
+                             the interactive pieces admin pages (server components) compose
+    LoginForm.tsx               phone + password, calls the login action directly (same
+                             call-as-a-function pattern as CheckoutForm, not native
+                             <form action>, so it can show the returned error inline)
+    AdminShell.tsx               sidebar nav (usePathname() for active-link highlight) +
+                             logout form + main content area. Renders the Users nav link
+                             only for role === "SUPER_ADMIN" — but see the security note
+                             above the app/ tree: this is a UI convenience, not the
+                             actual access control (the page and its actions gate too)
+    ProductForm.tsx              create AND edit share this one component (an optional
+                             `product` prop switches modes) — dynamic pack-size/price rows
+                             (add/remove), comma-separated attributes text field
+    CreateUserForm.tsx            name/phone/password/role — used only on the Users page
+    DeleteButton.tsx              generic confirm-then-call-server-action button, reused by
+                             the products list and users list (takes the bound action —
+                             e.g. deleteProduct.bind(null, product.id) — as a prop)
+    StatusBadge.tsx               color-coded pill for any Order/Payment status enum value
+    ShipmentStatusControl.tsx     select + auto-save (useTransition, no explicit save
+                             button) for an order's shipmentStatus
   layout/
     Container.tsx         max-width + responsive padding wrapper
     PageHeader.tsx          shared sub-page banner: eyebrow + h1 + description, on a cream band
@@ -29,16 +128,46 @@ components/
   cart/
     CartButton.tsx          "use client": navbar icon + item-count badge, opens the drawer
     CartDrawer.tsx           "use client": line items, qty steppers, total, WhatsApp checkout —
-                             rendered once in app/layout.tsx, NOT inside Navbar's <header>
-                             (see the stacking-context note below)
+                             rendered once in app/(site)/layout.tsx, NOT inside Navbar's <header>
+                             (see the stacking-context note below). Looks up each line's
+                             product/price from useCart()'s products array (added 2026-09-13),
+                             not a direct lib/products.ts import — Prisma can't run in a
+                             client component, so the database read happens once, server-side,
+                             in app/(site)/layout.tsx, and is passed down as a prop
+  checkout/
+    CheckoutForm.tsx          "use client" — added 2026-09-13. Delivery-details form +
+                             order summary in one component (deliberately not split
+                             further — tightly coupled content for a single page). Calls
+                             the submitOrder server action directly as a function (not a
+                             native <form action={...}>, since cart lines come from
+                             useCart(), not form fields) and shows its returned { error }
+                             inline; a successful call never returns — the action
+                             redirect()s server-side
+    PayuAutoSubmitForm.tsx    "use client" — renders a hidden form with the PayU fields as
+                             props and submits it via a useEffect on mount (a <noscript>
+                             fallback button covers the no-JS case). This is the one place
+                             a real network request leaves the app straight to PayU
+    ClearCartOnMount.tsx      "use client" — mounted only on /order-success, after payment
+                             is already confirmed server-side. Waits for CartProvider's
+                             hasHydrated flag before calling clearCart() — see the
+                             lib/cart-context.tsx entry below for why that ordering matters
   hero/
     Hero.tsx               art-directed (desktop/mobile) hero — Home only
   products/
     ProductCard.tsx         one product's image+badge, title, and AddToCartControl — no
-                             description/attributes/rating on the card (see below)
-    ProductGrid.tsx          section wrapper, maps lib/products.ts -> ProductCard — used on both `/` and `/sweets`
+                             description/attributes/rating on the card (see below). Image
+                             and title link to /products/[slug] (added 2026-09-13 — the
+                             card used to be a dead end with no detail page to reach)
+    ProductGrid.tsx          async server component (added 2026-09-13), maps
+                             lib/products-db.ts's getProducts() -> ProductCard — used on
+                             both `/` and `/sweets`. lib/products.ts is no longer the live
+                             read path, see the lib/ entries below
+    ProductDetails.tsx       added 2026-09-13 — /products/[slug]'s content: image + eyebrow/
+                             h1/variant/description/attribute chips + AddToCartControl, in
+                             the same asymmetric lg:grid-cols-12 layout as Gifting.tsx
     AddToCartControl.tsx     "use client": owns pack-size (weightOptions) selection state,
-                             renders the price row (reactive to selection) + dropdown + "Add to Cart"
+                             renders the price row (reactive to selection) + dropdown + "Add to Cart".
+                             Used identically by both ProductCard and ProductDetails
     QuantityStepper.tsx      "use client", controlled (value/onChange) — used only by
                              CartDrawer's per-line qty control (ProductCard has no stepper;
                              quantity is adjusted in the cart, not before adding)
@@ -118,16 +247,27 @@ components/
   motion/
     Reveal.tsx               Reveal / RevealGroup / RevealItem (Framer Motion, reduced-motion aware)
   footer/
-    Footer.tsx              renders once, in app/layout.tsx. Bottom bar (below the
+    Footer.tsx              renders once, in app/(site)/layout.tsx. Bottom bar (below the
                              4-column grid) links the four legal pages next to the
                              copyright line — not a 5th grid column, since the grid
                              is already full (Brand spans 2, Explore 1, Contact 1)
 
 lib/
-  products.ts               Product type + data (source of truth for the catalog).
-                             Each product has a weightOptions: { weight, price }[] array
-                             (currently 500 gram / 1 kg, 1 kg priced at exactly 2x) instead
-                             of a single weight/price pair — see CHANGELOG.md 2026-09-05 (2)
+  products.ts               Product/WeightOption TYPES (still the shared shape every
+                             component uses) + the original static data array — as of
+                             2026-09-13 that array is only the seed source for the database
+                             (see prisma/seed.ts), not the live read path. Each product has
+                             a weightOptions: { weight, price }[] array (currently 500 gram
+                             / 1 kg, 1 kg priced at exactly 2x) instead of a single
+                             weight/price pair — see CHANGELOG.md 2026-09-05 (2)
+  products-db.ts             added 2026-09-13 (ECOMMERCE_BUILDOUT.md Phase 2) — getProducts()
+                             / getProductBySlug(), the live, database-backed replacements
+                             for lib/products.ts's array. Both wrapped in React's cache() so
+                             one request calling both (e.g. app/(site)/layout.tsx + a page) only
+                             queries the database once. Maps Prisma's generated Product/
+                             ProductWeightOption rows back into the same Product/WeightOption
+                             shape lib/products.ts always exposed, so ProductCard/
+                             AddToCartControl/CartDrawer needed no prop-type changes
   counters.ts                 Counter type + data for the home page Counters section — icon,
                              target value, suffix, label. Figures are provisional placeholders,
                              not confirmed metrics (see CONTENT_GUIDELINES.md and TODO.md)
@@ -150,20 +290,117 @@ lib/
                              shippingPolicy) each route reads directly — no lookup array,
                              since these are four fixed routes, not a growing catalog like
                              blog-posts.ts. Drafted content, not lawyer-reviewed — see TODO.md
+  db.ts                        added 2026-09-13 (ECOMMERCE_BUILDOUT.md Phase 2) — Prisma
+                             Client singleton, using the @prisma/adapter-pg driver adapter
+                             (mandatory in Prisma 7) and Vercel Postgres's pooled
+                             DATABASE_URL. Next.js hot-reload-safe (globalThis-cached).
+                             Used by lib/products-db.ts (see above) — the site's read side
+                             now queries the database; lib/products.ts's array is seed-only
+  admin-auth.ts                 added 2026-09-14 (Phase 4) — hashPassword/verifyPassword
+                             (bcryptjs), createSession/destroySession (DB-backed
+                             AdminSession rows, not JWT — logging out or revoking access is
+                             just deleting a row), getCurrentAdmin (returns null, never
+                             throws), and requireAdmin/requireSuperAdmin (redirect to
+                             /admin/login or /admin if the check fails — for use in pages,
+                             layouts, and every admin Server Action, see the note above the
+                             app/ tree). Tagged `import "server-only"` so it can never end
+                             up in a client bundle
   nav-links.ts               shared nav link list + isNavLinkActive(pathname, href) — real
                               paths, not anchors; used by both NavLinks and MobileMenu
   cart-context.tsx            "use client": CartProvider + useCart() — lines are keyed by
                               slug+weight together (the same product can sit in the cart at
                               two different pack sizes as independent lines), persisted to
-                              localStorage, product/price details looked up by slug+weight
+                              localStorage. CartProvider now also takes a products prop
+                              (added 2026-09-13 — the app/(site)/layout.tsx-fetched catalog,
+                              exposed through the context) so client components can look up
+                              product/price by slug+weight without their own database access.
+                              Also exposes hasHydrated (added 2026-09-13) — a real bug
+                              turned up during Phase 3 testing: ClearCartOnMount's own
+                              mount effect fires BEFORE this provider's localStorage-
+                              hydration effect (child effects run before parent effects on
+                              mount), so calling clearCart() unconditionally on mount got
+                              silently overwritten a moment later when hydration read the
+                              still-stale stored cart. hasHydrated lets a consumer wait for
+                              that hydration to actually finish first
+  orders-db.ts                 added 2026-09-13 (Phase 3) — createOrderFromCart(customer,
+                             lines): re-reads every line's product/price from the database
+                             (never trusts the client-submitted cart), computes
+                             subtotal/shippingCharge/total, and creates the Order +
+                             OrderItem rows (with product details snapshotted, per the
+                             schema.prisma comment) + an initial Payment row (status
+                             INITIATED) in one call. Throws CheckoutError for
+                             checkout.tsx's server action to turn into a user-facing
+                             message (e.g. a line's product/weight no longer exists)
+  payu.ts                       added 2026-09-13 (Phase 3) — PayU hosted-checkout
+                             integration: generatePayuRequestHash() (request hash),
+                             verifyPayuResponseHash() (reverse hash, constant-time compare
+                             via timingSafeEqual — this is a security check, not just
+                             validation), and verifyPayuPayment() (the verify_payment
+                             server-to-server reconciliation API PayU itself recommends
+                             running after the redirect, rather than trusting it alone).
+                             Defaults to PayU's test/sandbox endpoints unless
+                             PAYU_ENV=production — see ECOMMERCE_BUILDOUT.md Phase 3 for
+                             the cutover story and TODO.md for what's still needed from
+                             the client (a real test key/salt, then real live ones)
   currency.ts                 formatINR() — Intl.NumberFormat("en-IN", { currency: "INR" })
   whatsapp.ts                 builds the itemized order message + wa.me checkout URL, and
                              (added 2026-09-05 (7)) the name/contact/email/message enquiry
                              message + wa.me URL used by EnquiryForm — both share the same
                              WHATSAPP_ORDER_NUMBER
   config.ts                   WHATSAPP_ORDER_NUMBER — the one place that number is defined,
-                             used for both order checkout and general enquiries
+                             used for both order checkout and general enquiries. Also
+                             SHIPPING_CHARGE (added 2026-09-13 — flat ₹50, an explicit
+                             placeholder, see TODO.md) and SITE_URL (builds PayU's
+                             surl/furl — Vercel's own VERCEL_URL by default, since PayU
+                             needs a publicly reachable HTTPS URL, not localhost)
+
+prisma/                      added 2026-09-13 (ECOMMERCE_BUILDOUT.md Phase 2)
+  schema.prisma               Product/ProductWeightOption, Order/OrderItem, Payment,
+                             AdminUser/AdminSession models — see the lib/db.ts entry above
+                             for the Prisma-version-specific setup notes. AdminUser logs in
+                             by phone (unique), not email (2026-09-14 decision); AdminSession
+                             is one row per login (DB-backed sessions, not JWT — see
+                             lib/admin-auth.ts)
+  migrations/                  on-disk migration history, applied against the live Vercel
+                             Postgres (Neon-backed) database. Created via `prisma migrate
+                             diff --from-config-datasource --to-schema ... --script` +
+                             `prisma migrate deploy` rather than the usual `migrate dev`,
+                             since this CLI refuses to run interactively (which `migrate
+                             dev` always is when there's a warning to confirm) in a
+                             non-interactive shell — `migrate deploy` applies a
+                             pre-generated migration file without prompting
+
+scripts/create-admin.ts       added 2026-09-14 (Phase 4) — the only way to create the first
+                             Super Admin (no public admin-signup page, deliberately — see
+                             ECOMMERCE_BUILDOUT.md Phase 4). `npx tsx scripts/create-admin.ts
+                             "<name>" <phone> <password> [SUPER_ADMIN|ADMIN_MANAGER]`;
+                             re-running with an existing phone resets that account's
+                             password instead of failing, which doubles as the forgot-
+                             password recovery path until a self-service one exists
+  seed.ts                      migrates lib/products.ts's 3 SKUs into the database — run
+                             via `npx prisma db seed`, not directly with tsx (it relies on
+                             prisma7.config.ts having already loaded .env/.env.local into
+                             the process before the seed subprocess inherits them)
+
+generated/prisma/            Prisma Client output (gitignored, regenerated via
+                             `npx prisma generate` after any schema change) — not
+                             committed, same treatment as .next/
 ```
+
+**`app/(site)/layout.tsx` sets `export const revalidate = 60`, added 2026-09-13.**
+A plain Prisma call in a Server Component — unlike `fetch()` — doesn't
+tell Next.js a route needs dynamic rendering on its own. Without this,
+`getProducts()`'s result (read by both the root layout, for the cart,
+and `ProductGrid`, on `/` and `/sweets`) would have frozen at build
+time: every route in the app rendered fully `○ (Static)` the first
+time this was tried, meaning a future admin product edit (Phase 4)
+wouldn't appear on the live site until the next deploy. Since the
+layout wraps every route, this revalidate window applies site-wide —
+harmless for pages that don't touch product data (`/story`,
+`/contact`, the legal pages), and keeps `/`/`/sweets` reasonably fresh
+without losing static-generation performance entirely. `/products/[slug]`
+has no `generateStaticParams` at all, so it's fully dynamic regardless
+(see the `app/` tree entry above).
 
 **Fixed-position UI must not nest inside `backdrop-blur`/`filter`
 ancestors.** `CartDrawer` was originally rendered inside `Navbar`'s
@@ -172,12 +409,12 @@ CSS Transforms spec, `filter`/`backdrop-filter` makes an element the
 containing block for its `position: fixed` descendants — so the
 drawer's `inset-y-0` resolved against `header`'s own ~80px height
 instead of the viewport, breaking it. `CartDrawer` now renders directly
-in `app/layout.tsx` instead. Keep this in mind before adding any other
+in `app/(site)/layout.tsx` instead. Keep this in mind before adding any other
 `fixed`-positioned overlay as a descendant of `Navbar`.
 
 **`NavLinks`' animated active indicator depends on the root layout
 staying mounted across navigations.** `Navbar` (and therefore
-`NavLinks`) lives in `app/layout.tsx`, and Next.js App Router keeps
+`NavLinks`) lives in `app/(site)/layout.tsx`, and Next.js App Router keeps
 shared layouts mounted across route transitions — only `{children}`
 swaps out. That's what lets Framer Motion's
 `layoutId="nav-active-indicator"` animate the line—leaf—line motif
@@ -219,9 +456,11 @@ homepage to five separate routes — see `WEBSITE_STRUCTURE.md` and
   (`ProductCard` stays a server component and just renders
   `<AddToCartControl />` as one interactive child), not wrappers around
   the whole page. The one necessary exception is `CartProvider`, which
-  wraps the entire app in `app/layout.tsx` — Context providers are the
+  wraps the entire app in `app/(site)/layout.tsx` — Context providers are the
   standard exception to "leaves only," since the alternative (prop-
-  drilling cart state through every page) would be worse.
+  drilling cart state through every page) would be worse. (This list
+  predates Phase 3/4 — see the `checkout/` and `admin/` entries above
+  for those components instead of expanding this one indefinitely.)
 - **Data-driven, not repeated JSX.** Products (`lib/products.ts`),
   benefit icons (`lib/benefits.ts`), and blog posts (`lib/blog-posts.ts`)
   are arrays mapped over in the section components. Adding a fourth

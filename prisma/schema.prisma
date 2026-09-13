@@ -1,0 +1,221 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Products — mirrors lib/products.ts's shape (see the seed script). Admin can
+// add/edit products and pricing through the Phase 4 dashboard once it exists;
+// until then this table is the source of truth, and lib/products.ts is
+// retired from the read path (ProductGrid, ProductCard, home page, /sweets).
+// ---------------------------------------------------------------------------
+
+enum ProductAccent {
+  GOLD
+  LILAC
+  ROSE
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  variant     String
+  tagline     String
+  description String
+  attributes  String[]
+  imageSrc    String
+  imageAlt    String
+  accent      ProductAccent
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  weightOptions ProductWeightOption[]
+  orderItems    OrderItem[]
+}
+
+// One row per pack size (e.g. "500 gram", "1 kg") a product is sold in.
+model ProductWeightOption {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  weight    String
+  /**
+   * Price in whole INR rupees — matches lib/products.ts's existing convention (no paise).
+   */
+  price     Int
+  sortOrder Int     @default(0)
+
+  @@unique([productId, weight])
+}
+
+// ---------------------------------------------------------------------------
+// Orders — guest checkout only, per ECOMMERCE_BUILDOUT.md (no customer
+// accounts). Contact and shipping details are stored directly on the order.
+// ---------------------------------------------------------------------------
+
+enum OrderPaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum OrderShipmentStatus {
+  NOT_SHIPPED
+  SHIPPED
+  DELIVERED
+}
+
+model Order {
+  id          String @id @default(cuid())
+  /**
+   * Short human-facing reference shown on the order-success page and to the customer — distinct from the internal id.
+   */
+  orderNumber String @unique
+
+  customerName  String
+  customerPhone String
+  customerEmail String
+
+  shippingAddressLine1 String
+  shippingAddressLine2 String?
+  shippingCity         String
+  shippingState        String
+  shippingPostalCode   String
+  shippingCountry      String  @default("India")
+
+  /**
+   * Sum of order item line totals, in whole INR rupees.
+   */
+  subtotal       Int
+  /**
+   * Charged at checkout per shipping-policy rules — snapshotted here, not recalculated later.
+   */
+  shippingCharge Int
+  /**
+   * subtotal + shippingCharge.
+   */
+  total          Int
+
+  paymentStatus  OrderPaymentStatus  @default(PENDING)
+  shipmentStatus OrderShipmentStatus @default(NOT_SHIPPED)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items    OrderItem[]
+  payments Payment[]
+}
+
+// One row per product+pack-size line in an order. Product details are
+// snapshotted at order time (name/variant/weight/price) so editing or
+// removing a product later never changes historical order records —
+// productId is kept only as a convenience link back to the live product.
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  productName String
+  productSlug String
+  variant     String
+  weight      String
+  /**
+   * Snapshotted unit price in whole INR rupees, re-validated server-side against Product at checkout time.
+   */
+  unitPrice   Int
+  quantity    Int
+  /**
+   * unitPrice * quantity.
+   */
+  lineTotal   Int
+}
+
+// ---------------------------------------------------------------------------
+// Payments — one row per PayU transaction attempt against an order. A single
+// order can have more than one Payment row if a customer retries after a
+// failure.
+// ---------------------------------------------------------------------------
+
+enum PaymentProvider {
+  PAYU
+}
+
+enum PaymentStatus {
+  INITIATED
+  SUCCESS
+  FAILURE
+}
+
+model Payment {
+  id       String          @id @default(cuid())
+  orderId  String
+  order    Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider PaymentProvider @default(PAYU)
+
+  /**
+   * The txnid we generate and send to PayU — unique per attempt.
+   */
+  providerTxnId     String        @unique
+  /**
+   * PayU's own payment id (mihpayid), set once a response comes back.
+   */
+  providerPaymentId String?
+  status            PaymentStatus @default(INITIATED)
+  /**
+   * Amount attempted, in whole INR rupees.
+   */
+  amount            Int
+  /**
+   * Raw PayU response/webhook payload, kept for audit and debugging.
+   */
+  rawResponse       Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Admin — Super Admin and Admin/Manager logins, per ECOMMERCE_BUILDOUT.md.
+// Identical day-to-day access; only Super Admin can manage other logins.
+// Login is phone + password (2026-09-14 decision) — phone is the unique
+// identifier, matching how the business already contacts customers.
+// ---------------------------------------------------------------------------
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN_MANAGER
+}
+
+model AdminUser {
+  id           String         @id @default(cuid())
+  name         String
+  phone        String         @unique
+  passwordHash String
+  role         AdminRole
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  sessions     AdminSession[]
+}
+
+// DB-backed sessions (not JWT) — a login is one row here, and logging out
+// (or revoking access) is just deleting it. Simple to reason about for a
+// small handful of internal staff accounts.
+model AdminSession {
+  id          String    @id @default(cuid())
+  token       String    @unique
+  adminUserId String
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+}
