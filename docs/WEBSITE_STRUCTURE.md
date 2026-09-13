@@ -16,6 +16,10 @@ item now navigates to a real page instead of scrolling the homepage.
 | `/blogs/[slug]` | *(reached from `/blogs`)* | the post title | `BlogPostHeader`, cover image, `BlogContent` |
 | `/testimonials` | Testimonials | "Testimonials" | `PageHeader`, `Testimonials` |
 | `/contact` | Contact Us | "Get in touch" | `PageHeader`, `ContactInfo` |
+| `/privacy-policy` | *(footer only)* | "Privacy Policy" | `PageHeader`, `LegalContent` |
+| `/terms-of-service` | *(footer only)* | "Terms of Service" | `PageHeader`, `LegalContent` |
+| `/refund-policy` | *(footer only)* | "Refund & Cancellation Policy" | `PageHeader`, `LegalContent` |
+| `/shipping-policy` | *(footer only)* | "Shipping & Delivery Policy" | `PageHeader`, `LegalContent` |
 
 **Nav label ≠ route slug, deliberately.** As of the 2026-09-04 nav
 restructure (`ROADMAP.md` #9), the main nav shows Home/Shop/About/Blogs/
@@ -33,6 +37,19 @@ breakpoint could hold without wrapping — re-verified with Playwright at
 81px header, no wrapping, no horizontal overflow. `/gifting` still sits
 out of the main nav (footer + `/sweets` callout only), so there was no
 need to revisit that call.
+
+**Four legal pages added 2026-09-13** (`/privacy-policy`,
+`/terms-of-service`, `/refund-policy`, `/shipping-policy`) ahead of
+integrating the PayU payment gateway — PayU's merchant approval
+process expects these to already exist on the live site. Deliberately
+footer-only, not in the main nav (already at its 6-item ceiling — see
+above); linked from the footer's bottom bar next to the copyright
+line rather than a 5th grid column, since the existing `lg:grid-cols-4`
+footer layout is already full (Brand spans 2, Explore 1, Contact 1).
+See `TODO.md` for the "not lawyer-reviewed, review before treating as
+final" caveat and the specific figures (48-hour damage-report window,
+5–7 business day refunds, 3–7 business day delivery) that are working
+defaults, not confirmed policy.
 
 `Navbar` and `Footer` render once, in `app/layout.tsx`, and persist
 across every route — as does `CartDrawer` (see `COMPONENT_ARCHITECTURE.md`

@@ -44,7 +44,38 @@ a design polish pass (theme toggle was withdrawn, not deferred — see
       testimonials that don't come from real customers), or replace
       `lib/testimonials.ts` with real customer quotes.
 
+- [ ] **Four legal pages (`/privacy-policy`, `/terms-of-service`,
+      `/refund-policy`, `/shipping-policy`) describe payments as
+      processed by PayU, even though PayU is not yet integrated —
+      checkout today is still WhatsApp-only.** Added 2026-09-13 at the
+      user's explicit instruction: PayU's merchant-approval process
+      needs these pages live before it will approve the integration,
+      so they describe the *future* state PayU is reviewing rather
+      than today's actual checkout flow. **Before this goes to a live
+      or client-facing build:** be aware a visitor reading these pages
+      today will see payment language that doesn't match the site's
+      current WhatsApp-only checkout; re-verify all four once PayU
+      actually goes live. Also **not lawyer-reviewed** — this is a
+      best-effort draft, not a substitute for compliance/legal review,
+      particularly given India's DPDP Act and Consumer Protection
+      (E-Commerce) Rules. See `lib/legal-pages.ts` and `CHANGELOG.md`
+      2026-09-13.
+
 ## Needed from the client before launch
+
+- [ ] Confirm the working defaults used in the new legal pages: the
+      48-hour damage/incorrect-item reporting window and 5–7 business
+      day refund timeline (`lib/legal-pages.ts`'s `refundPolicy`), and
+      the 1–2 business day order-processing time and 3–7 business day
+      delivery window (`shippingPolicy`). Directionally confirmed by
+      the client (no returns except damaged/wrong/missing item;
+      pan-India, 3–7 days, customer pays shipping) but the specific
+      numbers are reasonable defaults, not client-supplied figures.
+- [ ] Confirm the legal/registered business name to use in
+      `ContactInfo.tsx`'s new "Business Name" row and the legal pages'
+      company-identification lines. Currently set to the brand name,
+      "Nouriqo," per the client's explicit answer — flagging only in
+      case PayU's own KYC needs a distinct registered entity name.
 
 - [x] Phone — `+91 99606 25495` added 2026-09-13 to `ContactInfo.tsx`,
       `Footer.tsx`, and `WHATSAPP_ORDER_NUMBER` (`lib/config.ts`), per

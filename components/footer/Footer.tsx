@@ -83,8 +83,24 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-3 border-t border-ink/10 pt-6 text-xs text-ink-soft sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Nouriqo. All rights reserved.</p>
+        <div className="mt-14 flex flex-col gap-4 border-t border-ink/10 pt-6 text-xs text-ink-soft sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4 sm:gap-y-1">
+            <p>© {new Date().getFullYear()} Nouriqo. All rights reserved.</p>
+            <nav aria-label="Legal" className="flex flex-wrap gap-x-4 gap-y-1">
+              <Link href="/privacy-policy" className="hover:text-emerald-800">
+                Privacy Policy
+              </Link>
+              <Link href="/terms-of-service" className="hover:text-emerald-800">
+                Terms of Service
+              </Link>
+              <Link href="/refund-policy" className="hover:text-emerald-800">
+                Refund Policy
+              </Link>
+              <Link href="/shipping-policy" className="hover:text-emerald-800">
+                Shipping Policy
+              </Link>
+            </nav>
+          </div>
           <p>Images shown are representative and may differ from the actual product.</p>
         </div>
       </Container>

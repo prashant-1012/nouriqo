@@ -1,5 +1,59 @@
 # Changelog
 
+## 2026-09-13 (3) — Four legal pages added, ahead of PayU integration
+
+User asked for a Privacy Policy, Terms of Service, and a "Contact Us"
+business name, to be linked from the footer. Discussed scope before
+writing anything (per the user's explicit "don't code, just discuss"
+request): the user confirmed the client plans to integrate PayU as a
+payment gateway later, and PayU's merchant-approval process requires
+these pages to already exist on the live site — which expanded scope
+to match what PayU typically checks for (also Refund/Cancellation and
+Shipping/Delivery policies, not just the two originally named) and
+settled several decisions that would otherwise have been fabricated
+content: business name shown ("Nouriqo," same as the brand), payments
+described in the *future* PayU state rather than today's WhatsApp-only
+checkout, generic "laws of India" jurisdiction (no specific city/state),
+refund policy (no returns except damaged/wrong/missing item), and
+shipping basics (pan-India, 3–7 business days, customer pays shipping).
+
+**New:**
+- `lib/legal-pages.ts` — `LegalBlock`/`LegalPage` types (heading/
+  paragraph/list blocks — list is new, blog's `BlogBlock` only has
+  heading/paragraph) and `formatLegalDate()`, plus four named page
+  exports: `privacyPolicy`, `termsOfService`, `refundPolicy`,
+  `shippingPolicy`. Exported individually rather than as a lookup
+  array, since these are four fixed routes, not a growing catalog.
+- `components/legal/LegalContent.tsx` — block renderer, same pattern
+  as `BlogContent.tsx` plus list-block support.
+- Four new routes (`app/privacy-policy`, `app/terms-of-service`,
+  `app/refund-policy`, `app/shipping-policy`), each a `PageHeader` +
+  `LegalContent` + a "Last updated" date, matching every other
+  sub-page's structure.
+- `Footer.tsx` — the bottom bar (below the existing 4-column grid,
+  which is already full) gained a `<nav aria-label="Legal">` linking
+  all four pages next to the copyright line, rather than a 5th grid
+  column.
+- `ContactInfo.tsx` — new "Business Name" row ("Nouriqo") above the
+  existing Email/Phone/Address list.
+
+Numeric specifics not supplied by the client (48-hour damage-report
+window, 5–7 business day refunds, 1–2 business day dispatch) are
+working defaults, not confirmed figures — flagged in `TODO.md`
+alongside the bigger caveat that all four pages describe the future
+PayU checkout flow, not today's WhatsApp-only one, and are a
+best-effort draft rather than lawyer-reviewed text.
+
+**Verification:** `next lint` and `next build` clean (all four routes
+prerender as static). Verified with Playwright (`playwright-core`,
+system Chrome): all four pages return 200 with no console/page errors;
+the footer's four legal links resolve to the correct hrefs at both
+375px and 1280px; `ContactInfo`'s new "Business Name" row renders
+correctly above Email/Phone/Address.
+
+`WEBSITE_STRUCTURE.md` and `COMPONENT_ARCHITECTURE.md` updated to
+match.
+
 ## 2026-09-13 (2) — Testimonials: fixed 6-of-9 hidden on mobile
 
 User reported that mobile only ever showed the first 3 testimonials on

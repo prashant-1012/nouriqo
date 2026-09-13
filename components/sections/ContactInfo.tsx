@@ -2,6 +2,7 @@ import { Container } from "@/components/layout/Container";
 import { Reveal } from "@/components/motion/Reveal";
 
 const details = [
+  { label: "Business Name", value: "Nouriqo" },
   { label: "Email", value: "[ to be added ]" },
   { label: "Phone", value: "+91 99606 25495" },
   { label: "Address", value: "[ to be added ]" },

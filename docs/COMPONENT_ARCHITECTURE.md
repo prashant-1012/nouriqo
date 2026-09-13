@@ -11,6 +11,10 @@ app/
   blogs/[slug]/page.tsx   individual post — generateStaticParams + generateMetadata
   testimonials/page.tsx   Testimonials
   contact/page.tsx        Contact
+  privacy-policy/page.tsx      Privacy Policy
+  terms-of-service/page.tsx    Terms of Service
+  refund-policy/page.tsx       Refund & Cancellation Policy
+  shipping-policy/page.tsx     Shipping & Delivery Policy
 
 components/
   layout/
@@ -43,6 +47,12 @@ components/
     BlogGrid.tsx             section wrapper, maps lib/blog-posts.ts -> BlogCard — `/blogs`
     BlogPostHeader.tsx       "Back to Journal" + date/read-time + h1 — `/blogs/[slug]`
     BlogContent.tsx          renders a post's heading/paragraph blocks
+  legal/
+    LegalContent.tsx         renders a legal page's heading/paragraph/list blocks
+                             (same block-renderer pattern as BlogContent, plus a
+                             "list" block type for numbered/bulleted clauses) —
+                             used by all four /privacy-policy, /terms-of-service,
+                             /refund-policy, /shipping-policy pages
   sections/
     BrandIntro.tsx          Home only, between ProductGrid and WhyNouriqo. bg-cream (not
                              ivory) specifically so it doesn't repeat ProductGrid's ivory
@@ -88,7 +98,10 @@ components/
                              new tab — same honest no-backend pattern as cart checkout, not
                              a fake "message sent" claim (the page copy says "opens WhatsApp
                              with your message pre-filled")
-    ContactInfo.tsx          `/contact` — the placeholder email/phone/address list
+    ContactInfo.tsx          `/contact` — business name, email/phone/address list.
+                             Business Name and Phone are real (Nouriqo /
+                             +91 99606 25495, added 2026-09-13); Email and
+                             Address remain bracketed placeholders
   ui/
     Button.tsx              primary/secondary/ghost/inverted link-button
     SectionHeading.tsx       eyebrow + title + description, light/dark tone
@@ -105,7 +118,10 @@ components/
   motion/
     Reveal.tsx               Reveal / RevealGroup / RevealItem (Framer Motion, reduced-motion aware)
   footer/
-    Footer.tsx              renders once, in app/layout.tsx
+    Footer.tsx              renders once, in app/layout.tsx. Bottom bar (below the
+                             4-column grid) links the four legal pages next to the
+                             copyright line — not a 5th grid column, since the grid
+                             is already full (Brand spans 2, Explore 1, Contact 1)
 
 lib/
   products.ts               Product type + data (source of truth for the catalog).
@@ -129,6 +145,11 @@ lib/
   testimonials.ts             Testimonial type + data (name, role, text) for the
                              /testimonials page — illustrative content, not from real named
                              customers; see the source comment and CONTENT_GUIDELINES.md
+  legal-pages.ts               LegalBlock/LegalPage types + formatLegalDate(), and the four
+                             named page exports (privacyPolicy, termsOfService, refundPolicy,
+                             shippingPolicy) each route reads directly — no lookup array,
+                             since these are four fixed routes, not a growing catalog like
+                             blog-posts.ts. Drafted content, not lawyer-reviewed — see TODO.md
   nav-links.ts               shared nav link list + isNavLinkActive(pathname, href) — real
                               paths, not anchors; used by both NavLinks and MobileMenu
   cart-context.tsx            "use client": CartProvider + useCart() — lines are keyed by
