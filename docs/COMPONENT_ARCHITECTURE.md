@@ -70,9 +70,17 @@ components/
     Gifting.tsx             `/gifting`
     Testimonials.tsx         `/testimonials` — three auto-scrolling columns
                              (components/ui/TestimonialsColumn.tsx) built from
-                             lib/testimonials.ts. Content is illustrative, not
-                             from real named customers — see the note atop
-                             lib/testimonials.ts and CONTENT_GUIDELINES.md
+                             lib/testimonials.ts, each showing 3 of the 9
+                             testimonials, visible from `sm:`/`lg:` up. Below
+                             `sm:` those three are replaced by a single
+                             `sm:hidden` column carrying all 9 testimonials
+                             (added 2026-09-13 — the 3-column split otherwise
+                             left 6 of 9 testimonials permanently invisible on
+                             mobile, since two of the three columns were just
+                             CSS-hidden, not redistributed). Content is
+                             illustrative, not from real named customers —
+                             see the note atop lib/testimonials.ts and
+                             CONTENT_GUIDELINES.md
     FinalCta.tsx             Home + `/gifting`
     EnquiryForm.tsx           "use client" — `/contact`, above ContactInfo. Name/contact/
                              email/message fields; submits by building a WhatsApp deep link

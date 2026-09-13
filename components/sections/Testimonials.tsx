@@ -20,7 +20,16 @@ export function Testimonials() {
         />
 
         <div className="mt-14 flex max-h-[740px] justify-center gap-6 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)]">
-          <TestimonialsColumn testimonials={firstColumn} duration={15} />
+          <TestimonialsColumn
+            testimonials={testimonials}
+            duration={45}
+            className="sm:hidden"
+          />
+          <TestimonialsColumn
+            testimonials={firstColumn}
+            duration={15}
+            className="hidden sm:block"
+          />
           <TestimonialsColumn
             testimonials={secondColumn}
             duration={19}

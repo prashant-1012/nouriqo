@@ -77,7 +77,7 @@ export function Footer() {
             </h3>
             <ul className="mt-4 space-y-3 text-sm text-ink-soft">
               <li>Email: [ to be added ]</li>
-              <li>Phone: [ to be added ]</li>
+              <li>Phone: +91 99606 25495</li>
               <li>[ Address to be added ]</li>
             </ul>
           </div>

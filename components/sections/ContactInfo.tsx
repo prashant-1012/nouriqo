@@ -3,7 +3,7 @@ import { Reveal } from "@/components/motion/Reveal";
 
 const details = [
   { label: "Email", value: "[ to be added ]" },
-  { label: "Phone", value: "[ to be added ]" },
+  { label: "Phone", value: "+91 99606 25495" },
   { label: "Address", value: "[ to be added ]" },
 ];
 

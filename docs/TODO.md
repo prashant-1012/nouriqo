@@ -46,8 +46,11 @@ a design polish pass (theme toggle was withdrawn, not deferred — see
 
 ## Needed from the client before launch
 
-- [ ] Real contact details (email, phone, address) to replace the
-      bracketed placeholders in `Footer.tsx`.
+- [x] Phone — `+91 99606 25495` added 2026-09-13 to `ContactInfo.tsx`,
+      `Footer.tsx`, and `WHATSAPP_ORDER_NUMBER` (`lib/config.ts`), per
+      client instruction.
+- [ ] Real email and address to replace the remaining bracketed
+      placeholders in `ContactInfo.tsx` / `Footer.tsx`.
 - [ ] Real social media URLs, if any exist — none are currently linked
       (deliberately, per the brief's "no fabricated links" rule).
 - [ ] **Real customer testimonials.** A `/testimonials` page shipped

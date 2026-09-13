@@ -1,5 +1,45 @@
 # Changelog
 
+## 2026-09-13 (2) — Testimonials: fixed 6-of-9 hidden on mobile
+
+User reported that mobile only ever showed the first 3 testimonials on
+`/testimonials`. Root cause: `Testimonials.tsx` splits the 9
+testimonials into 3 columns of 3, with column 2 hidden below `sm:` and
+column 3 hidden below `lg:` — CSS `hidden`, not conditional rendering,
+so those 6 testimonials were always in the DOM but never visible on a
+phone-width viewport. Fixed by adding a 4th column (`sm:hidden`,
+visible only below `sm:`) carrying the full 9-item `testimonials`
+array at a slower scroll `duration` (45s vs. 15–19s for the 3-item
+desktop columns, to keep a similar per-card pace); the original 3
+desktop columns are unchanged.
+
+Verified with a scripted Playwright check (`playwright-core`, System
+Chrome) rather than a single screenshot, since the column content
+scrolls continuously: at 375px only the new column renders (`display:
+block`, 320px wide inside a 327px row — no overflow) and its DOM
+contains all 9 unique names; at 1280px the new column is `display:
+none` and the original three (3 names each) render side by side as
+before. No console/page errors either width. `COMPONENT_ARCHITECTURE.md`
+updated.
+
+## 2026-09-13 — Real phone number added
+
+Client supplied a real contact number, `+91 9960625495`. Wired into all
+three places a phone number lives in this codebase:
+
+- `lib/config.ts`'s `WHATSAPP_ORDER_NUMBER` (was a placeholder digit
+  string, `917972052896`) — this single constant feeds every WhatsApp
+  deep link on the site (cart checkout and the `/contact` enquiry form),
+  so both now point at the real number.
+- `components/sections/ContactInfo.tsx` — `Phone` row on `/contact`,
+  replacing the bracketed `[ to be added ]` placeholder per
+  `CONTENT_GUIDELINES.md`'s placeholder convention.
+- `components/footer/Footer.tsx` — footer `Contact` column, same
+  placeholder swap.
+
+Email and address remain bracketed placeholders — not supplied yet, see
+`TODO.md`.
+
 ## 2026-09-08 (5) — Testimonial cards: shadow restored
 
 User pointed out the testimonial cards were missing the shadow shown in
