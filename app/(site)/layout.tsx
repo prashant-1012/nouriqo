@@ -3,6 +3,7 @@ import { Fraunces, Inter } from "next/font/google";
 import { Navbar } from "@/components/navigation/Navbar";
 import { Footer } from "@/components/footer/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { EnquiryPopup } from "@/components/enquiry/EnquiryPopup";
 import { CartProvider } from "@/lib/cart-context";
 import { getProducts } from "@/lib/products-db";
 import "../globals.css";
@@ -77,6 +78,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <main className="flex-1">{children}</main>
           <Footer />
           <CartDrawer />
+          {/*
+            Rendered here, not inside Navbar — Navbar's <header> has
+            backdrop-blur-sm, and a filter/backdrop-filter ancestor becomes
+            the containing block for its position:fixed descendants, which is
+            exactly what broke CartDrawer once. Same reason, same placement.
+          */}
+          <EnquiryPopup />
         </CartProvider>
       </body>
     </html>

@@ -1,5 +1,96 @@
 # Changelog
 
+## 2026-09-20 (2) — Timed enquiry popup
+
+A modal enquiry form that opens 5 seconds after a visitor lands, collecting
+name, mobile, email, address and message, and handing off to WhatsApp —
+the same honest no-backend pattern as `/contact`'s inline form and the
+cart's checkout.
+
+**Client decisions, asked before building:**
+- **Once per browsing session** (`sessionStorage`, not `localStorage`) —
+  reappears on a genuinely new session, never twice within one.
+- **WhatsApp deep link only.** No database record, no admin Enquiries
+  screen. Offered, explicitly declined — worth knowing that an enquiry
+  which is abandoned at the WhatsApp step leaves no trace on our side.
+- **All five fields required**, including address.
+- **Fires on whatever page they land on first**, not homepage only —
+  visitors arriving on `/sweets` or a blog post from search are landing too.
+
+**Trigger mechanics.** The two timing decisions collapse into one
+mechanism: a sessionStorage flag set the moment the popup is *shown*, so
+dismissing via X, Escape or the backdrop all behave identically, as does
+submitting. `EnquiryPopup` mounts in `app/(site)/layout.tsx`, which Next
+keeps mounted across client-side navigations, so its scheduling effect runs
+once per full page load — that is what gives "first page they land on"
+without any extra bookkeeping. Pathname and cart state are read through
+refs *synced in an effect* (not mutated during render — `react-hooks/refs`
+correctly rejects that, and it is unsafe under concurrent rendering) so
+navigating or opening the cart never restarts the countdown.
+
+**Suppressed on `/checkout*`, `/order-success` and `/contact`** — the first
+two are mid-payment or just-paid states where covering the screen risks a
+real order, and `/contact` already renders the same form inline. Re-checked
+at fire time, not just when scheduled, in case the visitor navigated into
+checkout during the 5 seconds. `/admin/*` needs no entry: it is a separate
+root layout, so the component never mounts there. The popup also declines
+to open if the cart drawer happens to be open, rather than stacking two
+overlays.
+
+**Rendered in `app/(site)/layout.tsx`, not inside `Navbar`** — same reason
+`CartDrawer` is: `Navbar`'s `<header>` has `backdrop-blur-sm`, and a
+`filter`/`backdrop-filter` ancestor becomes the containing block for its
+`position: fixed` descendants. Layering continues the existing scale
+(MobileMenu 40 → Navbar 50 → cart 60/70): scrim `z-[80]`, panel `z-[90]`.
+
+**No shadcn/Radix.** The `ui-styling` skill leans on them, but this project
+has neither, and `CartDrawer` already establishes the house overlay pattern
+(`AnimatePresence` + body scroll lock + Escape). Adding Radix for one
+dialog would have been a new dependency doing what ~40 lines already do
+here. One thing was added that `CartDrawer` lacks: a real **focus trap**.
+Focus moves to the dialog container itself (`tabIndex={-1}`) rather than the
+first control, so screen readers announce the title and the visitor isn't
+met with a heavy focus ring on the close button; Tab and Shift+Tab both wrap
+inside, and focus is restored to wherever it was on close.
+
+**16px inputs, deliberately** — `/contact`'s inline form uses 14px, which
+makes iOS Safari auto-zoom the viewport on focus. Tolerable on a page,
+disorienting in a modal. Bottom sheet below `sm:`, centred card above,
+`max-h-[90dvh]` with the form scrolling inside, since five fields plus a
+textarea is tall.
+
+**New/changed:**
+- `components/enquiry/EnquiryPopup.tsx` — new, `"use client"`.
+- `lib/enquiry-popup.ts` — new: session key, delay, suppressed-route list.
+- `lib/whatsapp.ts` — `EnquiryDetails` gains an optional `address`, emitted
+  as an `Address:` line only when present, so `/contact`'s four-field form
+  is completely unchanged and both keep one message format.
+- `app/(site)/layout.tsx` — mounts `<EnquiryPopup />` beside `CartDrawer`.
+
+**Verified** with Playwright against the dev server, 26/26: does not appear
+before 5s and does appear after; all five fields present and required;
+focus enters and is trapped in both directions over a full cycle; body
+scroll locks and releases; Escape closes; 16px inputs confirmed by computed
+style; no re-fire after client-side navigation *or* a full reload in the
+same session; does re-fire in a fresh session; suppressed on `/checkout`
+and `/contact`; and the exact URL handed to `window.open` carries all five
+values including the `Address:` line. Layout checked at 320/375/390/768/
+1440 — panel fits vertically at every size, form scrolls internally below
+`sm:`, no horizontal overflow, no console errors. Reduced-motion checked
+separately: opens with `opacity: 1`, no transform, fully on screen.
+`next build` and `eslint` clean.
+
+**Pre-existing bug found while testing, NOT introduced here and NOT fixed:**
+under `prefers-reduced-motion`, every `Reveal`/`RevealGroup`/`RevealItem`
+causes a React hydration mismatch. `useReducedMotion()` returns false during
+SSR, so the server emits `motion.div`'s `initial` styles
+(`opacity: 0; transform: translateY(20px)`), while the client renders the
+plain `<div>` early-return with no styles. Confirmed unrelated to this work
+by reproducing it on `/contact`, where the popup is suppressed and never
+renders. It affects only reduced-motion visitors, and the usual fix is to
+gate on a mounted flag rather than branching the returned element. Left
+alone as out of scope — see `TODO.md`.
+
 ## 2026-09-20 — Real favicon: brand mark replaces the Next.js default
 
 The site had been serving the stock `create-next-app` favicon — the

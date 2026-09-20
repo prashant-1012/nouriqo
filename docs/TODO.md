@@ -180,6 +180,22 @@ plan existed:
 
 ## Technical
 
+- [ ] **Hydration mismatch under `prefers-reduced-motion`.** Found
+      2026-09-20 while testing the enquiry popup; pre-existing and
+      unrelated to it (reproduces on `/contact`, where the popup never
+      renders). `components/motion/Reveal.tsx`'s `Reveal`/`RevealGroup`/
+      `RevealItem` all call `useReducedMotion()` and early-return a plain
+      `<div>`. That hook returns false during SSR, so the server emits
+      `motion.div`'s `initial` styles (`opacity: 0; transform:
+      translateY(20px)`) while the client renders the unstyled `<div>` —
+      React logs a hydration mismatch, and since it explicitly "won't be
+      patched up" those inline styles can leave content stuck invisible.
+      Affects only visitors with reduced motion enabled — but for them
+      it's every revealed section on every page. Usual fix: gate on a
+      mounted flag (always render the motion element, disable the
+      animation via props) rather than branching which element is
+      returned. See `CHANGELOG.md` 2026-09-20 (2).
+
 - [ ] Revisit the dual hero image preload trade-off if Lighthouse LCP
       numbers come back tight — see `PERFORMANCE_GUIDELINES.md`.
 - [ ] Add `sitemap.xml` / `robots.txt` file conventions

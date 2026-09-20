@@ -32,11 +32,21 @@ export type EnquiryDetails = {
   name: string;
   contact: string;
   email: string;
+  /**
+   * Optional: the timed enquiry popup (`components/enquiry/EnquiryPopup.tsx`)
+   * collects a delivery address, `/contact`'s inline form does not. Kept
+   * optional rather than splitting the builder in two, so both forms keep
+   * producing the same message format.
+   */
+  address?: string;
   message: string;
 };
 
 export function buildEnquiryMessage(details: EnquiryDetails): string {
-  return `Hi Nouriqo! I'd like to get in touch.\n\nName: ${details.name}\nContact: ${details.contact}\nEmail: ${details.email}\n\nMessage:\n${details.message}`;
+  const addressLine = details.address
+    ? `\nAddress: ${details.address}`
+    : "";
+  return `Hi Nouriqo! I'd like to get in touch.\n\nName: ${details.name}\nContact: ${details.contact}\nEmail: ${details.email}${addressLine}\n\nMessage:\n${details.message}`;
 }
 
 export function buildWhatsAppEnquiryUrl(details: EnquiryDetails): string {

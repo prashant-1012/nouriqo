@@ -151,6 +151,27 @@ components/
                              is already confirmed server-side. Waits for CartProvider's
                              hasHydrated flag before calling clearCart() — see the
                              lib/cart-context.tsx entry below for why that ordering matters
+  enquiry/                    added 2026-09-20
+    EnquiryPopup.tsx           "use client" — timed modal enquiry form (name/
+                             mobile/email/address/message, all required),
+                             opening 5s after landing and handing off to
+                             WhatsApp via lib/whatsapp.ts. Rendered in
+                             app/(site)/layout.tsx beside CartDrawer, NOT
+                             inside Navbar (same backdrop-filter containing-
+                             block reason — see the note below). Shows once
+                             per browsing session (sessionStorage flag set on
+                             show, so X / Escape / backdrop / submit all
+                             behave alike), skips the routes listed in
+                             lib/enquiry-popup.ts, and declines to open if the
+                             cart drawer is already open rather than stacking
+                             two overlays. Unlike CartDrawer it implements a
+                             real focus trap: focus goes to the dialog
+                             container itself (tabIndex={-1}) so screen
+                             readers announce the title, Tab/Shift+Tab wrap
+                             inside, and focus is restored on close. Inputs
+                             are 16px, not the 14px used by /contact's inline
+                             form — below 16px iOS Safari auto-zooms the
+                             viewport on focus
   hero/
     Hero.tsx               art-directed (desktop/mobile) hero — Home only
   products/
@@ -305,6 +326,16 @@ lib/
                              layouts, and every admin Server Action, see the note above the
                              app/ tree). Tagged `import "server-only"` so it can never end
                              up in a client bundle
+  enquiry-popup.ts             added 2026-09-20 — EnquiryPopup's tuning knobs in
+                             one place: ENQUIRY_POPUP_SESSION_KEY (versioned
+                             sessionStorage key), ENQUIRY_POPUP_DELAY_MS (5s,
+                             client-specified), and isEnquiryPopupSuppressed()
+                             — prefix match over /checkout, /order-success and
+                             /contact. The first two are mid-payment or
+                             just-paid states where covering the screen risks a
+                             real order; /contact already shows the same form
+                             inline. /admin/* needs no entry — separate root
+                             layout, so the popup never mounts there
   nav-links.ts               shared nav link list + isNavLinkActive(pathname, href) — real
                               paths, not anchors; used by both NavLinks and MobileMenu
   cart-context.tsx            "use client": CartProvider + useCart() — lines are keyed by
