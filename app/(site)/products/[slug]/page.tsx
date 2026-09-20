@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductDetails } from "@/components/products/ProductDetails";
-import { getProductBySlug } from "@/lib/products-db";
+import { getProductBySlug } from "@/lib/products-wix";
 
 export async function generateMetadata({
   params,

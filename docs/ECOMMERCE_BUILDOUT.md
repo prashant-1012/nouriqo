@@ -13,15 +13,29 @@ remaining work, Phase 2, and Phase 3 are tightly coupled and actually
 get built as two slices, not three separate phases — see "Suggested
 Build Order" below.
 
-## Status Snapshot (2026-09-14)
+> ## ⚠️ Course change, 2026-09-20 — read this first
+>
+> The client asked to manage the store from the **Wix dashboard** they already
+> pay for, not from the admin panel built in Phase 4. Wix Stores is now the
+> source of truth for products, and will be for carts, checkout and orders.
+>
+> **See `docs/WIX_INTEGRATION.md`** — that document, not this one, describes
+> how the storefront works today.
+>
+> Phases 2–4 below are still accurate as a record of what was built, and the
+> code still exists and works. It is kept as the fallback until a real payment
+> has gone through Wix end to end. Nothing here is deleted; it is superseded.
+
+## Status Snapshot (2026-09-20)
 
 | Phase | Status |
 |---|---|
 | 1 — Website | **Done** |
-| 2 — Backend (Postgres) | **Done** — schema, Prisma Client, the live database, and admin product management are all up |
+| 2 — Backend (Postgres) | **Built and working, now superseded** — the storefront reads products from Wix instead (2026-09-20). Schema, Prisma Client and the live database all still exist; nothing reads `lib/products-db.ts` any more |
 | 3 — PayU | **Built and tested against sandbox-shaped placeholder credentials** — full flow works end-to-end locally; not yet linked from the live cart drawer (by design), and not yet run against PayU's actual hosted page (needs a real test key/salt — see below) |
 | 4 — Admin | **Built and tested** — login, dashboard, product/order/user management all working; still needs the real Super Admin phone number to bootstrap the actual account (see below) |
-| 5 — Shiprocket | Not started, and deliberately deferred — no account/KYC yet, confirmed |
+| 5 — Shiprocket | Not started, and deliberately deferred — no account/KYC yet, confirmed. Wix has its own shipping rules, so this may not be needed as a separate integration |
+| **6 — Wix Headless** | **In progress (2026-09-20)** — catalog reads are live; checkout and payments not started. See `docs/WIX_INTEGRATION.md` |
 
 ## Phase 1 — Website (Next.js, Vercel)
 

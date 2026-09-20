@@ -5,15 +5,15 @@ import { Footer } from "@/components/footer/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { EnquiryPopup } from "@/components/enquiry/EnquiryPopup";
 import { CartProvider } from "@/lib/cart-context";
-import { getProducts } from "@/lib/products-db";
+import { getProducts } from "@/lib/products-wix";
 import "../globals.css";
 
 // Every route reads through this layout, and several (Home, /sweets, the
-// cart drawer via CartProvider) depend on getProducts()'s live database
-// read. A plain Prisma call — unlike fetch() — doesn't opt a route into
-// dynamic rendering on its own, so without this the product catalog would
-// freeze at build time and admin edits (once Phase 4 ships) would need a
-// redeploy to show up. ISR keeps pages fast while staying reasonably fresh.
+// cart drawer via CartProvider) depend on getProducts(), which now reads the
+// live Wix Stores catalog. ISR bounds how stale that can get: without it the
+// catalog would freeze at build time and the client's dashboard edits would
+// need a redeploy to appear. 60s is the worst case — POST /api/revalidate
+// flushes the catalog immediately. See docs/WIX_INTEGRATION.md.
 export const revalidate = 60;
 
 const fraunces = Fraunces({

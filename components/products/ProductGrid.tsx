@@ -2,7 +2,7 @@ import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 import { ProductCard } from "@/components/products/ProductCard";
-import { getProducts } from "@/lib/products-db";
+import { getProducts } from "@/lib/products-wix";
 
 export async function ProductGrid() {
   const products = await getProducts();

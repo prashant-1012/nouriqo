@@ -1,5 +1,55 @@
 # Changelog
 
+## 2026-09-20 (3) — Wix Headless: the product catalog moves to Wix
+
+The client asked to manage the store from the Wix dashboard they already pay
+for, rather than from the Phase 4 admin panel. Wix Stores is now the source of
+truth for products; this repo is the source of truth for presentation.
+
+Full reference: **`docs/WIX_INTEGRATION.md`**.
+
+**What shipped.** `lib/wix-client.ts` (visitor-token auth, cache-tagged fetch),
+`lib/products-wix.ts` (Wix → `Product` mapping), `lib/product-presentation.ts`
+(the hybrid styling model), `POST /api/revalidate`, and
+`static.wixstatic.com` in the image config.
+
+**Why it was a three-line change downstream.** The old `lib/products-db.ts`
+exposed exactly two functions returning a `Product`. Keeping that contract
+identical meant the cart, product grid and detail pages needed nothing beyond
+a changed import path. The abstraction earned its keep.
+
+**Hybrid presentation, decided explicitly.** Wix has no field for our accent
+colour, the "Since 1958" ribbon, the ingredient badges or the variant
+sub-label. The rule chosen: *defaults must make a brand-new product look right
+with zero code changes*, with per-slug overrides for styling we care about.
+Accent colours for unknown products are hashed from the slug, so they are
+stable across deploys rather than reshuffling. A renamed slug drops its
+override and falls back to generic-but-correct, never broken.
+
+**Catalog restructure, done over the API.** The Wix store had three products
+carrying leftover template slugs (`artisanal-cheese-platter` for GHEE PAPRI,
+`organic-quinoa-salad` for KAJU PAPRI), a zero shipping weight, and no pack
+sizes at all. Added a `Weight` option with 200 gram / 500 gram / 1 kg, priced
+per variant, with real per-size weights so Wix can compute shipping. Kaju
+Badam Papri was sitting out of stock with inventory tracking on while the
+other two had it off; put back in stock to match.
+
+**Pricing conflict, resolved toward Wix.** The repo seed and the Wix catalog
+disagreed badly — repo said ₹600 for Kaju Papri against a ₹725 *cost*, i.e.
+selling at a loss. `lib/products.ts` had always labelled its prices
+provisional. Wix's prices were real and are now authoritative. 1kg and 200g
+prices are reasonable derivations the client will adjust.
+
+**What was deliberately not deleted.** Prisma, the Postgres catalog, PayU and
+the whole `/admin` section still exist and still work. They are the fallback
+until a real payment clears through Wix. WhatsApp checkout also stays live
+until that same cutover — there is never an in-between state where checkout
+doesn't work.
+
+**Not done yet:** checkout, payments (PayU India KYC was in progress; Wix
+Payments does not support India), and a Wix webhook for automatic cache
+revalidation.
+
 ## 2026-09-20 (2) — Timed enquiry popup
 
 A modal enquiry form that opens 5 seconds after a visitor lands, collecting

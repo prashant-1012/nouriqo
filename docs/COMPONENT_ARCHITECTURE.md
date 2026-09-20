@@ -288,7 +288,26 @@ lib/
                              queries the database once. Maps Prisma's generated Product/
                              ProductWeightOption rows back into the same Product/WeightOption
                              shape lib/products.ts always exposed, so ProductCard/
-                             AddToCartControl/CartDrawer needed no prop-type changes
+                             AddToCartControl/CartDrawer needed no prop-type changes.
+                             SUPERSEDED 2026-09-20 — nothing imports this any more; the live
+                             read path is products-wix.ts. Kept as the fallback until a real
+                             payment clears through Wix. See docs/WIX_INTEGRATION.md
+  wix-client.ts              added 2026-09-20 — visitor-token auth and the authenticated fetch
+                             wrapper for the Wix REST API. Token cached in memory (it's a
+                             credential, not page data); Authorization takes the BARE token,
+                             no "Bearer " prefix. Exports WIX_PRODUCTS_TAG, the cache tag every
+                             catalog read carries
+  products-wix.ts            added 2026-09-20 — getProducts() / getProductBySlug() reading the
+                             live Wix Stores catalog, replacing products-db.ts. Returns the
+                             exact same Product shape, which is why the swap touched only three
+                             import lines. Pack sizes come from Wix variants sorted by numeric
+                             weight, not label. CATALOG V1 endpoints only — V3 will not work
+                             against this site
+  product-presentation.ts    added 2026-09-20 — the fields Wix Stores has no home for (accent,
+                             tagline, variant sub-label, ingredient badges, image alt). Hybrid
+                             model: defaults make any brand-new client-added product look right
+                             with zero code changes; OVERRIDES pins per-slug styling. Unknown
+                             products get a slug-hashed accent so it stays stable across deploys
   counters.ts                 Counter type + data for the home page Counters section — icon,
                              target value, suffix, label. Figures are provisional placeholders,
                              not confirmed metrics (see CONTENT_GUIDELINES.md and TODO.md)
