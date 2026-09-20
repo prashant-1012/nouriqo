@@ -61,9 +61,6 @@ export const metadata: Metadata = {
     description:
       "Real desi ghee, real dry fruits, nothing artificial. Discover Nouriqo's traditional Indian sweets.",
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

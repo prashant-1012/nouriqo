@@ -1,5 +1,78 @@
 # Changelog
 
+## 2026-09-20 — Real favicon: brand mark replaces the Next.js default
+
+The site had been serving the stock `create-next-app` favicon — the
+black circle with the white Vercel triangle — since it was scaffolded
+on 2026-09-04. On a live domain that means every browser tab, bookmark
+and search result was branded Vercel, not Nouriqo. Replaced with the
+brand's own leaf mark.
+
+**Why the supplied logo could not just be dropped in.** Both logo files
+are fully opaque: RGBA in format, but with zero transparent pixels and
+a solid `rgb(254,254,254)` background (79% of the lockup, 65% of the
+mark). The site works around this at runtime with `.logo-blend`'s
+`mix-blend-mode: multiply` (`globals.css`), which only succeeds because
+there is a cream page behind the logo — and which `globals.css` already
+disables under `prefers-color-scheme: dark`, conceding the same
+limitation. A favicon has no page behind it; the browser composites it
+onto the tab strip, which CSS cannot reach and which is near-black in
+dark mode. Dropped in as-is it would have been a white postage stamp in
+a dark tab bar. So the transparency had to be baked into the file.
+
+The full lockup (`nouriqo-logo.png`) was never a candidate — its
+"NOURIQO" / "EMPOWER HEALTH" wordmark is baked into the pixels and turns
+to mush at 16px. That is the same reasoning that produced
+`nouriqo-mark.png` for the navbar at ~36px, only more so at 16px.
+
+**What was done** — full detail, including how to reproduce it, is in
+`ASSET_MAP.md`'s new "Browser / app icons" section. In short: the white
+background was keyed out with a border-seeded flood fill (a global
+"delete all white" would have punched a hole through the enclosed
+highlight inside the right leaf), the ™ was dropped via connected-
+component analysis (illegible at icon sizes, but still eating
+contrast), and the mark was recropped from its off-centre position to
+its true 187×187 bbox and re-padded square.
+
+**Deliberately kept within the "do not alter the logo" rule.** No
+redrawing, recoloring or regeneration — only background removal,
+cropping and padding. This sits on the same side of the line as
+`nouriqo-mark.png`, which is itself already a crop of the supplied
+lockup. `nouriqo-logo.png` and `nouriqo-mark.png` are both untouched;
+the ™ removal applies only to the icon derivatives.
+
+**Resolution ceiling worth knowing:** the mark's actual ink is 187px in
+the best available source, so every icon is generated at or below that
+— nothing upscaled. Hence `icon.png` at 192×192 rather than the usual
+512×512. A larger icon (PWA manifest, large app tile) would need
+higher-resolution source artwork from the client.
+
+**Files:**
+- `app/favicon.ico` — 16/32/48, 32-bit BMP entries for widest
+  compatibility, transparent, tight ~4% padding.
+- `app/icon.png` — 192×192, transparent.
+- `app/apple-icon.png` — 180×180 on opaque `cream` (#faf3e6), ~14%
+  padding. Cannot be transparent: iOS renders a transparent
+  apple-touch-icon as solid black and masks the corners itself.
+
+**Also removed:** `app/(site)/layout.tsx`'s manual
+`icons: { icon: "/favicon.ico" }` metadata entry. Next's file
+conventions (`app/favicon.ico`, `app/icon.png`, `app/apple-icon.png`)
+emit the correct `<link>` tags automatically with sizes, types and
+content hashes, and Next's own docs recommend the file-based API over
+the config export "rather than having to sync the config export with
+actual files." Left in place it would have fought the new `icon.png`.
+
+**Verified:** `next build` clean, `eslint` clean. Both root layouts —
+`(site)` and `admin` — emit exactly one set of tags (`icon` 48×48 ico,
+`icon` 192×192 png, `apple-touch-icon` 180×180), confirmed in the built
+HTML, since the convention files sit at the true top level of `app/`
+and so resolve for both trees. The written `.ico` was decoded back out
+of its own bytes and rendered against both a dark (#202124) and light
+(#dee1e6) tab strip at all three sizes to confirm no white box, clean
+edges, the interior leaf highlight intact, and the notch between the
+two leaves still legible at 16px.
+
 ## 2026-09-14 (2) — Real Super Admin account created; phone UI treatment
 
 Follow-up to the admin dashboard build: the client asked why they

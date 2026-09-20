@@ -15,6 +15,56 @@ as PNG to preserve alpha transparency.
 | `nouriqo-logo.png` | `Screenshot 2026-08-31 221247.png` | Full lockup (leaf mark + "NOURIQO" + "EMPOWER HEALTH"), as supplied. Reserved for placements with enough room to show the wordmark at a legible size (none currently — kept for future use, e.g. an About page). |
 | `nouriqo-mark.png` | Cropped from `nouriqo-logo.png` | Icon-only crop (just the two-leaf mark + ™), no resizing/recoloring of the artwork itself — cropped because the full lockup's baked-in wordmark becomes illegible at navbar/footer icon size (~36px). Used in `Navbar` and `Footer` next to an HTML "NOURIQO" text label. White background handled the same way via `.logo-blend`. |
 
+### Browser / app icons (`app/favicon.ico`, `app/icon.png`, `app/apple-icon.png`)
+
+Added 2026-09-20, replacing the stock `create-next-app` Vercel triangle
+that had shipped as the favicon since the project was scaffolded. All
+three are derived from `nouriqo-mark.png` — no redrawing, recoloring or
+regeneration of the artwork, the same line `nouriqo-mark.png` itself
+already sits on (see its row above).
+
+| File | Size(s) | Notes |
+|---|---|---|
+| `app/favicon.ico` | 16, 32, 48 | 32-bit BMP entries (not PNG-in-ICO), for widest browser compatibility. ~4% padding — deliberately tight, since 16px is where legibility is scarcest. |
+| `app/icon.png` | 192×192 | Transparent, ~6% padding. |
+| `app/apple-icon.png` | 180×180 | **Opaque `cream` (#faf3e6) background**, ~14% padding — iOS renders a transparent apple-touch-icon as solid black and masks the corners, so this one cannot be transparent or edge-to-edge like the other two. |
+
+Three things were done to the mark to make it work as an icon, each
+worth knowing before regenerating these:
+
+1. **White background keyed out.** The supplied logo files are fully
+   opaque (RGBA in format, but zero transparent pixels — background is
+   solid `rgb(254,254,254)`). On the site that is handled at runtime by
+   `.logo-blend`'s `mix-blend-mode: multiply`, which only works because
+   there is a cream page behind it. A favicon composites straight onto
+   the browser's tab strip, which no CSS can reach and which is
+   near-black in dark mode — so the transparency had to be baked in.
+   Done with a **border-seeded flood fill**, not a global "delete all
+   white": the right leaf contains an enclosed white highlight that a
+   global key would punch a hole through. The flood fill cannot reach it.
+2. **™ removed.** Connected-component analysis after keying found two
+   blobs — the leaves (22,088px) and the ™ (665px) — and kept only the
+   former. At 16–48px the ™ is illegible but still consumes contrast.
+   It remains on `nouriqo-logo.png` and `nouriqo-mark.png`, which are
+   untouched; this applies to the icon derivatives only.
+3. **Recropped and re-centred.** `nouriqo-mark.png`'s ink sits
+   off-centre (x 73–293 in a 320×210 canvas) because it was cut out of
+   the lockup, not composed as an icon. Cropped to its true bbox, which
+   comes out at exactly 187×187 once the ™ is gone.
+
+**Resolution ceiling: 187px.** That is the mark's actual ink size in the
+best available source, so every icon above is generated at or below it
+— nothing is upscaled into detail the supplied artwork does not contain.
+This is why `icon.png` is 192×192 rather than the more usual 512×512.
+If a larger icon is ever needed (a PWA manifest, a large app tile), it
+needs higher-resolution source artwork from the client, not an upscale
+of this one.
+
+Generated with `sharp` (already present as a Next.js dependency) via a
+throwaway script — no new dependency and no committed tooling, since
+this is a one-off derivation. The steps above are recorded here
+precisely so it is reproducible without that script.
+
 ## `hero/`
 
 | File | Source | Usage |
