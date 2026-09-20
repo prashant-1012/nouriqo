@@ -10,6 +10,12 @@ import type { Product, WeightOption } from "@/lib/products";
 import { formatINR } from "@/lib/currency";
 import { buildWhatsAppOrderUrl } from "@/lib/whatsapp";
 import { QuantityStepper } from "@/components/products/QuantityStepper";
+import { CheckoutButton } from "@/components/cart/CheckoutButton";
+
+// Read at module scope: NEXT_PUBLIC_* vars are inlined at build time, so this
+// is a constant, not a runtime lookup.
+const wixCheckoutEnabled =
+  process.env.NEXT_PUBLIC_WIX_CHECKOUT_ENABLED === "true";
 
 export function CartDrawer() {
   const { lines, isOpen, closeCart, updateQuantity, removeItem, products } =
@@ -159,14 +165,31 @@ export function CartDrawer() {
                   <p className="mt-1 text-xs italic text-ink-soft/70">
                     Prices shown are indicative and may change.
                   </p>
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 flex w-full items-center justify-center rounded-full bg-emerald-800 px-6 py-3 text-sm font-medium text-ivory transition-colors hover:bg-emerald-700"
-                  >
-                    Checkout via WhatsApp
-                  </a>
+                  {wixCheckoutEnabled ? (
+                    <>
+                      <CheckoutButton />
+                      {/* WhatsApp stays reachable during the transition — per
+                          ECOMMERCE_BUILDOUT.md there is never a moment where
+                          checkout doesn't work. Remove at cutover. */}
+                      <a
+                        href={whatsappUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-3 block text-center text-xs text-ink-soft underline underline-offset-4 decoration-ink-soft/30 hover:text-emerald-800"
+                      >
+                        Or order via WhatsApp
+                      </a>
+                    </>
+                  ) : (
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 flex w-full items-center justify-center rounded-full bg-emerald-800 px-6 py-3 text-sm font-medium text-ivory transition-colors hover:bg-emerald-700"
+                    >
+                      Checkout via WhatsApp
+                    </a>
+                  )}
                 </div>
               </>
             )}

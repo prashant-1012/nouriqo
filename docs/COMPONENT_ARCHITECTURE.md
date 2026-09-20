@@ -308,6 +308,12 @@ lib/
                              model: defaults make any brand-new client-added product look right
                              with zero code changes; OVERRIDES pins per-slug styling. Unknown
                              products get a slug-hashed accent so it stays stable across deploys
+  wix-checkout.ts            added 2026-09-20 — createCheckoutUrl(): turns browser cart lines
+                             into a real Wix cart and returns the hosted checkout URL. Lines
+                             are re-resolved against the live catalog (never trusted) and
+                             prices come from Wix, not the request. Variants referenced by
+                             variantId — option names return ITEM_NOT_FOUND_IN_CATALOG.
+                             Gated behind WIX_CHECKOUT_ENABLED; see docs/WIX_INTEGRATION.md
   counters.ts                 Counter type + data for the home page Counters section — icon,
                              target value, suffix, label. Figures are provisional placeholders,
                              not confirmed metrics (see CONTENT_GUIDELINES.md and TODO.md)

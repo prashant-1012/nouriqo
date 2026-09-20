@@ -10,10 +10,22 @@ export type WeightOption = {
   weight: string;
   /** Indicative price in INR for this pack size — provisional, see CONTENT_GUIDELINES.md */
   price: number;
+  /**
+   * Wix Stores variant ID for this pack size. Required to put the item in a
+   * real Wix cart at checkout — Wix identifies what's being bought by variant,
+   * not by our `weight` label. Absent on the legacy static array below.
+   */
+  variantId?: string;
 };
 
 export type Product = {
   slug: string;
+  /**
+   * Wix Stores product ID. Paired with a WeightOption's `variantId` to build
+   * the `catalogReference` a Wix cart line needs. Absent on the legacy static
+   * array below, which is no longer a live read path.
+   */
+  wixProductId?: string;
   name: string;
   variant: string;
   tagline: string;

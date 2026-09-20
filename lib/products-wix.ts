@@ -97,11 +97,12 @@ function toWeightOptions(product: WixProduct): Product["weightOptions"] {
     .map((entry) => ({
       weight: Object.values(entry.choices)[0] ?? "",
       price: entry.variant.priceData?.price ?? 0,
+      variantId: entry.id,
       sortKey: entry.variant.weight ?? 0,
     }))
     .filter((option) => option.weight !== "")
     .sort((a, b) => a.sortKey - b.sortKey)
-    .map(({ weight, price }) => ({ weight, price }));
+    .map(({ weight, price, variantId }) => ({ weight, price, variantId }));
 
   if (fromVariants.length > 0) {
     return fromVariants;
@@ -119,6 +120,7 @@ function toProduct(product: WixProduct): Product {
 
   return {
     slug: product.slug,
+    wixProductId: product.id,
     name: product.name,
     variant: presentation.variant,
     tagline: presentation.tagline,

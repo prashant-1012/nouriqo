@@ -129,6 +129,96 @@ If the client later renames that slug in Wix, the override silently stops
 applying and the product falls back to defaults. It degrades to *generic but
 correct*, never to broken. That is intentional.
 
+## Checkout
+
+**Status: built, gated off, blocked on one DNS change.** See the blocker below
+before enabling anything.
+
+### How it works
+
+The browser cart stays local (localStorage) while the customer shops — "Add to
+Cart" makes no network call and works offline. A real Wix cart is created only
+when they click **Checkout**:
+
+```
+CheckoutButton  →  POST /api/checkout
+                     → lib/wix-checkout.ts
+                        → fresh visitor token
+                        → POST /ecom/v2/carts          (catalogItems)
+                        → POST /ecom/v2/carts/{id}/get-checkout-url
+                     ← { checkoutUrl }
+                →  browser redirects to Wix hosted checkout
+```
+
+Deliberate choices:
+
+- **Cart created at checkout, not per click.** Keeps add-to-cart instant, and
+  Wix still gives the client abandoned-*checkout* recovery from this point —
+  a warmer signal than an abandoned cart anyway.
+- **A fresh visitor token per checkout.** Catalog reads share one cached token
+  because they're public and identical for everyone. A cart belongs to a
+  shopper, so each checkout mints its own session rather than hanging every
+  order off one shared identity.
+- **Nothing from the browser is trusted.** Lines are re-resolved against the
+  live catalog by slug and pack size; anything deleted, renamed or out of
+  stock is dropped. Prices are never read from the request — Wix prices the
+  cart from its own catalog, so a tampered payload can't buy sweets cheaply.
+- **Variants are referenced by `variantId`.** These products have
+  `manageVariants: true`, so passing option names instead returns
+  `ITEM_NOT_FOUND_IN_CATALOG`.
+
+### 🚧 Blocker: the Wix pages domain
+
+`get-checkout-url` currently returns:
+
+```
+https://www.nouriqo.com/checkout?checkoutId=...
+```
+
+**That domain points at Vercel, not Wix.** A customer following it would land
+on this repo's own PayU checkout page with a stray query param. Checkout
+cannot work until this is fixed.
+
+Wix serves its hosted pages from a *separate* site with its own domain, and
+per Wix's docs **you cannot use the external site's own domain** for it. The
+fix is a subdomain:
+
+1. **Wix dashboard** → Settings → Development & integrations → Headless
+   Settings → **Manage URLs** → **Wix pages domain** → Manage domain
+2. Connect something like `checkout.nouriqo.com`
+3. Add the matching DNS record at the domain registrar
+
+Leaving it on the free `*.wixsite.com` default also works and needs no DNS —
+it's just less polished, since the customer visibly lands on a Wix domain.
+
+### Feature flags
+
+Both must be `"true"`, and **neither should be set in Vercel until the domain
+above is sorted**:
+
+| Flag | Guards |
+|---|---|
+| `WIX_CHECKOUT_ENABLED` | `POST /api/checkout` — returns 503 when off |
+| `NEXT_PUBLIC_WIX_CHECKOUT_ENABLED` | Whether the cart drawer shows the button |
+
+With the flags off, the cart drawer behaves exactly as it does in production
+today: a single "Checkout via WhatsApp" button. With them on, Wix checkout
+becomes the primary action and WhatsApp drops to a secondary link — per
+`ECOMMERCE_BUILDOUT.md`, there is never a moment where checkout doesn't work.
+Remove the WhatsApp link at cutover.
+
+### A note on deprecated APIs
+
+Checkout V1 (`/ecom/v1/checkouts`) is **fully deprecated** — all 13 methods.
+Don't build on it, and be wary of Wix's own headless guides that still route
+through it via the Redirects API and `ecomCheckout.checkoutId`.
+
+Cart V2's `get-checkout-url`, which this code uses, is current. Cart V2 also
+drops the checkout entity entirely: the alternative flow is `SetDeliveryMethod`
+then `PlaceOrder`, which would keep the customer on our site but means we
+handle payment ourselves. Worth revisiting if the hosted checkout's branding
+break becomes a problem.
+
 ## Caching and freshness
 
 Product reads are tagged `wix-products` and sit behind a 60-second ISR window
@@ -187,15 +277,46 @@ That is deliberate. Until a real payment has gone through Wix end to end, the
 PayU-backed checkout is the fallback. Delete it only after the Wix checkout
 has taken live money successfully.
 
+### Keeping Postgres in sync
+
+A fallback that doesn't work isn't a fallback. The two catalogs drifted the
+moment Wix took over — Postgres still held `classic-ghee-papri` and had no
+200 gram pack, so any cart built on the live site failed PayU checkout with
+`<slug> (<weight>) is no longer available`.
+
+Re-mirror Wix into Postgres after any structural catalog change:
+
+```bash
+npx tsx --env-file=.env.local scripts/sync-products-from-wix.ts
+```
+
+It upserts by slug, replaces pack sizes wholesale (so a size removed in Wix
+disappears here too), and deletes products Wix no longer sells. Past
+`OrderItem` rows keep their snapshotted details — the schema nulls their
+`productId` rather than cascading.
+
+**Do not run `prisma/seed.ts`.** It seeds from the static pre-Wix array in
+`lib/products.ts` and would reintroduce the old slugs and prices. It carries a
+warning header saying so.
+
 WhatsApp checkout also stays live until that same cutover, per the rule in
 `ECOMMERCE_BUILDOUT.md`: there is never an in-between state where checkout
 doesn't work.
 
 ## Known gaps
 
-- **Checkout is not built yet.** Products and cart read from Wix; the purchase
-  flow does not. Wix Headless requires redirecting to a Wix-hosted checkout
-  page on a subdomain, then returning to the site. Not started.
+- **Checkout is built but disabled.** Blocked on the Wix pages domain — see
+  [Checkout](#checkout). Nothing else stands in its way.
+- **Shipping resolves, but it's free.** Verified 2026-09-20 with a real
+  variant to a New Delhi address: Wix returns a "Free shipping" option at
+  ₹0.00, so checkout won't stall. But the PayU flow charges a flat ₹50, so
+  moving to Wix as-is silently drops that. Client decision: free, flat ₹50, or
+  weight-based (per-pack weights are already set, so all three work).
+- **Tax is 0%.** No tax region is configured, so nothing is collected. May be
+  correct for their turnover; worth confirming if GST applies.
+- **International shipping is active.** A region covering everywhere outside
+  India exists with the same carrier. Probably a Wix default nobody reviewed —
+  confirm it's intentional before launch.
 - **Payments are not connected.** Wix Payments does **not** support India. The
   site must use a third-party provider; **PayU India is available** in Wix's
   India payment method list, alongside Razorpay, Cashfree, Easebuzz, Nimbbl,
@@ -212,6 +333,7 @@ doesn't work.
 
 ## Reference
 
+- `WIX_PROGRESS.md` — where the migration got to and what's next; **start there**
 - Wix Headless docs: https://dev.wix.com/docs/go-headless
 - Catalog V1 API: https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1
 - `ECOMMERCE_BUILDOUT.md` — the original five-phase plan this changes course from

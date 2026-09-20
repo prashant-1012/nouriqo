@@ -1,5 +1,73 @@
 # Changelog
 
+## 2026-09-20 (5) — Fix "<slug> (<weight>) is no longer available" at checkout
+
+Reported symptom: `ghee-papri (200 gram) is no longer available.` on every
+checkout attempt. Two distinct causes, both fixed.
+
+**Cause 1 — the catalogs had drifted.** That message comes from
+`lib/orders-db.ts`, the *PayU* order path, which validates against Postgres.
+Postgres still held the pre-Wix catalog: old slugs (`classic-ghee-papri`) and
+no 200 gram pack. Any cart built on the live site — which now reads from Wix —
+failed validation there.
+
+Fixed with `scripts/sync-products-from-wix.ts`, which mirrors the Wix catalog
+into Postgres: upsert by slug, pack sizes replaced wholesale, products Wix no
+longer sells deleted. Ran it — 3 products synced, 2 stale slugs removed. The
+PayU fallback works again, which matters: a fallback that doesn't work isn't
+one. `prisma/seed.ts` now carries a warning header, since running it would
+reintroduce exactly the stale data that caused this.
+
+**Cause 2 — the domain collision, now with a customer-visible symptom.** The
+reason anyone reached the PayU page at all is that Wix's `get-checkout-url`
+returns `https://www.nouriqo.com/checkout?checkoutId=…`, and that domain
+resolves to Vercel. Wix's checkout link lands on *this app's* legacy checkout
+page, which then fails while validating a Wix cart against Postgres.
+
+`createCheckoutUrl` now refuses to return a URL whose host is our own domain,
+with a message naming the fix, rather than redirecting a paying customer into
+that loop. The underlying fix is still a Wix pages domain — dashboard-only,
+not settable through `UpdateOAuthApp` (which only accepts name, description,
+domains, login/logout URLs).
+
+## 2026-09-20 (4) — Wix checkout, built and gated off
+
+Cart hand-off to Wix's hosted checkout. **Shipped disabled** behind
+`WIX_CHECKOUT_ENABLED` / `NEXT_PUBLIC_WIX_CHECKOUT_ENABLED` — with the flags
+off the cart drawer is byte-for-byte what production shows today.
+
+**What shipped.** `lib/wix-checkout.ts`, `POST /api/checkout`,
+`components/cart/CheckoutButton.tsx`, plus `wixProductId` / `variantId`
+carried through the `Product` type so a cart line can name a real Wix variant.
+
+**Cart stays local; the Wix cart is created at checkout.** Syncing every
+add-to-cart to Wix would put a network call behind every click for little
+gain. Wix tracks abandoned *checkouts*, so the client keeps recovery — and
+someone who started checkout is a warmer lead than someone who merely added to
+cart.
+
+**A fresh visitor token per checkout.** Catalog reads share one cached token
+(public data, identical for everyone). A cart belongs to a shopper, so each
+checkout mints its own session rather than hanging every order off one shared
+identity.
+
+**Blocked on one DNS change.** `get-checkout-url` returns a URL on
+`www.nouriqo.com` — which points at Vercel, not Wix, so a customer would land
+on this repo's own PayU checkout page. Wix serves hosted pages from a separate
+site and explicitly can't reuse the external site's domain. Needs a
+`checkout.nouriqo.com` subdomain (or the free `*.wixsite.com` default). Details
+in `docs/WIX_INTEGRATION.md`.
+
+**Checkout V1 is fully deprecated** — all 13 methods. Wix's own headless guides
+still route through it via the Redirects API, so that's a trap. Cart V2's
+`get-checkout-url`, used here, is current.
+
+**Also verified while building:** shipping rates *do* resolve for India, but as
+"Free shipping" at ₹0.00 — the PayU flow charges a flat ₹50, so that charge
+would silently vanish at cutover. Tax is 0% with no region configured, and an
+active international shipping region exists. All three need a client decision;
+none block the build.
+
 ## 2026-09-20 (3) — Wix Headless: the product catalog moves to Wix
 
 The client asked to manage the store from the Wix dashboard they already pay

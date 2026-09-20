@@ -83,6 +83,25 @@ export async function getVisitorToken(): Promise<string> {
   return inFlightToken;
 }
 
+/**
+ * A brand-new visitor token, bypassing the shared cache.
+ *
+ * Catalog reads are public and identical for everyone, so they happily share
+ * one cached token. A cart is different: it belongs to a visitor. Minting a
+ * fresh token per checkout keeps each shopper's cart its own session rather
+ * than hanging every order off one long-lived shared identity.
+ */
+export async function createFreshVisitorToken(): Promise<string> {
+  const previous = cachedToken;
+  try {
+    return await requestVisitorToken();
+  } finally {
+    // requestVisitorToken() writes to the shared cache as a side effect.
+    // Restore it so a checkout doesn't churn the token used for catalog reads.
+    cachedToken = previous;
+  }
+}
+
 type WixFetchOptions = {
   /** Present for POST/PATCH; omit for GET. */
   body?: unknown;
