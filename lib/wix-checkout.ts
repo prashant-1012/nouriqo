@@ -115,7 +115,41 @@ export async function createCheckoutUrl(lines: CheckoutLine[]): Promise<string> 
 
   assertNotOurOwnDomain(checkoutUrl);
 
-  return checkoutUrl;
+  return withReturnToStorefront(checkoutUrl, token);
+}
+
+/** Where Wix's "Continue Browsing" / post-purchase links send the shopper. */
+const POST_FLOW_URL = `https://${CANONICAL_SITE_HOST}/sweets`;
+
+type RedirectSessionResponse = { redirectSession: { fullUrl: string } };
+
+/**
+ * Wraps the checkout in a redirect session so Wix's "Continue Browsing" link
+ * returns to this storefront. A plain get-checkout-url link sends it to the Wix
+ * site's own address (the unused *.wixsite.com template site).
+ *
+ * Requires www.nouriqo.com as an allowed redirect domain in Headless Settings.
+ * If the session can't be created, the plain checkout URL is returned: a
+ * wrong "Continue Browsing" target is not worth failing a sale over.
+ */
+async function withReturnToStorefront(
+  checkoutUrl: string,
+  token: string
+): Promise<string> {
+  const checkoutId = new URL(checkoutUrl).searchParams.get("checkoutId");
+  if (!checkoutId) return checkoutUrl;
+
+  try {
+    const { redirectSession } = await wixPost<RedirectSessionResponse>(
+      "/redirect-session/v1/redirect-session",
+      token,
+      { ecomCheckout: { checkoutId }, callbacks: { postFlowUrl: POST_FLOW_URL } }
+    );
+    return redirectSession.fullUrl;
+  } catch (error) {
+    console.warn("Redirect session failed; using plain checkout URL.", error);
+    return checkoutUrl;
+  }
 }
 
 /**

@@ -19,10 +19,10 @@ still works, kept as the fallback until a real payment clears through Wix.
 | Product catalog from Wix | ✅ Live |
 | Catalog restructure (pack sizes, slugs, stock) | ✅ Done |
 | Postgres mirrored from Wix | ✅ Done, via script |
-| Shipping regions & rates | ✅ Working — but **free** |
+| Shipping regions & rates | ✅ India: ₹30, free over ₹1,499 (2026-09-25). ⚠️ International region still free — remove |
 | Checkout code | ✅ Built, ⛔ gated off |
-| Wix pages domain | ❌ **Blocker** |
-| Payment method in Wix | ❌ Not connected |
+| Wix pages domain | ✅ Fixed 2026-09-25 — `animeshds88.wixsite.com/nouriqo` |
+| Payment method in Wix | ✅ Cash on Delivery (Manual Payments), 2026-09-25. PayU pending KYC |
 | Real order placed end to end | ❌ Never — store has 0 orders all-time |
 
 ## What's done
@@ -45,7 +45,15 @@ Wix cart is created only at checkout. Gated behind two flags, both off.
 **Postgres re-mirrored** — `scripts/sync-products-from-wix.ts`. The catalogs
 had drifted and broken the PayU fallback; this fixed it.
 
-## ⛔ The one blocker
+## ✅ The blocker (resolved 2026-09-25)
+
+**Fixed:** nouriqo.com was unassigned from the Wix site (Settings → Domains →
+⋯ → Unassign from this site). The domain and its DNS were untouched. Verified
+against Wix's own nameservers: `www` still points to Vercel. The Wix site fell
+back to `animeshds88.wixsite.com/nouriqo`, and `get-checkout-url` now returns
+links there. A real checkout link opened Wix's hosted checkout with the
+correct item and price. Delivery still shows "Free" (see decisions below).
+The history of the problem follows.
 
 Wix returns checkout URLs on `https://www.nouriqo.com/checkout?checkoutId=…`.
 **That domain points at Vercel, not Wix**, so the link lands on this app's own
@@ -71,7 +79,7 @@ redirecting customers into the broken loop.
 
 | # | Task | Who |
 |---|---|---|
-| 1 | Set the Wix pages domain (above) | You / client |
+| 1 | ~~Set the Wix pages domain~~ ✅ done 2026-09-25 | You |
 | 2 | Enable **Manual Payments** in Wix → Accept Payments (few clicks, no KYC) | Client |
 | 3 | Set `WIX_CHECKOUT_ENABLED` + `NEXT_PUBLIC_WIX_CHECKOUT_ENABLED` to `true` in Vercel | You |
 | 4 | Place a real end-to-end test order, confirm it lands in the Wix dashboard | Both |

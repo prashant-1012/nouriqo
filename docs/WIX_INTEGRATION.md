@@ -146,6 +146,9 @@ CheckoutButton  →  POST /api/checkout
                         → fresh visitor token
                         → POST /ecom/v2/carts          (catalogItems)
                         → POST /ecom/v2/carts/{id}/get-checkout-url
+                        → POST /redirect-session/v1/redirect-session
+                             (checkoutId + postFlowUrl = www.nouriqo.com/sweets,
+                              so "Continue Browsing" returns to the storefront)
                      ← { checkoutUrl }
                 →  browser redirects to Wix hosted checkout
 ```
@@ -190,6 +193,28 @@ fix is a subdomain:
 
 Leaving it on the free `*.wixsite.com` default also works and needs no DNS —
 it's just less polished, since the customer visibly lands on a Wix domain.
+
+**Confirmed 2026-09-25 in the dashboard:**
+- The Wix pages domain field in Headless Settings is read-only. It
+  mirrors the Wix site's **primary domain**, which is `nouriqo.com`. So
+  the fix means changing the Wix site's domain (Settings → Domains), not
+  a separate headless setting.
+- **nouriqo.com's DNS is hosted by Wix** (nameservers `ns10/ns11.wixdns.net`),
+  so any new record, such as a `checkout` CNAME, is added in Wix → Domains →
+  Manage DNS Records, not in Vercel.
+- The Domains page shows a red "Your domain is set to point away from Wix"
+  warning. **This is expected, because `www` deliberately points at Vercel.
+  Never click its "Try Again" button.** That would point nouriqo.com back
+  to the Wix template site and take the live storefront down.
+
+**DNS backup (2026-09-25).** If Wix ever rewrites these, restoring these two
+records brings the live site back:
+
+| Type | Host | Value | TTL |
+|---|---|---|---|
+| A | nouriqo.com | `216.198.79.1` | 1 hour |
+| CNAME | www.nouriqo.com | `4eb2d566e19907c5.vercel-dns-017.com` | 1 hour |
+| NS | nouriqo.com | `ns10.wixdns.net`, `ns11.wixdns.net` | 1 day (not editable) |
 
 ### Feature flags
 

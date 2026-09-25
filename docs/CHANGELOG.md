@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-09-25 (6) — Wix checkout unblocked: domain, COD, shipping, return link
+
+**Wix pages domain fixed (dashboard, by the user).** nouriqo.com was unassigned
+from the Wix site in Settings → Domains → ⋯ → Unassign from this site. The
+domain's DNS (hosted by Wix, `www` → Vercel) was untouched; we checked this
+against Wix's own nameservers. Checkout links now point to
+`animeshds88.wixsite.com/nouriqo` instead of looping back to Vercel. A DNS
+backup and a warning never to click the Domains page's "Try Again" are in
+`WIX_INTEGRATION.md`.
+
+**Wix store settings (dashboard, by the user):**
+- Manual Payments set up as "Cash on delivery";
+- India shipping set to ₹30, free over ₹1,499;
+- the customer order-confirmation email confirmed active.
+
+The International region is still ₹0 and needs removing (see
+`WIX_PROGRESS.md`).
+
+**Code: "Continue Browsing" returns to the storefront.** A plain
+`get-checkout-url` link sent Wix checkout's "Continue Browsing" to the unused
+wixsite template site. `lib/wix-checkout.ts` now wraps the checkout in a Wix
+Redirect Session with `postFlowUrl = https://www.nouriqo.com/sweets`. If the
+session call fails, it falls back to the plain checkout URL, so a wrong link
+target never blocks a sale. `www.nouriqo.com` was already an allowed
+redirect domain.
+
+**Verification:**
+- A real checkout, driven with Playwright and stopped before "Place Order", shows:
+  - the correct item and price;
+  - the ₹30 delivery (and "Free" on a ₹2,560 cart);
+  - **Cash on Delivery** at the payment step;
+  - "Continue Browsing" pointing to Wix's headless redirect, which returns
+    302 to `www.nouriqo.com/sweets`.
+- `tsc` and eslint are clean.
+- No order was placed.
+
 ## 2026-09-25 (5) — Animated pack-size dropdown
 
 The user supplied a 21st.dev reference component (emerald-ui's

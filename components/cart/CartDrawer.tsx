@@ -168,9 +168,9 @@ export function CartDrawer() {
                   {wixCheckoutEnabled ? (
                     <>
                       <CheckoutButton />
-                      {/* WhatsApp stays reachable during the transition — per
-                          ECOMMERCE_BUILDOUT.md there is never a moment where
-                          checkout doesn't work. Remove at cutover. */}
+                      {/* WhatsApp stays reachable as a backup for the first few
+                          weeks of Wix checkout (user decision, 2026-09-25) —
+                          remove once Wix orders are flowing reliably. */}
                       <a
                         href={whatsappUrl}
                         target="_blank"
