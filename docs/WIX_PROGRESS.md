@@ -86,6 +86,10 @@ gateway, so PayU stops being on the critical path.
   Wix returns "Free shipping" at ₹0.00. The PayU flow charges a flat ₹50, so
   that charge silently vanishes at cutover. Choose: free, flat ₹50, or
   weight-based (per-pack weights are already set, so all three work).
+  **Update, 2026-09-25:** the client's Shipping Policy now says charges
+  apply by location/order value, and free shipping only as a stated
+  promotion. So "always free" contradicts the published policy. Pick a
+  flat or weight-based rate, then set it in Wix.
 - **Tax is 0%** — no tax region configured. Confirm whether GST applies.
 - **International shipping is active** — a region covering everywhere outside
   India exists. Probably an unreviewed Wix default; confirm it's intentional.

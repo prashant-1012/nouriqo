@@ -15,16 +15,40 @@ export function LegalContent({ blocks }: { blocks: LegalBlock[] }) {
           );
         }
 
-        if (block.type === "list") {
+        if (block.type === "subheading") {
           return (
-            <ul
+            <h3
               key={index}
-              className="list-disc space-y-2 pl-5 text-base leading-relaxed text-ink-soft"
+              className="font-display text-xl text-ink sm:text-2xl"
+            >
+              {block.text}
+            </h3>
+          );
+        }
+
+        if (block.type === "list" || block.type === "orderedList") {
+          const List = block.type === "list" ? "ul" : "ol";
+          return (
+            <List
+              key={index}
+              className={`${block.type === "list" ? "list-disc" : "list-decimal"} space-y-2 pl-5 text-base leading-relaxed text-ink-soft`}
             >
               {block.items.map((item, itemIndex) => (
                 <li key={itemIndex}>{item}</li>
               ))}
-            </ul>
+            </List>
+          );
+        }
+
+        if (block.type === "lines") {
+          return (
+            <p key={index} className="text-base leading-relaxed text-ink-soft">
+              {block.lines.map((line, lineIndex) => (
+                <span key={lineIndex} className="block">
+                  {line}
+                </span>
+              ))}
+            </p>
           );
         }
 

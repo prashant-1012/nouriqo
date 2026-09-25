@@ -44,33 +44,40 @@ a design polish pass (theme toggle was withdrawn, not deferred — see
       testimonials that don't come from real customers), or replace
       `lib/testimonials.ts` with real customer quotes.
 
-- [ ] **Four legal pages (`/privacy-policy`, `/terms-of-service`,
-      `/refund-policy`, `/shipping-policy`) describe payments as
-      processed by PayU, even though PayU is not yet integrated —
-      checkout today is still WhatsApp-only.** Added 2026-09-13 at the
-      user's explicit instruction: PayU's merchant-approval process
-      needs these pages live before it will approve the integration,
-      so they describe the *future* state PayU is reviewing rather
-      than today's actual checkout flow. **Before this goes to a live
-      or client-facing build:** be aware a visitor reading these pages
-      today will see payment language that doesn't match the site's
-      current WhatsApp-only checkout; re-verify all four once PayU
-      actually goes live. Also **not lawyer-reviewed** — this is a
-      best-effort draft, not a substitute for compliance/legal review,
-      particularly given India's DPDP Act and Consumer Protection
-      (E-Commerce) Rules. See `lib/legal-pages.ts` and `CHANGELOG.md`
-      2026-09-13.
+- [x] ~~Four legal pages describe payments as processed by PayU~~ —
+      resolved 2026-09-25: all four (`/privacy-policy`,
+      `/terms-of-service`, `/refund-policy`, `/shipping-policy`) are now
+      the client's own text, which refers to "third-party payment
+      service providers" rather than naming PayU. The client supplied
+      the wording; we haven't had it legally reviewed, so whether it
+      meets India's DPDP Act and Consumer Protection (E-Commerce) Rules
+      is the client's call. See `CHANGELOG.md` 2026-09-25.
+- [ ] **"Terms and Conditions" vs "Terms of Service".** The client's
+      Privacy Policy (intro paragraph) refers to our "Terms and
+      Conditions"; the client's own terms page is titled "Terms of
+      Service". Left as supplied — ask the client which name to use in
+      both.
 
 ## Needed from the client before launch
 
-- [ ] Confirm the working defaults used in the new legal pages: the
-      48-hour damage/incorrect-item reporting window and 5–7 business
-      day refund timeline (`lib/legal-pages.ts`'s `refundPolicy`), and
-      the 1–2 business day order-processing time and 3–7 business day
-      delivery window (`shippingPolicy`). Directionally confirmed by
-      the client (no returns except damaged/wrong/missing item;
-      pan-India, 3–7 days, customer pays shipping) but the specific
-      numbers are reasonable defaults, not client-supplied figures.
+- [x] ~~Confirm the working defaults used in the legal pages~~ —
+      superseded 2026-09-25: `refundPolicy` and `shippingPolicy` are
+      now the client's own text with their own figures (5-day window
+      for damaged/incorrect/missing, 10-day for spoiled, 24–48h
+      response; dispatch within 3 working days, up to 10 for
+      made-to-order/out-of-stock). Our 48-hour / 5–7 day / 1–2 day /
+      3–7 day defaults are gone.
+- [ ] **Wix shipping settings vs the client's Shipping Policy.** The
+      policy (2026-09-25) says shipping charges apply and free shipping
+      is only offered as a stated promotion. Wix currently returns
+      "Free shipping" at ₹0.00 for every order, and an international
+      shipping region is active (see `WIX_PROGRESS.md`). Configure Wix
+      shipping rates to match the policy before the Wix checkout goes
+      live.
+- [x] Refund page name — the page is now titled "Refund, Return &
+      Replacement Policy" (2026-09-25), matching the client's text and
+      the Shipping Policy's reference to it. URL stays `/refund-policy`
+      and the footer label stays "Refund Policy".
 - [ ] Confirm the legal/registered business name to use in
       `ContactInfo.tsx`'s new "Business Name" row and the legal pages'
       company-identification lines. Currently set to the brand name,
@@ -110,8 +117,14 @@ a design polish pass (theme toggle was withdrawn, not deferred — see
 - [x] Phone — `+91 99606 25495` added 2026-09-13 to `ContactInfo.tsx`,
       `Footer.tsx`, and `WHATSAPP_ORDER_NUMBER` (`lib/config.ts`), per
       client instruction.
-- [ ] Real email and address to replace the remaining bracketed
-      placeholders in `ContactInfo.tsx` / `Footer.tsx`.
+- [x] Email (`sales1earth@gmail.com`) and address ("Pune, Maharashtra,
+      India") added 2026-09-25 to `ContactInfo.tsx` and `Footer.tsx`,
+      taken from the client's Privacy Policy text.
+- [ ] **Two phone numbers are live.** All four of the client's legal
+      pages (2026-09-25) list `+91 92701 31986` as Phone/WhatsApp; the
+      footer, `/contact`, and `WHATSAPP_ORDER_NUMBER` still use
+      `+91 99606 25495`. Kept that way at the user's instruction — confirm with the client which is
+      current, then make them match.
 - [ ] Real social media URLs, if any exist — none are currently linked
       (deliberately, per the brief's "no fabricated links" rule).
 - [ ] **Real customer testimonials.** A `/testimonials` page shipped

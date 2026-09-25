@@ -31,7 +31,7 @@ item now navigates to a real page instead of scrolling the homepage.
 | `/products/[slug]` | *(reached from a `ProductCard`)* | the product name | `ProductDetails` — image + copy + `AddToCartControl`, no shared `PageHeader` (its own "Back to Our Sweets" link instead) |
 | `/privacy-policy` | *(footer only)* | "Privacy Policy" | `PageHeader`, `LegalContent` |
 | `/terms-of-service` | *(footer only)* | "Terms of Service" | `PageHeader`, `LegalContent` |
-| `/refund-policy` | *(footer only)* | "Refund & Cancellation Policy" | `PageHeader`, `LegalContent` |
+| `/refund-policy` | *(footer only)* | "Refund, Return & Replacement Policy" | `PageHeader`, `LegalContent` |
 | `/shipping-policy` | *(footer only)* | "Shipping & Delivery Policy" | `PageHeader`, `LegalContent` |
 | `/checkout` | *(not linked yet — see note below)* | "Checkout" | `PageHeader`, `CheckoutForm` — delivery-details form + order summary |
 | `/checkout/payu-redirect` | *(reached only via order creation)* | none — auto-submits to PayU | `PayuAutoSubmitForm`, no header chrome |
@@ -63,10 +63,9 @@ footer-only, not in the main nav (already at its 6-item ceiling — see
 above); linked from the footer's bottom bar next to the copyright
 line rather than a 5th grid column, since the existing `lg:grid-cols-4`
 footer layout is already full (Brand spans 2, Explore 1, Contact 1).
-See `TODO.md` for the "not lawyer-reviewed, review before treating as
-final" caveat and the specific figures (48-hour damage-report window,
-5–7 business day refunds, 3–7 business day delivery) that are working
-defaults, not confirmed policy.
+The original 2026-09-13 text was our draft, with working-default
+figures. **On 2026-09-25 all four pages were replaced with the client's
+own text**, including their own figures (see `CHANGELOG.md`).
 
 `Navbar` and `Footer` render once, in `app/layout.tsx`, and persist
 across every route — as does `CartDrawer` (see `COMPONENT_ARCHITECTURE.md`

@@ -79,7 +79,7 @@ Per the brief, none of the following are invented anywhere on the site:
 ## Placeholder Convention
 
 Where real information is missing but the site needs a slot for it
-(contact email/phone/address in the footer), the placeholder is written
+(as the footer's contact email/address were until 2026-09-25), the placeholder is written
 in **bracketed form** — `Email: [ to be added ]` — rather than a
 plausible-looking fake value like `hello@nouriqo.com`. Brackets read
 unambiguously as "not filled in yet" to both the client and any visitor

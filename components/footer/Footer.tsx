@@ -76,9 +76,9 @@ export function Footer() {
               Contact
             </h3>
             <ul className="mt-4 space-y-3 text-sm text-ink-soft">
-              <li>Email: [ to be added ]</li>
+              <li>Email: sales1earth@gmail.com</li>
               <li>Phone: +91 99606 25495</li>
-              <li>[ Address to be added ]</li>
+              <li>Pune, Maharashtra, India</li>
             </ul>
           </div>
         </div>

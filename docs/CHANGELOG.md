@@ -1,5 +1,133 @@
 # Changelog
 
+## 2026-09-25 (4) — Terms of Service replaced with the client's text
+
+This is the last of the four legal pages. `termsOfService` in
+`lib/legal-pages.ts` now holds the client's text word for word (12
+numbered sections). As with the other three, the only changes are
+structural:
+- the text is split into blocks, with the contact details as a `lines`
+  block;
+- lines broken by the paste are rejoined;
+- `&amp;` is written as "&";
+- the duplicate "Last Updated" lines are dropped.
+
+`lastUpdated` is 2026-09-15. The title stays "Terms of Service", which
+matches the client's heading.
+
+**All four legal pages are now the client's text.** None of our
+2026-09-13 drafts remain, and nothing on these pages names PayU. That
+closes the `TODO.md` item about the pages describing a PayU checkout
+that didn't exist yet.
+
+**Still open in `TODO.md`:**
+- The Privacy Policy refers to "Terms and Conditions", but this page is
+  titled "Terms of Service". Both are client text, so we left them for
+  the client to decide.
+- The phone number mismatch: the legal pages use 92701 31986, while the
+  footer, `/contact` and WhatsApp checkout use 99606 25495.
+
+**Verification:** `tsc --noEmit` and eslint are clean. On the dev server,
+`/terms-of-service` renders all 12 sections and shows "Last updated: 15
+September 2026".
+
+## 2026-09-25 (3) — Refund policy replaced with the client's text
+
+Third page from the client. `refundPolicy` in `lib/legal-pages.ts` now
+holds their text word for word (13 numbered sections). As with the other
+two pages, the only changes are structural:
+- the text is split into blocks, and the contact details within sections
+  2, 10, 11 and 13 use `lines` blocks;
+- lines broken by the paste are rejoined;
+- `&amp;` is written as "&";
+- the duplicate "Last Updated" lines are dropped.
+
+`lastUpdated` is 2026-09-15.
+
+**The page title changed** from "Refund & Cancellation Policy" to
+"Refund, Return & Replacement Policy". This matches the client's heading
+and the Shipping Policy's section 8 reference to it. Kept as they were,
+so existing links (and anything already submitted to PayU) still work:
+- the URL `/refund-policy`;
+- the export name `refundPolicy`;
+- the footer's short "Refund Policy" label.
+
+The Terms of Service draft's cross-reference was renamed to match.
+
+**This replaces our working defaults.** The 48-hour reporting window and
+5–7 business day refund timeline are gone. The client's figures are:
+- 5 days from delivery to report damaged, incorrect or missing items;
+- 10 days for spoiled products;
+- a response within 24–48 hours;
+- no refund-processing timeline promised.
+
+**Verification:** `tsc --noEmit` and eslint are clean. On the dev server,
+`/refund-policy` shows the new h1 and `<title>`, all 13 sections, and
+"Last updated: 15 September 2026".
+
+## 2026-09-25 (2) — Shipping & Delivery Policy replaced with the client's text
+
+Second page from the client. `shippingPolicy` in `lib/legal-pages.ts` now
+holds their text word for word (10 numbered sections). The only changes
+are structural:
+- the text is split into blocks;
+- lines broken by the paste are rejoined ("re-delivery" was split across
+  two lines);
+- `&amp;` is written as "&";
+- the duplicate "Last Updated" lines are dropped.
+
+`lastUpdated` is 2026-09-15, the date the client's text gives. The
+description is reworded to "How your order is packed, dispatched, and
+delivered.", because the old one promised "where we ship" and the new
+text doesn't cover that.
+
+The client's contact block keeps its own phone number (`+91 92701
+31986`), the same as the Privacy Policy.
+
+**This replaces our working defaults.** The 1–2 day processing time,
+3–7 day delivery window and "we ship across India" are gone. The new
+figures are dispatch within 3 working days, or up to 10 for items
+needing preparation or out of stock, with no delivery-day promise.
+
+**New client decisions flagged in `TODO.md`:**
+- The policy says free shipping only applies during a stated promotion,
+  but Wix currently charges ₹0 shipping on every order.
+- Section 8 refers to a "Refund, Return & Replacement Policy", which
+  doesn't match our "Refund & Cancellation Policy" title.
+
+**Verification:** `tsc --noEmit` and eslint are clean. On the dev server,
+`/shipping-policy` renders all 10 sections and shows "Last updated: 15
+September 2026".
+
+## 2026-09-25 — Privacy Policy replaced with the client's text
+
+The client is supplying their own text for the four legal pages, one
+page at a time. First up: the Privacy Policy. `privacyPolicy` in
+`lib/legal-pages.ts` now holds that text word for word (17 numbered
+sections). The only changes are structural: the text is split into
+blocks, the duplicate "Last Updated" lines are dropped because the page
+already shows one, and a missing space in "Email:sales1earth" is fixed.
+`lastUpdated` stays 2026-09-13, the date the client's text gives.
+
+**Contact details, decided with the user:**
+- Section 17 had "[Insert official email address]". It now uses
+  `sales1earth@gmail.com`, the email section 15 already gives.
+- The policy's phone number (`+91 92701 31986`) appears **only on this
+  page**. The rest of the site keeps `+91 99606 25495` until the client
+  confirms which number is current (see `TODO.md`).
+- The email and "Pune, Maharashtra, India" now replace the bracketed
+  placeholders in `Footer.tsx` and `ContactInfo.tsx`.
+
+**`LegalContent` gained three block types** for the client's structure:
+`subheading` (h3, for sub-sections 3A–3D), `orderedList` (section 4's
+numbered purposes), and `lines` (the contact/address blocks: stacked
+lines with no paragraph gap).
+
+**Verification:** `tsc --noEmit` and eslint are clean. On the dev server,
+`/privacy-policy` renders all 17 h2 sections, the four h3 sub-sections
+and the ordered list, and shows "Last updated: 13 September 2026".
+`/contact` and the footer show the new email and address.
+
 ## 2026-09-20 (5) — Fix "<slug> (<weight>) is no longer available" at checkout
 
 Reported symptom: `ghee-papri (200 gram) is no longer available.` on every

@@ -3,9 +3,9 @@ import { Reveal } from "@/components/motion/Reveal";
 
 const details = [
   { label: "Business Name", value: "Nouriqo" },
-  { label: "Email", value: "[ to be added ]" },
+  { label: "Email", value: "sales1earth@gmail.com" },
   { label: "Phone", value: "+91 99606 25495" },
-  { label: "Address", value: "[ to be added ]" },
+  { label: "Address", value: "Pune, Maharashtra, India" },
 ];
 
 export function ContactInfo() {

@@ -24,7 +24,7 @@ app/
     contact/page.tsx        Contact
     privacy-policy/page.tsx      Privacy Policy
     terms-of-service/page.tsx    Terms of Service
-    refund-policy/page.tsx       Refund & Cancellation Policy
+    refund-policy/page.tsx       Refund, Return & Replacement Policy
     shipping-policy/page.tsx     Shipping & Delivery Policy
     products/[slug]/page.tsx     added 2026-09-13 (Phase 2) — PDP,
                                generateMetadata only, no generateStaticParams (see
@@ -198,9 +198,11 @@ components/
     BlogPostHeader.tsx       "Back to Journal" + date/read-time + h1 — `/blogs/[slug]`
     BlogContent.tsx          renders a post's heading/paragraph blocks
   legal/
-    LegalContent.tsx         renders a legal page's heading/paragraph/list blocks
-                             (same block-renderer pattern as BlogContent, plus a
-                             "list" block type for numbered/bulleted clauses) —
+    LegalContent.tsx         renders a legal page's heading/subheading/paragraph/
+                             list/orderedList/lines blocks (same block-renderer
+                             pattern as BlogContent; subheading, orderedList and
+                             lines added 2026-09-25 for the client's Privacy
+                             Policy — "lines" is a stacked contact/address block) —
                              used by all four /privacy-policy, /terms-of-service,
                              /refund-policy, /shipping-policy pages
   sections/
@@ -249,9 +251,9 @@ components/
                              a fake "message sent" claim (the page copy says "opens WhatsApp
                              with your message pre-filled")
     ContactInfo.tsx          `/contact` — business name, email/phone/address list.
-                             Business Name and Phone are real (Nouriqo /
-                             +91 99606 25495, added 2026-09-13); Email and
-                             Address remain bracketed placeholders
+                             All four are real: Nouriqo / +91 99606 25495
+                             (2026-09-13), sales1earth@gmail.com / Pune,
+                             Maharashtra, India (2026-09-25)
   ui/
     Button.tsx              primary/secondary/ghost/inverted link-button
     SectionHeading.tsx       eyebrow + title + description, light/dark tone
@@ -335,7 +337,8 @@ lib/
                              named page exports (privacyPolicy, termsOfService, refundPolicy,
                              shippingPolicy) each route reads directly — no lookup array,
                              since these are four fixed routes, not a growing catalog like
-                             blog-posts.ts. Drafted content, not lawyer-reviewed — see TODO.md
+                             blog-posts.ts. All four are the client's own text
+                             (2026-09-25), used verbatim — see CHANGELOG.md
   db.ts                        added 2026-09-13 (ECOMMERCE_BUILDOUT.md Phase 2) — Prisma
                              Client singleton, using the @prisma/adapter-pg driver adapter
                              (mandatory in Prisma 7) and Vercel Postgres's pooled
