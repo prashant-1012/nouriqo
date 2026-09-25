@@ -103,7 +103,12 @@ export async function createCheckoutUrl(lines: CheckoutLine[]): Promise<string> 
 
   const token = await createFreshVisitorToken();
 
+  // Wix pre-fills checkout's address form by geolocating whoever creates the
+  // cart — which is our server, not the shopper. On Vercel that is Ashburn,
+  // Virginia, so every customer saw "United States" preselected. We only ship
+  // within India, so say so explicitly.
   const { cart } = await wixPost<CartResponse>("/ecom/v2/carts", token, {
+    cart: { deliveryInfo: { address: { country: "IN" } } },
     catalogItems,
   });
 

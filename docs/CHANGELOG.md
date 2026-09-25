@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-25 (7) — Wix checkout live; India preset as the delivery country
+
+The user set both checkout flags in Vercel and redeployed. The live cart now
+shows **Checkout** with "Or order via WhatsApp" below it (kept for the first
+few weeks at the user's request), and Checkout opens Wix's hosted checkout.
+
+**Bug found on the live site: checkout preselected "United States,
+Virginia".** Wix pre-fills the address form by geolocating whoever creates
+the cart. For us that's the server, not the shopper, and Vercel's functions
+run in Ashburn, Virginia. It never showed up locally, because the dev server
+is in Pune. Fixed in `lib/wix-checkout.ts` by creating the cart with
+`deliveryInfo.address.country = "IN"`.
+
+We confirmed the explicit country wins over geolocation: locally, forcing
+`"US"` from a Pune server showed United States. With `"IN"`, checkout opens
+on India with region and postcode left blank.
+
+**International orders are blocked.** The user deactivated the
+International shipping region rather than deleting it. Wix's country
+dropdown still lists every country, but on the live site a US address gets
+"Sorry, our items are not currently available in your region." and the
+order can't be completed.
+
 ## 2026-09-25 (6) — Wix checkout unblocked: domain, COD, shipping, return link
 
 **Wix pages domain fixed (dashboard, by the user).** nouriqo.com was unassigned

@@ -19,8 +19,8 @@ still works, kept as the fallback until a real payment clears through Wix.
 | Product catalog from Wix | ✅ Live |
 | Catalog restructure (pack sizes, slugs, stock) | ✅ Done |
 | Postgres mirrored from Wix | ✅ Done, via script |
-| Shipping regions & rates | ✅ India: ₹30, free over ₹1,499 (2026-09-25). ⚠️ International region still free — remove |
-| Checkout code | ✅ Built, ⛔ gated off |
+| Shipping regions & rates | ✅ India: ₹30, free over ₹1,499 (2026-09-25). International region deactivated |
+| Checkout code | ✅ Live on nouriqo.com since 2026-09-25 (flags on in Vercel), WhatsApp link kept as backup |
 | Wix pages domain | ✅ Fixed 2026-09-25 — `animeshds88.wixsite.com/nouriqo` |
 | Payment method in Wix | ✅ Cash on Delivery (Manual Payments), 2026-09-25. PayU pending KYC |
 | Real order placed end to end | ❌ Never — store has 0 orders all-time |
