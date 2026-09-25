@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-09-25 (5) — Animated pack-size dropdown
+
+The user supplied a 21st.dev reference component (emerald-ui's
+`AnimatedDropdown`, MIT) and asked for it on the "quantity" dropdown. The
+only storefront dropdown is the pack-size picker in `AddToCartControl`
+(cart quantity uses `QuantityStepper`). The user confirmed that as the
+target, and asked for each option to show its price.
+
+**Adapted rather than pasted.** The original is shadcn-styled
+(`bg-primary`, `border-input`, `text-foreground`, `dark:`). This project
+has no shadcn theme and no dark mode, so those classes would have
+rendered unstyled. It's also a menu of `<a href>` links rather than a
+value picker. We didn't set up shadcn or add `tailwind-merge`.
+
+**New `components/ui/AnimatedSelect.tsx`:**
+- keeps the reference's motion: the rotating chevron, the fade/scale
+  panel and the staggered options;
+- is a controlled select that follows the ARIA listbox pattern
+  (arrows, Home/End, Enter/Space, Escape back to the trigger, Tab, and
+  closing on click outside);
+- respects reduced motion, falling back to an opacity fade only;
+- matches the old native `<select>` pill in brand ivory, ink and emerald.
+
+`AddToCartControl` uses it with "size · price" options and gained a
+`dropdownSide` prop. `ProductCard` passes `"top"`, because the card's
+`overflow-hidden` would clip a list that opened downward. The product
+page opens it downward.
+
+**Verification:** `tsc --noEmit` and eslint are clean. Checked with
+Playwright (system Chrome) at 1280px and 375px:
+- on cards the list opens upward, inside the card;
+- on the product page it opens downward;
+- keyboard selection updates both the trigger and the price;
+- clicking outside closes it, and Escape closes it and returns focus to
+  the trigger;
+- no console errors.
+
 ## 2026-09-25 (4) — Terms of Service replaced with the client's text
 
 This is the last of the four legal pages. `termsOfService` in

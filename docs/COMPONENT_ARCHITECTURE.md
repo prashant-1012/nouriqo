@@ -187,8 +187,11 @@ components/
                              h1/variant/description/attribute chips + AddToCartControl, in
                              the same asymmetric lg:grid-cols-12 layout as Gifting.tsx
     AddToCartControl.tsx     "use client": owns pack-size (weightOptions) selection state,
-                             renders the price row (reactive to selection) + dropdown + "Add to Cart".
-                             Used identically by both ProductCard and ProductDetails
+                             renders the price row (reactive to selection) + pack-size
+                             AnimatedSelect (options show size + price) + "Add to Cart".
+                             Used by both ProductCard (dropdownSide="top" — the card's
+                             overflow-hidden would clip a downward list) and
+                             ProductDetails (default "bottom")
     QuantityStepper.tsx      "use client", controlled (value/onChange) — used only by
                              CartDrawer's per-line qty control (ProductCard has no stepper;
                              quantity is adjusted in the cart, not before adding)
@@ -256,6 +259,13 @@ components/
                              Maharashtra, India (2026-09-25)
   ui/
     Button.tsx              primary/secondary/ghost/inverted link-button
+    AnimatedSelect.tsx       "use client" — controlled single-value select (value/onChange,
+                             options with optional right-aligned hint) with a framer-motion
+                             animated listbox: rotating chevron, fade/scale panel, staggered
+                             options; ARIA listbox keyboard support; reduced-motion aware;
+                             `side` prop opens it up or down. Adapted from 21st.dev's
+                             AnimatedDropdown (emerald-ui, MIT) — restyled with the brand
+                             palette instead of shadcn tokens, which this project doesn't use
     SectionHeading.tsx       eyebrow + title + description, light/dark tone
     TestimonialsColumn.tsx   "use client" — one auto-scrolling column of
                              testimonial cards (framer-motion translateY

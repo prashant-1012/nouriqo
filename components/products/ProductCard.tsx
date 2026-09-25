@@ -41,7 +41,7 @@ export function ProductCard({ product }: { product: Product }) {
         </h3>
 
         <div className="mt-auto pt-4">
-          <AddToCartControl product={product} />
+          <AddToCartControl product={product} dropdownSide="top" />
         </div>
       </div>
     </article>

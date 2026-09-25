@@ -3,11 +3,19 @@
 import { useState } from "react";
 import { Check, ShoppingBag } from "lucide-react";
 import clsx from "clsx";
+import { AnimatedSelect } from "@/components/ui/AnimatedSelect";
 import { useCart } from "@/lib/cart-context";
 import { formatINR } from "@/lib/currency";
 import type { Product } from "@/lib/products";
 
-export function AddToCartControl({ product }: { product: Product }) {
+export function AddToCartControl({
+  product,
+  dropdownSide = "bottom",
+}: {
+  product: Product;
+  /** "top" inside ProductCard, whose overflow-hidden would clip a downward list. */
+  dropdownSide?: "top" | "bottom";
+}) {
   const { addItem } = useCart();
   const [selectedWeight, setSelectedWeight] = useState(
     product.weightOptions[0].weight
@@ -31,18 +39,18 @@ export function AddToCartControl({ product }: { product: Product }) {
       </p>
 
       <div className="mt-3 flex items-center gap-2">
-        <select
+        <AnimatedSelect
           value={selectedWeight}
-          onChange={(event) => setSelectedWeight(event.target.value)}
-          aria-label={`Pack size for ${product.name}`}
-          className="h-11 flex-1 rounded-full border border-ink/15 bg-ivory px-4 text-sm text-ink transition-colors hover:border-ink/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-800"
-        >
-          {product.weightOptions.map((option) => (
-            <option key={option.weight} value={option.weight}>
-              {option.weight}
-            </option>
-          ))}
-        </select>
+          onChange={setSelectedWeight}
+          ariaLabel={`Pack size for ${product.name}`}
+          side={dropdownSide}
+          className="flex-1"
+          options={product.weightOptions.map((option) => ({
+            value: option.weight,
+            label: option.weight,
+            hint: formatINR(option.price),
+          }))}
+        />
         <button
           type="button"
           onClick={handleAdd}
