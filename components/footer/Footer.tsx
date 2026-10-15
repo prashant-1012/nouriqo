@@ -15,7 +15,7 @@ export function Footer() {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <p className="font-display text-xl tracking-wide text-emerald-900">
-              EARTH ONE CO
+              ONE EARTH CO
             </p>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink-soft">
               Traditional Indian sweets, thoughtfully made — real desi ghee,
@@ -66,8 +66,10 @@ export function Footer() {
               Contact
             </h3>
             <ul className="mt-4 space-y-3 text-sm text-ink-soft">
+              <li>ONE EARTH CO</li>
               <li>Email: sales1earth@gmail.com</li>
-              <li>Phone: +91 99606 25495</li>
+              {/* <li>Phone: +91 99606 25495</li> */}
+              <li>Phone: +91 92701 31986</li>
               <li>Pune, Maharashtra, India</li>
             </ul>
           </div>
@@ -75,7 +77,7 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col gap-4 border-t border-ink/10 pt-6 text-xs text-ink-soft sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4 sm:gap-y-1">
-            <p>© {new Date().getFullYear()} Nouriqo. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} One earth co. All rights reserved.</p>
             <nav aria-label="Legal" className="flex flex-wrap gap-x-4 gap-y-1">
               <Link href="/privacy-policy" className="hover:text-emerald-800">
                 Privacy Policy

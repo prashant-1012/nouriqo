@@ -1,32 +1,52 @@
 # Changelog
 
-## 2026-10-15 — Footer brand lockup replaced with "EARTH ONE CO"
+## 2026-10-15 — Footer: "ONE EARTH CO" replaces the brand lockup; second phone added
 
-The footer's left column opened with the `nouriqo-mark.png` leaf icon plus a
-"NOURIQO" wordmark, wrapped in a `<Link href="/">`. Removed at the user's
-request and replaced with plain "EARTH ONE CO" text, keeping the same
-`font-display text-xl tracking-wide text-emerald-900` treatment the wordmark
-used, so the column's visual weight is unchanged.
+Three changes to `components/footer/Footer.tsx`, all at the user's request.
 
-Two consequences worth knowing:
+**1. The left column's brand lockup is gone.** It opened with the
+`nouriqo-mark.png` leaf icon plus a "NOURIQO" wordmark, wrapped in a
+`<Link href="/">`. Replaced with plain **ONE EARTH CO** text, keeping the
+wordmark's own `font-display text-xl tracking-wide text-emerald-900`
+treatment so the column's visual weight is unchanged. (First written as
+"EARTH ONE CO", corrected the same day — the company is One Earth Co.)
 
-- **The footer no longer links to the home page.** That lockup was the only
-  home link down there — the Explore column lists Shop/About/Gifting/Blogs/
-  Testimonials/Contact Us, but not Home. Deliberate, not an oversight:
-  labelling a parent-company name as "Nouriqo home" would have been wrong,
-  and the navbar logo still links home on every page. Say so if a footer
-  home link is wanted back.
-- **`next/image` is no longer imported** in `Footer.tsx` — the lockup was its
-  only use. `nouriqo-mark.png` itself is untouched and still used by `Navbar`
-  (see `ASSET_MAP.md`).
+Two consequences: **the footer no longer links to the home page** — that
+lockup was the only home link down there, since the Explore column lists
+Shop/About/Gifting/Blogs/Testimonials/Contact Us but not Home. Left as plain
+text deliberately rather than a link, since labelling a parent-company name
+as "Nouriqo home" would have been wrong, and the navbar logo still links home
+on every page. And **`next/image` is no longer imported** here, the lockup
+being its only use. `nouriqo-mark.png` itself is untouched and still used by
+`Navbar` (see `ASSET_MAP.md`).
 
-Left alone, since only the left-side lockup was in scope: the bottom bar
-still reads "© 2026 Nouriqo. All rights reserved.", and `ContactInfo.tsx`'s
-Business Name row still says "Nouriqo". If "Earth One Co" is the registered
-entity, those are the other two places that would change — and it would
-resolve the open "confirm the legal/registered business name" item in
-`TODO.md`. The client's own email (`sales1earth@gmail.com`) points the same
-way, but this hasn't been confirmed, so nothing else was touched.
+**2. "ONE EARTH CO" also heads the Contact column**, as the first row above
+Email — the same business-name-first ordering `ContactInfo.tsx` uses on
+`/contact`.
+
+**3. The phone number is now `+91 92701 31986`.** Added below the existing
+`+91 99606 25495`, which the user then commented out in the same pass — so the
+footer shows the new number alone rather than both. This is the number all
+four of the client's legal pages have listed since 2026-09-25, so the footer
+now agrees with them.
+
+Note this does **not** fully close the open "two phone numbers" item in
+`TODO.md`: `WHATSAPP_ORDER_NUMBER` (`lib/config.ts`) and `ContactInfo.tsx`
+on `/contact` still use `99606 25495`, so cart checkout and WhatsApp
+enquiries still route to the old number while the footer advertises the new
+one. Worth confirming with the client which is current and then making all
+three agree.
+
+**4. The copyright line now reads "One earth co"** instead of "Nouriqo" —
+the user's own edit, in the same pass. Its casing differs from the
+`ONE EARTH CO` used in the two places above; left exactly as written.
+
+**Still saying "Nouriqo":** `ContactInfo.tsx`'s Business Name row on
+`/contact`. If One Earth Co is the registered entity that is the remaining
+place to change, and doing so would close the open "confirm the legal/
+registered business name" item in `TODO.md`. The client's own email
+(`sales1earth@gmail.com`) points that way, but it hasn't been confirmed, so
+nothing else was assumed.
 
 ## 2026-09-25 (7) — Wix checkout live; India preset as the delivery country
 
