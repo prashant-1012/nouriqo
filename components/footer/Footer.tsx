@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { Motif } from "@/components/decorative/Motif";
@@ -15,18 +14,9 @@ export function Footer() {
       <Container className="relative py-16 sm:py-20">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2.5" aria-label="Nouriqo home">
-              <Image
-                src="/assets/logo/nouriqo-mark.png"
-                alt="Nouriqo"
-                width={40}
-                height={26}
-                className="logo-blend h-9 w-auto object-contain"
-              />
-              <span className="font-display text-xl tracking-wide text-emerald-900">
-                NOURIQO
-              </span>
-            </Link>
+            <p className="font-display text-xl tracking-wide text-emerald-900">
+              EARTH ONE CO
+            </p>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink-soft">
               Traditional Indian sweets, thoughtfully made — real desi ghee,
               real dry fruits, no shortcuts.

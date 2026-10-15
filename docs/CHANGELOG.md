@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-10-15 — Footer brand lockup replaced with "EARTH ONE CO"
+
+The footer's left column opened with the `nouriqo-mark.png` leaf icon plus a
+"NOURIQO" wordmark, wrapped in a `<Link href="/">`. Removed at the user's
+request and replaced with plain "EARTH ONE CO" text, keeping the same
+`font-display text-xl tracking-wide text-emerald-900` treatment the wordmark
+used, so the column's visual weight is unchanged.
+
+Two consequences worth knowing:
+
+- **The footer no longer links to the home page.** That lockup was the only
+  home link down there — the Explore column lists Shop/About/Gifting/Blogs/
+  Testimonials/Contact Us, but not Home. Deliberate, not an oversight:
+  labelling a parent-company name as "Nouriqo home" would have been wrong,
+  and the navbar logo still links home on every page. Say so if a footer
+  home link is wanted back.
+- **`next/image` is no longer imported** in `Footer.tsx` — the lockup was its
+  only use. `nouriqo-mark.png` itself is untouched and still used by `Navbar`
+  (see `ASSET_MAP.md`).
+
+Left alone, since only the left-side lockup was in scope: the bottom bar
+still reads "© 2026 Nouriqo. All rights reserved.", and `ContactInfo.tsx`'s
+Business Name row still says "Nouriqo". If "Earth One Co" is the registered
+entity, those are the other two places that would change — and it would
+resolve the open "confirm the legal/registered business name" item in
+`TODO.md`. The client's own email (`sales1earth@gmail.com`) points the same
+way, but this hasn't been confirmed, so nothing else was touched.
+
 ## 2026-09-25 (7) — Wix checkout live; India preset as the delivery country
 
 The user set both checkout flags in Vercel and redeployed. The live cart now
