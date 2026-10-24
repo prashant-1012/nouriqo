@@ -174,9 +174,6 @@ export function CheckoutForm() {
             <span>{formatINR(total)}</span>
           </div>
         </div>
-        <p className="mt-2 text-xs italic text-ink-soft/70">
-          Prices shown are indicative and may change.
-        </p>
       </div>
     </div>
   );

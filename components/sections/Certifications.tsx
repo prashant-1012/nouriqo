@@ -44,11 +44,6 @@ export function Certifications() {
             ))}
           </div>
         </Reveal>
-
-        <p className="mt-6 text-center text-xs italic text-ink-soft/70">
-          Certification logos shown are placeholders for reference only,
-          pending verified credentials.
-        </p>
       </Container>
     </section>
   );

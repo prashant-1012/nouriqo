@@ -25,9 +25,11 @@ a design polish pass (theme toggle was withdrawn, not deferred — see
       use of the FDA mark is separately restricted regardless of the
       product's actual regulatory status — and swap them into
       `lib/certifications.ts`, or (b) remove the section entirely if no
-      real certifications exist yet. Do not simply remove the on-page
-      "placeholders, pending verified credentials" disclaimer without
-      doing one of those two things first.
+      real certifications exist yet. **The on-page "placeholders, pending
+      verified credentials" disclaimer was removed 2026-10-24 at the
+      user's instruction**, so the logos now display with nothing marking
+      them as unconfirmed. This item is still open: confirm the
+      certifications are real, or remove the section.
 
 - [ ] **`components/sections/Testimonials.tsx` (`/testimonials`) renders
       nine fabricated testimonials attributed to fictional named
@@ -138,9 +140,9 @@ a design polish pass (theme toggle was withdrawn, not deferred — see
       to a real launch, and ideally supply real ones to replace them.
 - [x] Pricing — added 2026-09-04 (see `ROADMAP.md` #5), but it's
       placeholder pricing the client explicitly called provisional.
-      **Still needed:** confirmation of real, final retail pricing
-      before launch, at which point the "indicative and may change"
-      disclaimer (`ProductGrid`, `CartDrawer`) should come off.
+      **Resolved 2026-10-24:** the user confirmed the new Wix prices are
+      final, and the "indicative and may change" disclaimer came off
+      (`ProductGrid`, `CartDrawer`, `CheckoutForm`).
 - [ ] Confirmation on whether "Since 1958" and "Pride of India" (sourced
       from packaging photography) are approved for use as on-site copy.
 - [ ] Any certifications (FSSAI number, etc.) legally required to display
@@ -152,12 +154,12 @@ a design polish pass (theme toggle was withdrawn, not deferred — see
       (92% / 18K+ / 18K+ / 180+) explicitly as provisional placeholders,
       not confirmed Nouriqo metrics (client's call — see
       `CONTENT_GUIDELINES.md` and `lib/counters.ts`). **Still needed:**
-      real figures before launch, at which point the "provisional
-      placeholders" disclaimer under the row should come off.
-- [ ] Confirmation of the 1 kg = 2x the 500 gram price rule
-      (`lib/products.ts`'s `weightOptions`) as real, final pricing —
-      it's a client-specified rule, not invented, but still pairs with
-      the same "indicative and may change" pricing disclaimer above.
+      real figures. The "provisional placeholders" disclaimer under the
+      row was removed 2026-10-24 at the user's instruction, so the
+      placeholder figures now show unmarked.
+- [x] ~~Confirmation of the 1 kg = 2x the 500 gram price rule~~ — moot
+      2026-10-24: the 1 kg pack was removed and real 200 gram / 500 gram
+      prices were set in Wix (see `CHANGELOG.md`).
 
 ## Ecommerce build-out
 

@@ -100,11 +100,6 @@ export function Counters() {
             />
           ))}
         </div>
-
-        <p className="mt-10 text-center text-xs italic text-ink-soft/70">
-          Figures shown are provisional placeholders pending confirmed
-          numbers.
-        </p>
       </Container>
     </section>
   );

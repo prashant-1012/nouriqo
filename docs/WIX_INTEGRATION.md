@@ -352,9 +352,15 @@ doesn't work.
   signature verification, not a shared secret.
 - **Multi-option products are not modelled.** One option (`Weight`) is
   assumed. A second option would need real UI work.
-- **Cost prices exist only on the 500g variant.** Adding pack sizes left the
-  200g and 1kg variants with no cost recorded, so Wix profit reporting reads
-  ₹0 on those. Storefront is unaffected; the client needs to fill these in.
+- **Cost prices are incomplete.** Adding pack sizes left the 200g variants
+  with no cost recorded, and the 2026-10-24 variant reset on Kaju Badam and
+  Kaju Papri (to remove 1 kg) may have cleared their 500g costs too. Wix
+  profit reporting reads ₹0 where cost is missing. Storefront is unaffected;
+  the client needs to fill these in.
+- **Removing a pack size needs a variant reset.** V1 refuses to change
+  `productOptions` while variant data exists. Reset All Product Variant Data,
+  then Update Product, then re-set every variant's price, weight and SKU in
+  the same run — see `CHANGELOG.md` 2026-10-24.
 
 ## Reference
 

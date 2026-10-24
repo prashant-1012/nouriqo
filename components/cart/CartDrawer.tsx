@@ -162,9 +162,6 @@ export function CartDrawer() {
                       {formatINR(total)}
                     </span>
                   </div>
-                  <p className="mt-1 text-xs italic text-ink-soft/70">
-                    Prices shown are indicative and may change.
-                  </p>
                   {wixCheckoutEnabled ? (
                     <>
                       <CheckoutButton />

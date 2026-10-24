@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-10-24 — Final prices; 1 kg pack removed; three disclaimers removed
+
+At the user's request, set in Wix over the Catalog V1 API:
+
+| Product | 200 gram | 500 gram |
+|---|---|---|
+| Ghee Papri | ₹299 (was ₹250) | ₹750 (was ₹560) |
+| Kaju Badam Papri | ₹399 (was ₹370) | ₹999 (was ₹840) |
+| Kaju Papri | ₹580 (was ₹560) | ₹1,399 (was ₹1,280) |
+
+**1 kg is gone from every product.** Ghee Papri had already lost it in the
+dashboard; it was removed from Kaju Badam and Kaju Papri here. Each product's
+base price now equals its 500 gram price, as before.
+
+Removing an option choice in V1 is refused while variant data exists
+(`productOptions can't be changed when product has variants`). Done instead as
+Reset All Product Variant Data → Update Product (options + base price) →
+Update Product Variants (price, weight, SKU `40`). Variant IDs, shipping
+weights (0.2 / 0.5) and stock came through unchanged.
+
+Also: Postgres re-mirrored with `scripts/sync-products-from-wix.ts`; the
+legacy seed array in `lib/products.ts` updated to match; `/api/revalidate`
+flushed and the live `/sweets` page confirmed showing all six prices and no
+1 kg.
+
+**Three on-page disclaimers removed**, at the user's instruction:
+- "Prices shown are indicative and may change." — from `ProductGrid`,
+  `CartDrawer` and `CheckoutForm`. The user confirmed the prices above are
+  final.
+- "Figures shown are provisional placeholders pending confirmed numbers." —
+  from `Counters`. The figures themselves are unchanged and still
+  unconfirmed.
+- "Certification logos shown are placeholders for reference only, pending
+  verified credentials." — from `Certifications`. The logos are unchanged
+  and still unconfirmed; the BLOCKING item in `TODO.md` stays open.
+
 ## 2026-10-15 — Footer: "ONE EARTH CO" replaces the brand lockup; second phone added
 
 Three changes to `components/footer/Footer.tsx`, all at the user's request.

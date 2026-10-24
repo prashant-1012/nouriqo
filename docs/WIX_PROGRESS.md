@@ -101,10 +101,12 @@ gateway, so PayU stops being on the critical path.
 - **Tax is 0%** — no tax region configured. Confirm whether GST applies.
 - **International shipping is active** — a region covering everywhere outside
   India exists. Probably an unreviewed Wix default; confirm it's intentional.
-- **Cost prices** exist only on the 500 gram variant. The 200 gram and 1 kg
-  variants read ₹0 cost, so Wix profit reporting is wrong for them.
-- **1 kg / 200 gram prices** were reasonable derivations, flagged for the
-  client to adjust.
+- **Cost prices** existed only on the 500 gram variant, and the 2026-10-24
+  variant reset on Kaju Badam and Kaju Papri (needed to remove 1 kg) may
+  have cleared those too. Check every variant's cost in the dashboard, or
+  Wix profit reporting reads ₹0.
+- ~~1 kg / 200 gram prices~~ — resolved 2026-10-24: the user set real
+  200 gram / 500 gram prices and the 1 kg pack was removed (`CHANGELOG.md`).
 
 ### 3. Security / housekeeping
 

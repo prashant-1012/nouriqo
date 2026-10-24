@@ -8,7 +8,7 @@
 
 export type WeightOption = {
   weight: string;
-  /** Indicative price in INR for this pack size — provisional, see CONTENT_GUIDELINES.md */
+  /** Price in INR for this pack size. Live prices come from Wix, not from here. */
   price: number;
   /**
    * Wix Stores variant ID for this pack size. Required to put the item in a
@@ -48,8 +48,8 @@ export const products: Product[] = [
     description:
       "Our original recipe — layers of papri slow-cooked in desi ghee and finished with almonds and pistachios.",
     weightOptions: [
-      { weight: "500 gram", price: 500 },
-      { weight: "1 kg", price: 1000 },
+      { weight: "200 gram", price: 299 },
+      { weight: "500 gram", price: 750 },
     ],
     attributes: ["No Maida", "No Artificial Color", "No Preservatives"],
     image: {
@@ -66,8 +66,8 @@ export const products: Product[] = [
     description:
       "A velvety delicacy layered generously with cashews and almonds for a richer, nuttier bite.",
     weightOptions: [
-      { weight: "500 gram", price: 550 },
-      { weight: "1 kg", price: 1100 },
+      { weight: "200 gram", price: 399 },
+      { weight: "500 gram", price: 999 },
     ],
     attributes: ["No Maida", "No Artificial Color", "No Preservatives"],
     image: {
@@ -84,8 +84,8 @@ export const products: Product[] = [
     description:
       "Our signature cashew papri, finished with pistachio and a touch of rose for a lighter, fragrant finish.",
     weightOptions: [
-      { weight: "500 gram", price: 600 },
-      { weight: "1 kg", price: 1200 },
+      { weight: "200 gram", price: 580 },
+      { weight: "500 gram", price: 1399 },
     ],
     attributes: ["No Maida", "No Artificial Color", "No Preservatives"],
     image: {

@@ -23,10 +23,6 @@ export async function ProductGrid() {
             </RevealItem>
           ))}
         </RevealGroup>
-
-        <p className="mt-10 text-center text-xs italic text-ink-soft/70">
-          Prices shown are indicative and may change.
-        </p>
       </Container>
     </section>
   );

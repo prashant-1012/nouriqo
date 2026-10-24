@@ -80,7 +80,7 @@ function toPlainText(html: string | undefined): string {
  * Pack sizes, derived from the product's Wix variants.
  *
  * The client models pack size as a Wix product option named "Weight", whose
- * choices are "200 gram" / "500 gram" / "1 kg". We sort by the variant's own
+ * choices are "200 gram" / "500 gram". We sort by the variant's own
  * numeric weight rather than the label, so the order stays correct no matter
  * how the choices are named or reordered in the dashboard.
  *
